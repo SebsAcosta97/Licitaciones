@@ -1,0 +1,4 @@
+data/licitaciones_abiertas.json -filter -diff -merge text
+data/licitaciones_abiertas_v2.json -filter -diff -merge text
+data/licitaciones.json filter=lfs diff=lfs merge=lfs -text
+data/documentos_licitacion.json filter=lfs diff=lfs merge=lfs -text

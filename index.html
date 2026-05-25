@@ -1,0 +1,704 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GovAI | Inteligencia de Contratación Pública</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --bg-soft: #eef3f9;
+      --card: #ffffff;
+      --border: #dfe7f2;
+      --text: #132238;
+      --muted: #5d6f87;
+      --brand: #2f7ff7;
+      --brand-soft: #e8f1ff;
+      --success: #0f9f6e;
+      --warning: #d18b00;
+      --danger: #cc3a3a;
+    }
+
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    body {
+      background:
+        radial-gradient(circle at 10% 0%, #e9f2ff 0, transparent 40%),
+        radial-gradient(circle at 100% 20%, #edf8f2 0, transparent 35%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(34, 58, 94, 0.06);
+      backdrop-filter: blur(8px);
+    }
+
+    .soft-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: 0 6px 20px rgba(25, 43, 71, 0.05);
+    }
+
+    .fade-up { animation: fadeUp .45s ease both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .scrollbar::-webkit-scrollbar { width: 8px; }
+    .scrollbar::-webkit-scrollbar-thumb { background: #cdd9ea; border-radius: 999px; }
+  </style>
+</head>
+<body>
+  <div class="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
+
+    <header class="flex items-center justify-between mb-8 md:mb-10">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[var(--brand-soft)] text-[var(--brand)] flex items-center justify-center">
+          <i class="fa-solid fa-sparkles"></i>
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-extrabold tracking-tight">GovAI Intelligence</h1>
+          <p class="text-sm text-[var(--muted)]">IA para contratación pública y estrategia de ofertas</p>
+        </div>
+      </div>
+      <div class="hidden md:flex items-center gap-2 text-xs text-[var(--muted)] bg-white/70 border border-[var(--border)] px-3 py-2 rounded-xl">
+        <i class="fa-solid fa-database text-[var(--brand)]"></i>
+        Fuente: <code>data/licitaciones_abiertas_v2.json</code>
+      </div>
+    </header>
+
+    <section class="glass rounded-3xl p-6 md:p-10 mb-8 md:mb-10 fade-up">
+      <div class="max-w-4xl">
+        <p class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-[var(--brand-soft)] text-[var(--brand)] mb-5">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> IA de oportunidades públicas
+        </p>
+        <h2 class="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight mb-4">
+          Encuentra oportunidades de contratación pública con IA
+        </h2>
+        <p class="text-[var(--muted)] text-base md:text-lg mb-7 max-w-3xl">
+          La IA analiza miles de licitaciones históricas para ayudarte a preparar mejores ofertas.
+        </p>
+
+        <div class="soft-card rounded-2xl p-3 md:p-4 flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-[var(--bg-soft)] flex items-center justify-center text-[var(--brand)]">
+            <i class="fa-solid fa-robot"></i>
+          </div>
+          <input id="searchInput" type="text" class="w-full bg-transparent outline-none text-sm md:text-base" placeholder="Pregunta a la IA: 'licitaciones abiertas de software hospitalario en Madrid por encima de 100.000€'" />
+          <button id="searchButton" class="px-4 md:px-5 py-2.5 rounded-xl bg-[var(--brand)] hover:opacity-90 transition text-white text-sm font-semibold">
+            Buscar
+          </button>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mt-4 text-xs">
+          <button class="quick-query px-3 py-1.5 rounded-full bg-white border border-[var(--border)] hover:bg-[var(--bg-soft)]" data-query="hospital">Hospitales</button>
+          <button class="quick-query px-3 py-1.5 rounded-full bg-white border border-[var(--border)] hover:bg-[var(--bg-soft)]" data-query="software">Software</button>
+          <button class="quick-query px-3 py-1.5 rounded-full bg-white border border-[var(--border)] hover:bg-[var(--bg-soft)]" data-query="mantenimiento">Mantenimiento</button>
+          <button class="quick-query px-3 py-1.5 rounded-full bg-white border border-[var(--border)] hover:bg-[var(--bg-soft)]" data-query="cpv">CPV</button>
+          <button class="quick-query px-3 py-1.5 rounded-full bg-white border border-[var(--border)] hover:bg-[var(--bg-soft)]" data-query="Madrid">Madrid</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+      <div class="soft-card rounded-2xl p-5">
+        <div class="flex justify-between items-start gap-3">
+          <div>
+            <h3 class="font-bold text-lg">IA Insights</h3>
+            <p class="text-sm text-[var(--muted)] mt-1">Resumen ejecutivo de oportunidades detectadas</p>
+          </div>
+          <span class="px-2.5 py-1 text-xs rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Activo</span>
+        </div>
+        <ul id="aiInsights" class="mt-4 space-y-2 text-sm text-[var(--text)]"></ul>
+      </div>
+
+      <div class="soft-card rounded-2xl p-5">
+        <h3 class="font-bold text-lg mb-2">Historical Knowledge Base</h3>
+        <p class="text-sm text-[var(--muted)] leading-relaxed">
+          La IA utiliza licitaciones históricas como memoria analítica para detectar patrones ganadores,
+          requisitos frecuentes, estructuras documentales y comportamiento de adjudicatarios.
+        </p>
+        <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
+          <div class="bg-[var(--bg-soft)] rounded-xl p-3">
+            <p class="text-[var(--muted)]">Registros históricos</p>
+            <p class="font-bold text-lg" id="kpiHistorico">0</p>
+          </div>
+          <div class="bg-[var(--bg-soft)] rounded-xl p-3">
+            <p class="text-[var(--muted)]">Patrones detectados</p>
+            <p class="font-bold text-lg" id="kpiPatrones">0</p>
+          </div>
+          <div class="bg-[var(--bg-soft)] rounded-xl p-3">
+            <p class="text-[var(--muted)]">Presupuesto histórico</p>
+            <p class="font-bold text-lg" id="kpiHistoricoBudget">€0</p>
+          </div>
+          <div class="bg-[var(--bg-soft)] rounded-xl p-3">
+            <p class="text-[var(--muted)]">Organismos históricos</p>
+            <p class="font-bold text-lg" id="kpiHistoricoOrganismos">0</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="soft-card rounded-2xl p-4">
+          <p class="text-xs text-[var(--muted)]">Licitaciones Abiertas/Activas</p>
+          <p id="kpiAbiertas" class="text-2xl font-extrabold mt-1">0</p>
+        </div>
+        <div class="soft-card rounded-2xl p-4">
+          <p class="text-xs text-[var(--muted)]">Oportunidades IA</p>
+          <p id="kpiOportunidades" class="text-2xl font-extrabold mt-1">0</p>
+        </div>
+        <div class="soft-card rounded-2xl p-4">
+          <p class="text-xs text-[var(--muted)]">Organismos Activos</p>
+          <p id="kpiOrganismos" class="text-2xl font-extrabold mt-1">0</p>
+        </div>
+        <div class="soft-card rounded-2xl p-4">
+          <p class="text-xs text-[var(--muted)]">Presupuesto Abierto</p>
+          <p id="kpiBudget" class="text-xl md:text-2xl font-extrabold mt-1">€0</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="soft-card rounded-2xl p-4 md:p-5 mb-6">
+      <button id="toggleFilters" class="w-full flex items-center justify-between text-left">
+        <div>
+          <h3 class="font-bold">Filtros inteligentes</h3>
+          <p class="text-xs text-[var(--muted)]">Compactos y orientados a oportunidades actuales</p>
+        </div>
+        <i id="filtersChevron" class="fa-solid fa-chevron-down text-[var(--muted)] transition-transform"></i>
+      </button>
+
+      <div id="filtersPanel" class="hidden mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
+        <div>
+          <label class="text-xs text-[var(--muted)]">Estado</label>
+          <select id="estadoFilter" class="w-full mt-1 rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-[var(--muted)]">Tipo contrato</label>
+          <select id="tipoFilter" class="w-full mt-1 rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-[var(--muted)]">Organismo</label>
+          <select id="organoFilter" class="w-full mt-1 rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm">
+            <option value="">Todos</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-[var(--muted)]">Presupuesto mínimo (€)</label>
+          <input id="budgetFilter" type="number" placeholder="100000" class="w-full mt-1 rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm" />
+        </div>
+        <div class="flex items-end pb-2">
+          <label class="inline-flex items-center gap-2 text-sm text-[var(--text)]">
+            <input id="healthFilter" type="checkbox" class="rounded border-[var(--border)]">
+            Solo sector salud
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
+      <div class="soft-card rounded-2xl p-5">
+        <h3 class="font-bold mb-3">Distribución por estado</h3>
+        <div class="h-72"><canvas id="estadoChart"></canvas></div>
+      </div>
+      <div class="soft-card rounded-2xl p-5">
+        <h3 class="font-bold mb-3">Top organismos con actividad abierta</h3>
+        <div class="h-72"><canvas id="orgChart"></canvas></div>
+      </div>
+    </section>
+
+    <section class="mb-5 flex items-end justify-between gap-3">
+      <div>
+        <h3 class="text-2xl md:text-3xl font-extrabold tracking-tight">Licitaciones abiertas y recientes</h3>
+        <p class="text-sm text-[var(--muted)] mt-1">Foco en oportunidades actuales para preparación de ofertas</p>
+      </div>
+      <p class="text-sm text-[var(--muted)]"><span id="resultsCount">0</span> resultados</p>
+    </section>
+
+    <section id="cardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></section>
+    <div class="mt-5 text-center">
+      <button id="loadMoreBtn" class="hidden px-5 py-2.5 rounded-xl border border-[var(--border)] bg-white hover:bg-[var(--bg-soft)] text-sm font-semibold">
+        Cargar más oportunidades
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let licitaciones = [];
+    let filtered = [];
+    let historicas = [];
+    let estadoChartInstance = null;
+    let orgChartInstance = null;
+    let visibleCards = 30;
+
+    const ACTIVE_STATES = new Set(['EV', 'PUB', 'PCP', 'PRES', 'RES']);
+    const HEALTH_TERMS = ['hospital', 'salud', 'sanidad', 'clinica', 'clínica'];
+
+    function safeText(value, fallback = '') {
+      if (value === null || value === undefined) return fallback;
+      const text = String(value).trim();
+      return text || fallback;
+    }
+
+    function toNumber(value) {
+      if (value === null || value === undefined || value === '') return NaN;
+      const normalized = String(value).replace(/[^\d,.-]/g, '').replace(',', '.');
+      const parsed = Number(normalized);
+      return Number.isFinite(parsed) ? parsed : NaN;
+    }
+
+    function amountOf(item) {
+      const total = toNumber(item.importe_total);
+      if (!Number.isNaN(total)) return total;
+      const estimated = toNumber(item.importe_estimado);
+      if (!Number.isNaN(estimated)) return estimated;
+      return 0;
+    }
+
+    function parseDate(dateStr) {
+      if (!dateStr) return null;
+      const d = new Date(dateStr);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    function isHealthRelated(item) {
+      const blob = JSON.stringify(item || {}).toLowerCase();
+      return HEALTH_TERMS.some(term => blob.includes(term));
+    }
+
+    function isOpenOrActive(item) {
+      const estado = safeText(item.estado_codigo).toUpperCase();
+      if (ACTIVE_STATES.has(estado)) return true;
+      return true;
+    }
+
+    function formatEuro(value) {
+      if (!Number.isFinite(value)) return '-';
+      return new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function formatDate(dateStr) {
+      const d = parseDate(dateStr);
+      if (!d) return 'Sin fecha';
+      return d.toLocaleDateString('es-ES');
+    }
+
+    function opportunityScore(item) {
+      const amount = amountOf(item);
+      const hasDeadline = !!parseDate(item.fecha_publicacion);
+      const isHealth = isHealthRelated(item);
+      const isOpen = isOpenOrActive(item);
+      let score = 55;
+      if (isOpen) score += 18;
+      if (amount >= 100000) score += 10;
+      if (amount >= 500000) score += 6;
+      if (hasDeadline) score += 5;
+      if (isHealth) score += 6;
+      return Math.max(45, Math.min(97, score));
+    }
+
+    function setError(message) {
+      document.getElementById('cardsContainer').innerHTML = `
+        <div class="soft-card rounded-2xl p-8 text-center col-span-full">
+          <h3 class="text-xl font-bold text-red-700 mb-2">Error de carga</h3>
+          <p class="text-sm text-[var(--muted)]">${message}</p>
+        </div>
+      `;
+    }
+
+    function fillSelect(id, values) {
+      const select = document.getElementById(id);
+      if (!select) return;
+      select.innerHTML = '<option value="">Todos</option>';
+      values.sort((a, b) => a.localeCompare(b, 'es')).forEach(v => {
+        const option = document.createElement('option');
+        option.value = v;
+        option.textContent = v;
+        select.appendChild(option);
+      });
+    }
+
+    function populateFilters() {
+      const estadoSet = new Set();
+      const tipoSet = new Set();
+      const orgSet = new Set();
+
+      licitaciones.forEach(item => {
+        const estado = safeText(item.estado_codigo);
+        const tipo = safeText(item.tipo_contrato_codigo);
+        const org = safeText(item.organo_contratacion);
+        if (estado) estadoSet.add(estado);
+        if (tipo) tipoSet.add(tipo);
+        if (org) orgSet.add(org);
+      });
+
+      fillSelect('estadoFilter', [...estadoSet]);
+      fillSelect('tipoFilter', [...tipoSet]);
+      fillSelect('organoFilter', [...orgSet].slice(0, 250));
+    }
+
+    function applyFilters() {
+      const search = safeText(document.getElementById('searchInput').value).toLowerCase();
+      const estado = safeText(document.getElementById('estadoFilter').value);
+      const tipo = safeText(document.getElementById('tipoFilter').value);
+      const organo = safeText(document.getElementById('organoFilter').value);
+      const health = document.getElementById('healthFilter').checked;
+      const budget = toNumber(document.getElementById('budgetFilter').value);
+      const minBudget = Number.isNaN(budget) ? 0 : budget;
+      const hasActiveFilters = Boolean(search || estado || tipo || organo || health || minBudget > 0);
+
+      console.log('[GovAI] applyFilters()', {
+        totalOpenDataset: licitaciones.length,
+        search, estado, tipo, organo, health, minBudget, hasActiveFilters
+      });
+
+      if (!Array.isArray(licitaciones) || licitaciones.length === 0) {
+        filtered = [];
+        visibleCards = 30;
+        console.log('[GovAI] applyFilters(): dataset vacío');
+        renderAll();
+        return;
+      }
+
+      if (!hasActiveFilters) {
+        filtered = [...licitaciones];
+        filtered.sort((a, b) => {
+          const activeDiff = Number(isOpenOrActive(b)) - Number(isOpenOrActive(a));
+          if (activeDiff !== 0) return activeDiff;
+          const dateA = parseDate(a.fecha_publicacion)?.getTime() || 0;
+          const dateB = parseDate(b.fecha_publicacion)?.getTime() || 0;
+          return dateB - dateA;
+        });
+        visibleCards = 30;
+        console.log('[GovAI] applyFilters(): feed inicial sin filtros', {
+          filteredCount: filtered.length,
+          renderCount: Math.min(visibleCards, filtered.length)
+        });
+        renderAll();
+        return;
+      }
+
+      filtered = licitaciones.filter(item => {
+        const blob = JSON.stringify(item || {}).toLowerCase();
+        const amount = amountOf(item);
+
+        return (
+          (!search || blob.includes(search)) &&
+          (!estado || safeText(item.estado_codigo) === estado) &&
+          (!tipo || safeText(item.tipo_contrato_codigo) === tipo) &&
+          (!organo || safeText(item.organo_contratacion) === organo) &&
+          (!health || isHealthRelated(item)) &&
+          amount >= minBudget
+        );
+      });
+
+      filtered.sort((a, b) => {
+        const activeDiff = Number(isOpenOrActive(b)) - Number(isOpenOrActive(a));
+        if (activeDiff !== 0) return activeDiff;
+        const dateA = parseDate(a.fecha_publicacion)?.getTime() || 0;
+        const dateB = parseDate(b.fecha_publicacion)?.getTime() || 0;
+        return dateB - dateA;
+      });
+
+      visibleCards = 30;
+      console.log('[GovAI] applyFilters(): feed filtrado', {
+        filteredCount: filtered.length,
+        renderCount: Math.min(visibleCards, filtered.length)
+      });
+      renderAll();
+    }
+
+    function renderOperationalKPIs() {
+      const abiertas = filtered.filter(isOpenOrActive);
+      const presupuestoAbierto = abiertas.reduce((acc, item) => acc + amountOf(item), 0);
+      const organismosActivos = new Set(abiertas.map(x => safeText(x.organo_contratacion)).filter(Boolean));
+      const oportunidades = abiertas.filter(x => opportunityScore(x) >= 75).length;
+
+      document.getElementById('kpiAbiertas').textContent = abiertas.length.toLocaleString('es-ES');
+      document.getElementById('kpiOportunidades').textContent = oportunidades.toLocaleString('es-ES');
+      document.getElementById('kpiOrganismos').textContent = organismosActivos.size.toLocaleString('es-ES');
+      document.getElementById('kpiBudget').textContent = formatEuro(presupuestoAbierto);
+    }
+
+    function renderHistoricalKPIs() {
+      const source = historicas.length ? historicas : licitaciones;
+      const organismos = new Set(source.map(x => safeText(x.organo_contratacion)).filter(Boolean));
+      const presupuesto = source.reduce((acc, row) => acc + amountOf(row), 0);
+
+      document.getElementById('kpiHistorico').textContent = source.length.toLocaleString('es-ES');
+      document.getElementById('kpiPatrones').textContent = Math.max(12, Math.round(Math.sqrt(source.length / 3))).toLocaleString('es-ES');
+      document.getElementById('kpiHistoricoBudget').textContent = formatEuro(presupuesto);
+      document.getElementById('kpiHistoricoOrganismos').textContent = organismos.size.toLocaleString('es-ES');
+    }
+
+    function renderInsights() {
+      const insightsEl = document.getElementById('aiInsights');
+      const abiertas = filtered.filter(isOpenOrActive);
+      const total = filtered.length || 1;
+      const health = abiertas.filter(isHealthRelated).length;
+      const highValue = abiertas.filter(x => amountOf(x) >= 500000).length;
+      const recentWeekCutoff = Date.now() - (7 * 24 * 60 * 60 * 1000);
+      const activeWeekOrgs = new Set(
+        abiertas
+          .filter(x => (parseDate(x.fecha_publicacion)?.getTime() || 0) >= recentWeekCutoff)
+          .map(x => safeText(x.organo_contratacion))
+          .filter(Boolean)
+      );
+      const byLocation = {};
+      abiertas.forEach(x => {
+        const loc = safeText(x.lugar_ejecucion, 'No especificado');
+        byLocation[loc] = (byLocation[loc] || 0) + 1;
+      });
+      const topLocation = Object.entries(byLocation).sort((a, b) => b[1] - a[1])[0];
+      const healthPct = abiertas.length ? Math.round((health / abiertas.length) * 100) : 0;
+
+      const lines = [
+        `${highValue} oportunidades abiertas superan 500.000€ de presupuesto estimado.`,
+        `${activeWeekOrgs.size} organismos publicaron contratos en los últimos 7 días.`,
+        `${healthPct}% de las oportunidades activas están vinculadas al sector salud.`,
+        `${topLocation ? topLocation[0] : 'N/A'} concentra el mayor volumen de oportunidades activas.`
+      ];
+
+      insightsEl.innerHTML = lines.map(line => `
+        <li class="flex items-start gap-2">
+          <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
+          <span>${line}</span>
+        </li>
+      `).join('');
+    }
+
+    function createCharts() {
+      const abiertas = filtered.filter(isOpenOrActive);
+      const estadoMap = {};
+      const orgMap = {};
+
+      abiertas.forEach(item => {
+        const estado = safeText(item.estado_codigo, 'N/A');
+        const org = safeText(item.organo_contratacion, 'N/A');
+        estadoMap[estado] = (estadoMap[estado] || 0) + 1;
+        orgMap[org] = (orgMap[org] || 0) + 1;
+      });
+
+      const top = Object.entries(orgMap).sort((a, b) => b[1] - a[1]).slice(0, 6);
+
+      if (estadoChartInstance) estadoChartInstance.destroy();
+      if (orgChartInstance) orgChartInstance.destroy();
+
+      estadoChartInstance = new Chart(document.getElementById('estadoChart'), {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(estadoMap),
+          datasets: [{
+            data: Object.values(estadoMap),
+            backgroundColor: ['#2f7ff7', '#6ea8ff', '#8fd5be', '#ffcc80', '#b39ddb', '#90caf9']
+          }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } }, maintainAspectRatio: false }
+      });
+
+      orgChartInstance = new Chart(document.getElementById('orgChart'), {
+        type: 'bar',
+        data: {
+          labels: top.map(x => x[0]),
+          datasets: [{ data: top.map(x => x[1]), backgroundColor: '#2f7ff7', borderRadius: 8 }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: '#5d6f87', maxRotation: 30, minRotation: 0 } },
+            y: { ticks: { color: '#5d6f87' }, grid: { color: '#eef3f9' } }
+          },
+          maintainAspectRatio: false
+        }
+      });
+    }
+
+    function scoreBadge(score) {
+      if (score >= 85) return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      if (score >= 72) return 'bg-blue-50 text-blue-700 border-blue-200';
+      return 'bg-amber-50 text-amber-700 border-amber-200';
+    }
+
+    function renderCards() {
+      const container = document.getElementById('cardsContainer');
+      const rows = filtered.slice(0, visibleCards);
+      container.innerHTML = '';
+      document.getElementById('resultsCount').textContent = filtered.length.toLocaleString('es-ES');
+      console.log('[GovAI] renderCards()', {
+        filteredCount: filtered.length,
+        visibleCards,
+        rowsRendered: rows.length
+      });
+
+      if (!rows.length) {
+        container.innerHTML = `
+          <div class="soft-card rounded-2xl p-8 text-center col-span-full">
+            <h3 class="text-xl font-bold mb-2">Sin resultados</h3>
+            <p class="text-sm text-[var(--muted)]">Prueba otra consulta o ajusta los filtros.</p>
+          </div>
+        `;
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+      rows.forEach(item => {
+        const score = opportunityScore(item);
+        const isOpen = isOpenOrActive(item);
+        const amount = amountOf(item);
+
+        const card = document.createElement('article');
+        card.className = 'soft-card rounded-2xl p-5 fade-up';
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-3 mb-4">
+            <div>
+              <h4 class="font-bold text-lg leading-snug line-clamp-2">${safeText(item.title, 'Sin título')}</h4>
+              <p class="text-sm text-[var(--muted)] mt-1">${safeText(item.organo_contratacion, 'Organismo no informado')}</p>
+            </div>
+            <span class="px-2.5 py-1 rounded-full text-xs border ${scoreBadge(score)}">IA ${score}%</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-sm mb-4">
+            <div>
+              <p class="text-[var(--muted)] text-xs">Estado</p>
+              <p class="font-semibold mt-0.5">${safeText(item.estado_codigo, '-')}</p>
+            </div>
+            <div>
+              <p class="text-[var(--muted)] text-xs">Fecha publicación</p>
+              <p class="font-semibold mt-0.5">${formatDate(item.fecha_publicacion)}</p>
+            </div>
+            <div>
+              <p class="text-[var(--muted)] text-xs">Importe</p>
+              <p class="font-semibold mt-0.5">${amount > 0 ? formatEuro(amount) : '-'}</p>
+            </div>
+            <div>
+              <p class="text-[var(--muted)] text-xs">Vencimiento</p>
+              <p class="font-semibold mt-0.5">${formatDate(item.fecha_publicacion)}</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="px-2.5 py-1 rounded-full text-xs border ${isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-700 border-slate-200'}">${isOpen ? 'Activa / Abierta' : 'Histórica / Cerrada'}</span>
+            <span class="px-2.5 py-1 rounded-full text-xs border bg-blue-50 text-blue-700 border-blue-200">Oportunidad detectada</span>
+          </div>
+
+          <div class="flex gap-2">
+            <a href="${safeText(item.url, '#')}" target="_blank" rel="noopener noreferrer" class="flex-1 text-center px-3 py-2.5 rounded-xl bg-[var(--brand)] text-white text-sm font-semibold hover:opacity-90">Ver detalle</a>
+            <button class="flex-1 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-white text-sm font-semibold hover:bg-[var(--bg-soft)]">Analizar IA</button>
+          </div>
+        `;
+        fragment.appendChild(card);
+      });
+
+      container.appendChild(fragment);
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
+      const hasMore = filtered.length > visibleCards;
+      loadMoreBtn.classList.toggle('hidden', !hasMore);
+    }
+
+    function renderAll() {
+      renderOperationalKPIs();
+      renderHistoricalKPIs();
+      renderInsights();
+      createCharts();
+      renderCards();
+    }
+
+    function debounce(fn, delay = 220) {
+      let timer = null;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+      };
+    }
+
+    async function loadOpenData() {
+      try {
+        const res = await fetch('./data/licitaciones_abiertas_v2.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        if (!Array.isArray(data)) throw new Error('Formato inválido: se esperaba array');
+        console.log('[GovAI] loadOpenData(): JSON cargado', { fetchedCount: data.length });
+
+        licitaciones = data
+          .filter(x => x && typeof x === 'object')
+          .filter(x => safeText(x.licitacion_id) && (safeText(x.title) || safeText(x.organo_contratacion)));
+        filtered = [...licitaciones];
+        console.log('[GovAI] loadOpenData(): registros válidos', { validCount: licitaciones.length });
+
+        populateFilters();
+        applyFilters();
+      } catch (error) {
+        console.error(error);
+        setError('No se pudo cargar data/licitaciones_abiertas_v2.json. Revisa ruta y formato del archivo.');
+      }
+    }
+
+    async function loadHistoricalData() {
+      try {
+        const res = await fetch('./data/licitaciones.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!Array.isArray(data)) throw new Error('Formato histórico inválido');
+        historicas = data.filter(x => x && typeof x === 'object');
+        renderHistoricalKPIs();
+      } catch (error) {
+        console.warn('No se pudo cargar histórico completo para KPIs:', error);
+      }
+    }
+
+    const debouncedApplyFilters = debounce(applyFilters, 200);
+
+    ['searchInput', 'estadoFilter', 'tipoFilter', 'organoFilter', 'budgetFilter', 'healthFilter'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const eventName = ['estadoFilter', 'tipoFilter', 'organoFilter', 'healthFilter'].includes(id) ? 'change' : 'input';
+      el.addEventListener(eventName, debouncedApplyFilters);
+    });
+
+    document.getElementById('searchButton').addEventListener('click', applyFilters);
+
+    document.querySelectorAll('.quick-query').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('searchInput').value = btn.dataset.query || '';
+        applyFilters();
+      });
+    });
+
+    document.getElementById('toggleFilters').addEventListener('click', () => {
+      const panel = document.getElementById('filtersPanel');
+      const chevron = document.getElementById('filtersChevron');
+      panel.classList.toggle('hidden');
+      chevron.classList.toggle('rotate-180');
+    });
+
+    document.getElementById('loadMoreBtn').addEventListener('click', () => {
+      visibleCards += 30;
+      renderCards();
+    });
+
+    loadOpenData();
+    loadHistoricalData();
+  </script>
+</body>
+</html>
