@@ -22,48 +22,47 @@
       --muted: #5d6f87;
       --brand: #2f7ff7;
       --brand-soft: #e8f1ff;
-      --success: #0f9f6e;
-      --warning: #d18b00;
-      --danger: #cc3a3a;
     }
-
     * { font-family: 'Plus Jakarta Sans', sans-serif; }
-
     body {
-      background:
-        radial-gradient(circle at 10% 0%, #e9f2ff 0, transparent 40%),
-        radial-gradient(circle at 100% 20%, #edf8f2 0, transparent 35%),
-        var(--bg);
+      background: radial-gradient(circle at 15% 0%, #e9f2ff 0, transparent 40%), radial-gradient(circle at 100% 20%, #edf8f2 0, transparent 35%), var(--bg);
       color: var(--text);
     }
-
-    .glass {
-      background: rgba(255, 255, 255, 0.78);
-      border: 1px solid var(--border);
-      box-shadow: 0 10px 30px rgba(34, 58, 94, 0.06);
-      backdrop-filter: blur(8px);
-    }
-
     .soft-card {
       background: var(--card);
       border: 1px solid var(--border);
-      box-shadow: 0 6px 20px rgba(25, 43, 71, 0.05);
+      box-shadow: 0 8px 24px rgba(25, 43, 71, 0.06);
     }
-
-    .fade-up { animation: fadeUp .45s ease both; }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .chip {
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      line-height: 1;
+      transition: all .15s ease;
     }
-
-    .scrollbar::-webkit-scrollbar { width: 8px; }
-    .scrollbar::-webkit-scrollbar-thumb { background: #cdd9ea; border-radius: 999px; }
+    .chip:hover { background: var(--bg-soft); }
+    .chip.active {
+      background: var(--brand-soft);
+      border-color: #bfd6ff;
+      color: #144ea3;
+    }
+    .skeleton {
+      animation: pulse 1.2s infinite;
+      background: linear-gradient(90deg, #edf2f9 25%, #e3ebf6 37%, #edf2f9 63%);
+      background-size: 400% 100%;
+    }
+    @keyframes pulse {
+      0% { background-position: 100% 50%; }
+      100% { background-position: 0 50%; }
+    }
   </style>
 </head>
 <body>
   <div class="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
-
-    <header class="flex items-center justify-between mb-8 md:mb-10">
+    <header class="flex items-center justify-between mb-8">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-[var(--brand-soft)] text-[var(--brand)] flex items-center justify-center">
           <i class="fa-solid fa-sparkles"></i>
@@ -73,626 +72,507 @@
           <p class="text-sm text-[var(--muted)]">IA para contratación pública y estrategia de ofertas</p>
         </div>
       </div>
-      <div class="hidden md:flex items-center gap-2 text-xs text-[var(--muted)] bg-white/70 border border-[var(--border)] px-3 py-2 rounded-xl">
-        <i class="fa-solid fa-database text-[var(--brand)]"></i>
-        Fuente: <code>data/licitaciones_abiertas.json</code>
-      </div>
+      <div class="hidden md:flex text-xs text-[var(--muted)] bg-white border border-[var(--border)] px-3 py-2 rounded-xl">Fuente: <code class="ml-1">data/licitaciones_abiertas_v2.json</code></div>
     </header>
 
-    <section class="glass rounded-3xl p-6 md:p-10 mb-8 md:mb-10 fade-up">
-      <div class="max-w-4xl">
-        <p class="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-[var(--brand-soft)] text-[var(--brand)] mb-5">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> IA de oportunidades públicas
-        </p>
-        <h2 class="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight mb-4">
-          Encuentra oportunidades de contratación pública con IA
-        </h2>
-        <p class="text-[var(--muted)] text-base md:text-lg mb-7 max-w-3xl">
-          La IA analiza miles de licitaciones históricas para ayudarte a preparar mejores ofertas.
-        </p>
-
-        <div class="soft-card rounded-2xl p-3 md:p-4 flex items-center gap-3">
-          <div class="w-11 h-11 rounded-xl bg-[var(--bg-soft)] flex items-center justify-center text-[var(--brand)]">
-            <i class="fa-solid fa-robot"></i>
-          </div>
-          <input id="searchInput" type="text" class="w-full bg-transparent outline-none text-sm md:text-base" placeholder="Pregunta a la IA: 'licitaciones abiertas de software hospitalario en Madrid por encima de 100.000€'" />
-          <button id="searchButton" class="px-4 md:px-5 py-2.5 rounded-xl bg-[var(--brand)] hover:opacity-90 transition text-white text-sm font-semibold">
-            Buscar
-          </button>
-        </div>
-
-        <div class="flex flex-wrap gap-2 mt-4 text-xs">
-          <button class="quick-query px-3 py-1.5 rounded-full bg-white border border-[var(--border)] hover:bg-[var(--bg-soft)]" data-query="hospital">Hospitales</button>
-          <button class="quick-query px-3 py-1.5 rounded-full bg-white border border-[var(--border)] hover:bg-[var(--bg-soft)]" data-query="software">Software</button>
-          <button class="quick-query px-3 py-1.5 rounded-full bg-white border border-[var(--border)] hover:bg-[var(--bg-soft)]" data-query="mantenimiento">Mantenimiento</button>
-          <button class="quick-query px-3 py-1.5 rounded-full bg-white border border-[var(--border)] hover:bg-[var(--bg-soft)]" data-query="cpv">CPV</button>
-          <button class="quick-query px-3 py-1.5 rounded-full bg-white border border-[var(--border)] hover:bg-[var(--bg-soft)]" data-query="Madrid">Madrid</button>
-        </div>
+    <section class="soft-card rounded-3xl p-6 md:p-8 mb-6">
+      <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight mb-2">Encuentra oportunidades de contratación pública con IA</h2>
+      <p class="text-[var(--muted)] mb-5">Búsqueda instantánea sobre licitaciones abiertas y recientes para preparar mejores ofertas.</p>
+      <div class="flex gap-3 items-center bg-white border border-[var(--border)] rounded-2xl px-4 py-3">
+        <i class="fa-solid fa-magnifying-glass text-[var(--muted)]"></i>
+        <input id="searchInput" aria-label="Buscar licitaciones" class="w-full outline-none bg-transparent" placeholder="hospital, software, mantenimiento, Madrid, CPV..." />
       </div>
+      <div id="quickFilters" class="flex flex-wrap gap-2 mt-4"></div>
     </section>
 
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-      <div class="soft-card rounded-2xl p-5">
-        <div class="flex justify-between items-start gap-3">
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
+      <aside class="lg:col-span-4 xl:col-span-3 space-y-4">
+        <div class="soft-card rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold">Filtros inteligentes</h3>
+            <button id="clearAllFilters" class="text-xs text-[var(--brand)] font-semibold">Limpiar</button>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <p class="text-xs text-[var(--muted)] mb-2">Estado</p>
+              <div id="estadoChips" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div>
+              <p class="text-xs text-[var(--muted)] mb-2">Tipo de contrato</p>
+              <div id="tipoChips" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div>
+              <p class="text-xs text-[var(--muted)] mb-2">Ubicación</p>
+              <div id="ubicacionChips" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div>
+              <p class="text-xs text-[var(--muted)] mb-2">Presupuesto (€)</p>
+              <div class="grid grid-cols-2 gap-2">
+                <input id="minBudget" type="number" placeholder="Mínimo" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm" />
+                <input id="maxBudget" type="number" placeholder="Máximo" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm" />
+              </div>
+            </div>
+            <div>
+              <p class="text-xs text-[var(--muted)] mb-2">Fecha publicación</p>
+              <div id="fechaChips" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div>
+              <p class="text-xs text-[var(--muted)] mb-2">IA y prioridad</p>
+              <div id="iaChips" class="flex flex-wrap gap-2"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="soft-card rounded-2xl p-4">
+          <h3 class="font-bold mb-2">Filtros activos</h3>
+          <div id="activeFilters" class="flex flex-wrap gap-2"></div>
+        </div>
+      </aside>
+
+      <div class="lg:col-span-8 xl:col-span-9 space-y-4">
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Licitaciones abiertas</p><p id="kpiAbiertas" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Presupuesto abierto</p><p id="kpiBudget" class="text-2xl font-extrabold mt-1">€0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Organismos activos</p><p id="kpiOrganismos" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Nuevas 7 días</p><p id="kpiSemana" class="text-2xl font-extrabold mt-1">0</p></div>
+        </section>
+
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Base analítica IA</p><p id="kpiHistorico" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Sectores detectados</p><p id="kpiSectores" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Oportunidades IA</p><p id="kpiIA" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Contratos recurrentes</p><p id="kpiRecurrentes" class="text-2xl font-extrabold mt-1">0</p></div>
+        </section>
+
+        <section class="soft-card rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold">IA Insights</h3>
+            <span class="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-1">Activo</span>
+          </div>
+          <ul id="aiInsights" class="text-sm space-y-2"></ul>
+        </section>
+
+        <section class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Estados</h3><div class="h-64"><canvas id="estadoChart"></canvas></div></div>
+          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Top organismos</h3><div class="h-64"><canvas id="orgChart"></canvas></div></div>
+        </section>
+
+        <section class="flex items-center justify-between pt-1">
           <div>
-            <h3 class="font-bold text-lg">IA Insights</h3>
-            <p class="text-sm text-[var(--muted)] mt-1">Resumen ejecutivo de oportunidades detectadas</p>
+            <h3 class="text-2xl font-extrabold">Oportunidades activas</h3>
+            <p class="text-sm text-[var(--muted)]">Listado dinámico para discovery comercial</p>
           </div>
-          <span class="px-2.5 py-1 text-xs rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">Activo</span>
-        </div>
-        <ul id="aiInsights" class="mt-4 space-y-2 text-sm text-[var(--text)]"></ul>
-      </div>
+          <p class="text-sm text-[var(--muted)]"><span id="resultsCount">0</span> resultados</p>
+        </section>
 
-      <div class="soft-card rounded-2xl p-5">
-        <h3 class="font-bold text-lg mb-2">Historical Knowledge Base</h3>
-        <p class="text-sm text-[var(--muted)] leading-relaxed">
-          La IA utiliza licitaciones históricas como memoria analítica para detectar patrones ganadores,
-          requisitos frecuentes, estructuras documentales y comportamiento de adjudicatarios.
-        </p>
-        <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
-          <div class="bg-[var(--bg-soft)] rounded-xl p-3">
-            <p class="text-[var(--muted)]">Registros históricos</p>
-            <p class="font-bold text-lg" id="kpiHistorico">0</p>
-          </div>
-          <div class="bg-[var(--bg-soft)] rounded-xl p-3">
-            <p class="text-[var(--muted)]">Patrones detectados</p>
-            <p class="font-bold text-lg" id="kpiPatrones">0</p>
-          </div>
-          <div class="bg-[var(--bg-soft)] rounded-xl p-3">
-            <p class="text-[var(--muted)]">Presupuesto histórico</p>
-            <p class="font-bold text-lg" id="kpiHistoricoBudget">€0</p>
-          </div>
-          <div class="bg-[var(--bg-soft)] rounded-xl p-3">
-            <p class="text-[var(--muted)]">Organismos históricos</p>
-            <p class="font-bold text-lg" id="kpiHistoricoOrganismos">0</p>
-          </div>
-        </div>
+        <section id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3"></section>
+        <div class="text-center"><button id="loadMoreBtn" class="hidden px-5 py-2.5 rounded-xl border border-[var(--border)] bg-white hover:bg-[var(--bg-soft)] text-sm font-semibold">Cargar más</button></div>
       </div>
     </section>
-
-    <section class="mb-8">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div class="soft-card rounded-2xl p-4">
-          <p class="text-xs text-[var(--muted)]">Licitaciones Abiertas/Activas</p>
-          <p id="kpiAbiertas" class="text-2xl font-extrabold mt-1">0</p>
-        </div>
-        <div class="soft-card rounded-2xl p-4">
-          <p class="text-xs text-[var(--muted)]">Oportunidades IA</p>
-          <p id="kpiOportunidades" class="text-2xl font-extrabold mt-1">0</p>
-        </div>
-        <div class="soft-card rounded-2xl p-4">
-          <p class="text-xs text-[var(--muted)]">Organismos Activos</p>
-          <p id="kpiOrganismos" class="text-2xl font-extrabold mt-1">0</p>
-        </div>
-        <div class="soft-card rounded-2xl p-4">
-          <p class="text-xs text-[var(--muted)]">Presupuesto Abierto</p>
-          <p id="kpiBudget" class="text-xl md:text-2xl font-extrabold mt-1">€0</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="soft-card rounded-2xl p-4 md:p-5 mb-6">
-      <button id="toggleFilters" class="w-full flex items-center justify-between text-left">
-        <div>
-          <h3 class="font-bold">Filtros inteligentes</h3>
-          <p class="text-xs text-[var(--muted)]">Compactos y orientados a oportunidades actuales</p>
-        </div>
-        <i id="filtersChevron" class="fa-solid fa-chevron-down text-[var(--muted)] transition-transform"></i>
-      </button>
-
-      <div id="filtersPanel" class="hidden mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
-        <div>
-          <label class="text-xs text-[var(--muted)]">Estado</label>
-          <select id="estadoFilter" class="w-full mt-1 rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm">
-            <option value="">Todos</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-xs text-[var(--muted)]">Tipo contrato</label>
-          <select id="tipoFilter" class="w-full mt-1 rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm">
-            <option value="">Todos</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-xs text-[var(--muted)]">Organismo</label>
-          <select id="organoFilter" class="w-full mt-1 rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm">
-            <option value="">Todos</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-xs text-[var(--muted)]">Presupuesto mínimo (€)</label>
-          <input id="budgetFilter" type="number" placeholder="100000" class="w-full mt-1 rounded-xl border border-[var(--border)] bg-white px-3 py-2.5 text-sm" />
-        </div>
-        <div class="flex items-end pb-2">
-          <label class="inline-flex items-center gap-2 text-sm text-[var(--text)]">
-            <input id="healthFilter" type="checkbox" class="rounded border-[var(--border)]">
-            Solo sector salud
-          </label>
-        </div>
-      </div>
-    </section>
-
-    <section class="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-8">
-      <div class="soft-card rounded-2xl p-5">
-        <h3 class="font-bold mb-3">Distribución por estado</h3>
-        <div class="h-72"><canvas id="estadoChart"></canvas></div>
-      </div>
-      <div class="soft-card rounded-2xl p-5">
-        <h3 class="font-bold mb-3">Top organismos con actividad abierta</h3>
-        <div class="h-72"><canvas id="orgChart"></canvas></div>
-      </div>
-    </section>
-
-    <section class="mb-5 flex items-end justify-between gap-3">
-      <div>
-        <h3 class="text-2xl md:text-3xl font-extrabold tracking-tight">Licitaciones abiertas y recientes</h3>
-        <p class="text-sm text-[var(--muted)] mt-1">Foco en oportunidades actuales para preparación de ofertas</p>
-      </div>
-      <p class="text-sm text-[var(--muted)]"><span id="resultsCount">0</span> resultados</p>
-    </section>
-
-    <section id="cardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></section>
-    <div class="mt-5 text-center">
-      <button id="loadMoreBtn" class="hidden px-5 py-2.5 rounded-xl border border-[var(--border)] bg-white hover:bg-[var(--bg-soft)] text-sm font-semibold">
-        Cargar más oportunidades
-      </button>
-    </div>
   </div>
 
   <script>
-    let licitaciones = [];
-    let filtered = [];
-    let historicas = [];
-    let estadoChartInstance = null;
-    let orgChartInstance = null;
-    let visibleCards = 30;
+    const state = {
+      raw: [],
+      filtered: [],
+      visible: 24,
+      charts: { estado: null, org: null },
+      filters: {
+        q: '',
+        estado: new Set(),
+        tipo: new Set(),
+        ubicacion: new Set(),
+        minBudget: null,
+        maxBudget: null,
+        fecha: 'all',
+        flags: new Set()
+      },
+      meta: { recurrentOrg: new Set() }
+    };
 
-    const ACTIVE_STATES = new Set(['EV', 'PUB', 'PCP', 'PRES', 'RES']);
-    const HEALTH_TERMS = ['hospital', 'salud', 'sanidad', 'clinica', 'clínica'];
+    const HEALTH = ['salud', 'sanidad', 'hospital', 'médic', 'clinic', 'farmac'];
+    const TECH = ['software', 'aplicaci', 'sistema', 'digital', 'cloud', 'datos', 'ia'];
+    const WORKS = ['obra', 'construcción', 'rehabilitación', 'infraestructura'];
 
-    function safeText(value, fallback = '') {
-      if (value === null || value === undefined) return fallback;
-      const text = String(value).trim();
-      return text || fallback;
+    function safeText(v) { return (v ?? '').toString().trim(); }
+    function amount(v) {
+      const n = Number((safeText(v).replace(/[^\d,.-]/g, '').replace(',', '.')));
+      return Number.isFinite(n) ? n : 0;
     }
-
-    function toNumber(value) {
-      if (value === null || value === undefined || value === '') return NaN;
-      const normalized = String(value).replace(/[^\d,.-]/g, '').replace(',', '.');
-      const parsed = Number(normalized);
-      return Number.isFinite(parsed) ? parsed : NaN;
-    }
-
-    function amountOf(item) {
-      const total = toNumber(item.importe_total);
-      if (!Number.isNaN(total)) return total;
-      const estimated = toNumber(item.importe_estimado);
-      if (!Number.isNaN(estimated)) return estimated;
-      return 0;
-    }
-
-    function parseDate(dateStr) {
-      if (!dateStr) return null;
-      const d = new Date(dateStr);
+    function dateVal(v) {
+      const d = new Date(v);
       return Number.isNaN(d.getTime()) ? null : d;
     }
-
-    function isHealthRelated(item) {
-      const blob = JSON.stringify(item || {}).toLowerCase();
-      return HEALTH_TERMS.some(term => blob.includes(term));
+    function daysAgo(d) {
+      if (!d) return 9999;
+      return Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
+    }
+    function locationBucket(item) {
+      const loc = safeText(item.lugar_ejecucion);
+      if (!loc) return 'No especificado';
+      return loc.split(/[\/,]/)[0].trim() || 'No especificado';
+    }
+    function score(item) {
+      let s = 55;
+      if (amount(item.importe_total) >= 100000) s += 10;
+      if (amount(item.importe_total) >= 500000) s += 10;
+      if (daysAgo(item.__date) <= 7) s += 8;
+      if (item.__tags.has('SALUD')) s += 6;
+      if (item.__tags.has('TECH')) s += 5;
+      if (state.meta.recurrentOrg.has(item.organo_contratacion)) s += 5;
+      return Math.min(97, s);
     }
 
-    function isOpenOrActive(item) {
-      const estado = safeText(item.estado_codigo).toUpperCase();
-      if (ACTIVE_STATES.has(estado)) return true;
-      return true;
+    function enrich(rows) {
+      const orgCounter = {};
+      rows.forEach(r => { const o = safeText(r.organo_contratacion); if (o) orgCounter[o] = (orgCounter[o] || 0) + 1; });
+      state.meta.recurrentOrg = new Set(Object.entries(orgCounter).filter(([, c]) => c >= 5).map(([o]) => o));
+
+      return rows.map(r => {
+        const title = safeText(r.title);
+        const org = safeText(r.organo_contratacion);
+        const blob = `${title} ${org} ${safeText(r.lugar_ejecucion)} ${safeText(r.tipo_contrato_codigo)} ${safeText(r.estado_codigo)}`.toLowerCase();
+        const tags = new Set();
+        if (HEALTH.some(k => blob.includes(k))) tags.add('SALUD');
+        if (TECH.some(k => blob.includes(k))) tags.add('TECH');
+        if (WORKS.some(k => blob.includes(k))) tags.add('OBRAS');
+
+        const item = {
+          ...r,
+          __amount: amount(r.importe_total),
+          __date: dateVal(r.fecha_publicacion),
+          __loc: locationBucket(r),
+          __blob: blob,
+          __tags: tags
+        };
+        item.__score = score(item);
+        return item;
+      });
     }
 
-    function formatEuro(value) {
-      if (!Number.isFinite(value)) return '-';
-      return new Intl.NumberFormat('es-ES', {
-        style: 'currency',
-        currency: 'EUR',
-        maximumFractionDigits: 0
-      }).format(value);
-    }
-
-    function formatDate(dateStr) {
-      const d = parseDate(dateStr);
-      if (!d) return 'Sin fecha';
-      return d.toLocaleDateString('es-ES');
-    }
-
-    function opportunityScore(item) {
-      const amount = amountOf(item);
-      const hasDeadline = !!parseDate(item.fecha_publicacion);
-      const isHealth = isHealthRelated(item);
-      const isOpen = isOpenOrActive(item);
-      let score = 55;
-      if (isOpen) score += 18;
-      if (amount >= 100000) score += 10;
-      if (amount >= 500000) score += 6;
-      if (hasDeadline) score += 5;
-      if (isHealth) score += 6;
-      return Math.max(45, Math.min(97, score));
-    }
-
-    function setError(message) {
-      document.getElementById('cardsContainer').innerHTML = `
-        <div class="soft-card rounded-2xl p-8 text-center col-span-full">
-          <h3 class="text-xl font-bold text-red-700 mb-2">Error de carga</h3>
-          <p class="text-sm text-[var(--muted)]">${message}</p>
+    function renderSkeleton() {
+      const c = document.getElementById('cardsContainer');
+      c.innerHTML = Array.from({ length: 9 }).map(() => `
+        <div class="soft-card rounded-2xl p-4">
+          <div class="skeleton h-4 rounded w-4/5 mb-3"></div>
+          <div class="skeleton h-3 rounded w-2/3 mb-4"></div>
+          <div class="skeleton h-20 rounded mb-3"></div>
+          <div class="skeleton h-8 rounded"></div>
         </div>
-      `;
-    }
-
-    function fillSelect(id, values) {
-      const select = document.getElementById(id);
-      if (!select) return;
-      select.innerHTML = '<option value="">Todos</option>';
-      values.sort((a, b) => a.localeCompare(b, 'es')).forEach(v => {
-        const option = document.createElement('option');
-        option.value = v;
-        option.textContent = v;
-        select.appendChild(option);
-      });
-    }
-
-    function populateFilters() {
-      const estadoSet = new Set();
-      const tipoSet = new Set();
-      const orgSet = new Set();
-
-      licitaciones.forEach(item => {
-        const estado = safeText(item.estado_codigo);
-        const tipo = safeText(item.tipo_contrato_codigo);
-        const org = safeText(item.organo_contratacion);
-        if (estado) estadoSet.add(estado);
-        if (tipo) tipoSet.add(tipo);
-        if (org) orgSet.add(org);
-      });
-
-      fillSelect('estadoFilter', [...estadoSet]);
-      fillSelect('tipoFilter', [...tipoSet]);
-      fillSelect('organoFilter', [...orgSet].slice(0, 250));
-    }
-
-    function applyFilters() {
-      const search = safeText(document.getElementById('searchInput').value).toLowerCase();
-      const estado = safeText(document.getElementById('estadoFilter').value);
-      const tipo = safeText(document.getElementById('tipoFilter').value);
-      const organo = safeText(document.getElementById('organoFilter').value);
-      const health = document.getElementById('healthFilter').checked;
-      const budget = toNumber(document.getElementById('budgetFilter').value);
-      const minBudget = Number.isNaN(budget) ? 0 : budget;
-      const hasActiveFilters = Boolean(search || estado || tipo || organo || health || minBudget > 0);
-
-      console.log('[GovAI] applyFilters()', {
-        totalOpenDataset: licitaciones.length,
-        search, estado, tipo, organo, health, minBudget, hasActiveFilters
-      });
-
-      if (!Array.isArray(licitaciones) || licitaciones.length === 0) {
-        filtered = [];
-        visibleCards = 30;
-        console.log('[GovAI] applyFilters(): dataset vacío');
-        renderAll();
-        return;
-      }
-
-      if (!hasActiveFilters) {
-        filtered = [...licitaciones];
-        filtered.sort((a, b) => {
-          const activeDiff = Number(isOpenOrActive(b)) - Number(isOpenOrActive(a));
-          if (activeDiff !== 0) return activeDiff;
-          const dateA = parseDate(a.fecha_publicacion)?.getTime() || 0;
-          const dateB = parseDate(b.fecha_publicacion)?.getTime() || 0;
-          return dateB - dateA;
-        });
-        visibleCards = 30;
-        console.log('[GovAI] applyFilters(): feed inicial sin filtros', {
-          filteredCount: filtered.length,
-          renderCount: Math.min(visibleCards, filtered.length)
-        });
-        renderAll();
-        return;
-      }
-
-      filtered = licitaciones.filter(item => {
-        const blob = JSON.stringify(item || {}).toLowerCase();
-        const amount = amountOf(item);
-
-        return (
-          (!search || blob.includes(search)) &&
-          (!estado || safeText(item.estado_codigo) === estado) &&
-          (!tipo || safeText(item.tipo_contrato_codigo) === tipo) &&
-          (!organo || safeText(item.organo_contratacion) === organo) &&
-          (!health || isHealthRelated(item)) &&
-          amount >= minBudget
-        );
-      });
-
-      filtered.sort((a, b) => {
-        const activeDiff = Number(isOpenOrActive(b)) - Number(isOpenOrActive(a));
-        if (activeDiff !== 0) return activeDiff;
-        const dateA = parseDate(a.fecha_publicacion)?.getTime() || 0;
-        const dateB = parseDate(b.fecha_publicacion)?.getTime() || 0;
-        return dateB - dateA;
-      });
-
-      visibleCards = 30;
-      console.log('[GovAI] applyFilters(): feed filtrado', {
-        filteredCount: filtered.length,
-        renderCount: Math.min(visibleCards, filtered.length)
-      });
-      renderAll();
-    }
-
-    function renderOperationalKPIs() {
-      const abiertas = filtered.filter(isOpenOrActive);
-      const presupuestoAbierto = abiertas.reduce((acc, item) => acc + amountOf(item), 0);
-      const organismosActivos = new Set(abiertas.map(x => safeText(x.organo_contratacion)).filter(Boolean));
-      const oportunidades = abiertas.filter(x => opportunityScore(x) >= 75).length;
-
-      document.getElementById('kpiAbiertas').textContent = abiertas.length.toLocaleString('es-ES');
-      document.getElementById('kpiOportunidades').textContent = oportunidades.toLocaleString('es-ES');
-      document.getElementById('kpiOrganismos').textContent = organismosActivos.size.toLocaleString('es-ES');
-      document.getElementById('kpiBudget').textContent = formatEuro(presupuestoAbierto);
-    }
-
-    function renderHistoricalKPIs() {
-      const source = historicas.length ? historicas : licitaciones;
-      const organismos = new Set(source.map(x => safeText(x.organo_contratacion)).filter(Boolean));
-      const presupuesto = source.reduce((acc, row) => acc + amountOf(row), 0);
-
-      document.getElementById('kpiHistorico').textContent = source.length.toLocaleString('es-ES');
-      document.getElementById('kpiPatrones').textContent = Math.max(12, Math.round(Math.sqrt(source.length / 3))).toLocaleString('es-ES');
-      document.getElementById('kpiHistoricoBudget').textContent = formatEuro(presupuesto);
-      document.getElementById('kpiHistoricoOrganismos').textContent = organismos.size.toLocaleString('es-ES');
-    }
-
-    function renderInsights() {
-      const insightsEl = document.getElementById('aiInsights');
-      const abiertas = filtered.filter(isOpenOrActive);
-      const total = filtered.length || 1;
-      const health = abiertas.filter(isHealthRelated).length;
-      const highValue = abiertas.filter(x => amountOf(x) >= 500000).length;
-      const recentWeekCutoff = Date.now() - (7 * 24 * 60 * 60 * 1000);
-      const activeWeekOrgs = new Set(
-        abiertas
-          .filter(x => (parseDate(x.fecha_publicacion)?.getTime() || 0) >= recentWeekCutoff)
-          .map(x => safeText(x.organo_contratacion))
-          .filter(Boolean)
-      );
-      const byLocation = {};
-      abiertas.forEach(x => {
-        const loc = safeText(x.lugar_ejecucion, 'No especificado');
-        byLocation[loc] = (byLocation[loc] || 0) + 1;
-      });
-      const topLocation = Object.entries(byLocation).sort((a, b) => b[1] - a[1])[0];
-      const healthPct = abiertas.length ? Math.round((health / abiertas.length) * 100) : 0;
-
-      const lines = [
-        `${highValue} oportunidades abiertas superan 500.000€ de presupuesto estimado.`,
-        `${activeWeekOrgs.size} organismos publicaron contratos en los últimos 7 días.`,
-        `${healthPct}% de las oportunidades activas están vinculadas al sector salud.`,
-        `${topLocation ? topLocation[0] : 'N/A'} concentra el mayor volumen de oportunidades activas.`
-      ];
-
-      insightsEl.innerHTML = lines.map(line => `
-        <li class="flex items-start gap-2">
-          <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5"></i>
-          <span>${line}</span>
-        </li>
       `).join('');
     }
 
-    function createCharts() {
-      const abiertas = filtered.filter(isOpenOrActive);
-      const estadoMap = {};
-      const orgMap = {};
+    function chip(id, label, active = false) {
+      return `<button data-id="${id}" class="chip ${active ? 'active' : ''}">${label}</button>`;
+    }
 
-      abiertas.forEach(item => {
-        const estado = safeText(item.estado_codigo, 'N/A');
-        const org = safeText(item.organo_contratacion, 'N/A');
-        estadoMap[estado] = (estadoMap[estado] || 0) + 1;
-        orgMap[org] = (orgMap[org] || 0) + 1;
+    function topCounts(field, max = 10) {
+      const map = {};
+      state.raw.forEach(r => { const k = safeText(r[field]); if (k) map[k] = (map[k] || 0) + 1; });
+      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
+    }
+
+    function topLocations(max = 12) {
+      const map = {};
+      state.raw.forEach(r => { map[r.__loc] = (map[r.__loc] || 0) + 1; });
+      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
+    }
+
+    function renderFilterUI() {
+      const estado = topCounts('estado_codigo', 8);
+      const tipo = topCounts('tipo_contrato_codigo', 10);
+      const loc = topLocations(12);
+
+      document.getElementById('estadoChips').innerHTML = estado.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.estado.has(v))).join('');
+      document.getElementById('tipoChips').innerHTML = tipo.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.tipo.has(v))).join('');
+      document.getElementById('ubicacionChips').innerHTML = loc.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.ubicacion.has(v))).join('');
+
+      document.getElementById('fechaChips').innerHTML = [
+        ['all', 'Todas'], ['7d', 'Últimos 7 días'], ['30d', 'Últimos 30 días'], ['90d', 'Últimos 90 días']
+      ].map(([v, l]) => chip(v, l, state.filters.fecha === v)).join('');
+
+      document.getElementById('iaChips').innerHTML = [
+        ['ia', 'IA recomendada'], ['alto', 'Alto presupuesto'], ['salud', 'Sector salud'], ['tech', 'Tecnología'], ['recurrente', 'Recurrentes']
+      ].map(([v, l]) => chip(v, l, state.filters.flags.has(v))).join('');
+
+      document.getElementById('quickFilters').innerHTML = [
+        ['salud', 'Salud'], ['tech', 'Tecnología'], ['alto', 'Alto presupuesto'], ['30d', 'Recientes']
+      ].map(([k, l]) => `<button class="chip" data-quick="${k}">${l}</button>`).join('');
+    }
+
+    function applyFilters() {
+      const f = state.filters;
+      state.filtered = state.raw.filter(r => {
+        if (f.q && !r.__blob.includes(f.q)) return false;
+        if (f.estado.size && !f.estado.has(r.estado_codigo)) return false;
+        if (f.tipo.size && !f.tipo.has(r.tipo_contrato_codigo)) return false;
+        if (f.ubicacion.size && !f.ubicacion.has(r.__loc)) return false;
+        if (f.minBudget !== null && r.__amount < f.minBudget) return false;
+        if (f.maxBudget !== null && r.__amount > f.maxBudget) return false;
+
+        if (f.fecha !== 'all') {
+          const d = daysAgo(r.__date);
+          if (f.fecha === '7d' && d > 7) return false;
+          if (f.fecha === '30d' && d > 30) return false;
+          if (f.fecha === '90d' && d > 90) return false;
+        }
+
+        if (f.flags.has('ia') && r.__score < 80) return false;
+        if (f.flags.has('alto') && r.__amount < 500000) return false;
+        if (f.flags.has('salud') && !r.__tags.has('SALUD')) return false;
+        if (f.flags.has('tech') && !r.__tags.has('TECH')) return false;
+        if (f.flags.has('recurrente') && !state.meta.recurrentOrg.has(r.organo_contratacion)) return false;
+
+        return true;
       });
 
-      const top = Object.entries(orgMap).sort((a, b) => b[1] - a[1]).slice(0, 6);
+      state.filtered.sort((a, b) => {
+        const dateDiff = (b.__date?.getTime() || 0) - (a.__date?.getTime() || 0);
+        if (dateDiff !== 0) return dateDiff;
+        return b.__score - a.__score;
+      });
 
-      if (estadoChartInstance) estadoChartInstance.destroy();
-      if (orgChartInstance) orgChartInstance.destroy();
+      renderAll();
+    }
 
-      estadoChartInstance = new Chart(document.getElementById('estadoChart'), {
+    function formatEuro(n) {
+      return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number.isFinite(n) ? n : 0);
+    }
+
+    function kpis() {
+      const rows = state.filtered;
+      const base = state.raw;
+      const budget = rows.reduce((a, r) => a + r.__amount, 0);
+      const orgs = new Set(rows.map(r => r.organo_contratacion).filter(Boolean));
+      const week = rows.filter(r => daysAgo(r.__date) <= 7).length;
+      const sectors = new Set(base.flatMap(r => [...r.__tags]));
+      const ia = rows.filter(r => r.__score >= 80).length;
+      const rec = rows.filter(r => state.meta.recurrentOrg.has(r.organo_contratacion)).length;
+
+      document.getElementById('kpiAbiertas').textContent = rows.length.toLocaleString('es-ES');
+      document.getElementById('kpiBudget').textContent = formatEuro(budget);
+      document.getElementById('kpiOrganismos').textContent = orgs.size.toLocaleString('es-ES');
+      document.getElementById('kpiSemana').textContent = week.toLocaleString('es-ES');
+
+      document.getElementById('kpiHistorico').textContent = base.length.toLocaleString('es-ES');
+      document.getElementById('kpiSectores').textContent = sectors.size.toLocaleString('es-ES');
+      document.getElementById('kpiIA').textContent = ia.toLocaleString('es-ES');
+      document.getElementById('kpiRecurrentes').textContent = rec.toLocaleString('es-ES');
+    }
+
+    function insights() {
+      const rows = state.filtered;
+      const high = rows.filter(r => r.__amount >= 500000).length;
+      const health = rows.filter(r => r.__tags.has('SALUD')).length;
+      const tech = rows.filter(r => r.__tags.has('TECH')).length;
+      const topLoc = Object.entries(rows.reduce((m, r) => (m[r.__loc] = (m[r.__loc] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1])[0];
+      const pctHealth = rows.length ? Math.round((health / rows.length) * 100) : 0;
+
+      document.getElementById('aiInsights').innerHTML = [
+        `${high} oportunidades superan 500.000€ de presupuesto.`,
+        `${pctHealth}% de oportunidades activas pertenece a salud.`,
+        `${tech} licitaciones contienen señales de tecnología/digitalización.`,
+        `${topLoc ? topLoc[0] : 'N/A'} concentra más oportunidades activas.`
+      ].map(t => `<li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-600 mt-1"></i><span>${t}</span></li>`).join('');
+    }
+
+    function renderActiveFilters() {
+      const out = [];
+      if (state.filters.q) out.push(`Búsqueda: ${state.filters.q}`);
+      state.filters.estado.forEach(v => out.push(`Estado: ${v}`));
+      state.filters.tipo.forEach(v => out.push(`Tipo: ${v}`));
+      state.filters.ubicacion.forEach(v => out.push(`Ubicación: ${v}`));
+      if (state.filters.minBudget !== null) out.push(`Min: ${formatEuro(state.filters.minBudget)}`);
+      if (state.filters.maxBudget !== null) out.push(`Max: ${formatEuro(state.filters.maxBudget)}`);
+      if (state.filters.fecha !== 'all') out.push(`Fecha: ${state.filters.fecha}`);
+      state.filters.flags.forEach(v => out.push(`IA: ${v}`));
+
+      document.getElementById('activeFilters').innerHTML = out.length
+        ? out.map(t => `<span class="chip active">${t}</span>`).join('')
+        : '<span class="text-sm text-[var(--muted)]">Sin filtros activos</span>';
+    }
+
+    function chart() {
+      const rows = state.filtered;
+      const estado = rows.reduce((m, r) => (m[r.estado_codigo] = (m[r.estado_codigo] || 0) + 1, m), {});
+      const org = rows.reduce((m, r) => (m[r.organo_contratacion] = (m[r.organo_contratacion] || 0) + 1, m), {});
+      const topOrg = Object.entries(org).sort((a, b) => b[1] - a[1]).slice(0, 7);
+
+      if (state.charts.estado) state.charts.estado.destroy();
+      if (state.charts.org) state.charts.org.destroy();
+
+      state.charts.estado = new Chart(document.getElementById('estadoChart'), {
         type: 'doughnut',
-        data: {
-          labels: Object.keys(estadoMap),
-          datasets: [{
-            data: Object.values(estadoMap),
-            backgroundColor: ['#2f7ff7', '#6ea8ff', '#8fd5be', '#ffcc80', '#b39ddb', '#90caf9']
-          }]
-        },
+        data: { labels: Object.keys(estado), datasets: [{ data: Object.values(estado), backgroundColor: ['#2f7ff7','#8cb8ff','#8fd5be','#ffd08a','#b9a6ff','#90caf9'] }] },
         options: { plugins: { legend: { position: 'bottom' } }, maintainAspectRatio: false }
       });
 
-      orgChartInstance = new Chart(document.getElementById('orgChart'), {
+      state.charts.org = new Chart(document.getElementById('orgChart'), {
         type: 'bar',
-        data: {
-          labels: top.map(x => x[0]),
-          datasets: [{ data: top.map(x => x[1]), backgroundColor: '#2f7ff7', borderRadius: 8 }]
-        },
-        options: {
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: '#5d6f87', maxRotation: 30, minRotation: 0 } },
-            y: { ticks: { color: '#5d6f87' }, grid: { color: '#eef3f9' } }
-          },
-          maintainAspectRatio: false
-        }
+        data: { labels: topOrg.map(x => x[0]), datasets: [{ data: topOrg.map(x => x[1]), backgroundColor: '#2f7ff7', borderRadius: 8 }] },
+        options: { plugins: { legend: { display: false } }, maintainAspectRatio: false }
       });
     }
 
-    function scoreBadge(score) {
-      if (score >= 85) return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      if (score >= 72) return 'bg-blue-50 text-blue-700 border-blue-200';
-      return 'bg-amber-50 text-amber-700 border-amber-200';
+    function badgeClass(label) {
+      const map = {
+        'ABIERTO': 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        'URGENTE': 'bg-amber-50 text-amber-700 border-amber-200',
+        'ALTO': 'bg-blue-50 text-blue-700 border-blue-200',
+        'SALUD': 'bg-pink-50 text-pink-700 border-pink-200',
+        'TECH': 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        'OBRAS': 'bg-slate-100 text-slate-700 border-slate-200',
+        'IA': 'bg-violet-50 text-violet-700 border-violet-200'
+      };
+      return map[label] || 'bg-slate-100 text-slate-700 border-slate-200';
     }
 
-    function renderCards() {
-      const container = document.getElementById('cardsContainer');
-      const rows = filtered.slice(0, visibleCards);
-      container.innerHTML = '';
-      document.getElementById('resultsCount').textContent = filtered.length.toLocaleString('es-ES');
-      console.log('[GovAI] renderCards()', {
-        filteredCount: filtered.length,
-        visibleCards,
-        rowsRendered: rows.length
-      });
+    function cards() {
+      const rows = state.filtered.slice(0, state.visible);
+      const c = document.getElementById('cardsContainer');
+      document.getElementById('resultsCount').textContent = state.filtered.length.toLocaleString('es-ES');
 
       if (!rows.length) {
-        container.innerHTML = `
-          <div class="soft-card rounded-2xl p-8 text-center col-span-full">
-            <h3 class="text-xl font-bold mb-2">Sin resultados</h3>
-            <p class="text-sm text-[var(--muted)]">Prueba otra consulta o ajusta los filtros.</p>
-          </div>
-        `;
+        c.innerHTML = '<div class="soft-card rounded-2xl p-8 text-center col-span-full"><h3 class="text-xl font-bold mb-2">Sin resultados</h3><p class="text-sm text-[var(--muted)]">Prueba cambiar filtros o limpiar búsqueda.</p></div>';
+        document.getElementById('loadMoreBtn').classList.add('hidden');
         return;
       }
 
-      const fragment = document.createDocumentFragment();
-      rows.forEach(item => {
-        const score = opportunityScore(item);
-        const isOpen = isOpenOrActive(item);
-        const amount = amountOf(item);
+      c.innerHTML = rows.map(r => {
+        const badges = ['ABIERTO'];
+        if (daysAgo(r.__date) <= 7) badges.push('URGENTE');
+        if (r.__amount >= 500000) badges.push('ALTO');
+        if (r.__tags.has('SALUD')) badges.push('SALUD');
+        if (r.__tags.has('TECH')) badges.push('TECH');
+        if (r.__tags.has('OBRAS')) badges.push('OBRAS');
+        if (r.__score >= 80) badges.push('IA');
 
-        const card = document.createElement('article');
-        card.className = 'soft-card rounded-2xl p-5 fade-up';
-        card.innerHTML = `
-          <div class="flex items-start justify-between gap-3 mb-4">
-            <div>
-              <h4 class="font-bold text-lg leading-snug line-clamp-2">${safeText(item.title, 'Sin título')}</h4>
-              <p class="text-sm text-[var(--muted)] mt-1">${safeText(item.organo_contratacion, 'Organismo no informado')}</p>
-            </div>
-            <span class="px-2.5 py-1 rounded-full text-xs border ${scoreBadge(score)}">IA ${score}%</span>
+        return `
+        <article class="soft-card rounded-2xl p-4">
+          <div class="flex items-start justify-between gap-3 mb-3">
+            <h4 class="font-bold leading-snug text-sm md:text-base">${safeText(r.title) || 'Sin título'}</h4>
+            <span class="text-xs px-2 py-1 rounded-full border ${badgeClass('IA')}">${r.__score}%</span>
           </div>
-
-          <div class="grid grid-cols-2 gap-3 text-sm mb-4">
-            <div>
-              <p class="text-[var(--muted)] text-xs">Estado</p>
-              <p class="font-semibold mt-0.5">${safeText(item.estado_codigo, '-')}</p>
-            </div>
-            <div>
-              <p class="text-[var(--muted)] text-xs">Fecha publicación</p>
-              <p class="font-semibold mt-0.5">${formatDate(item.fecha_publicacion)}</p>
-            </div>
-            <div>
-              <p class="text-[var(--muted)] text-xs">Importe</p>
-              <p class="font-semibold mt-0.5">${amount > 0 ? formatEuro(amount) : '-'}</p>
-            </div>
-            <div>
-              <p class="text-[var(--muted)] text-xs">Vencimiento</p>
-              <p class="font-semibold mt-0.5">${formatDate(item.fecha_publicacion)}</p>
-            </div>
+          <p class="text-xs text-[var(--muted)] mb-3">${safeText(r.organo_contratacion) || 'Organismo no informado'}</p>
+          <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+            <div><p class="text-[var(--muted)]">Estado</p><p class="font-semibold">${safeText(r.estado_codigo) || '-'}</p></div>
+            <div><p class="text-[var(--muted)]">Fecha</p><p class="font-semibold">${r.__date ? r.__date.toLocaleDateString('es-ES') : '-'}</p></div>
+            <div><p class="text-[var(--muted)]">Importe</p><p class="font-semibold">${formatEuro(r.__amount)}</p></div>
+            <div><p class="text-[var(--muted)]">Ubicación</p><p class="font-semibold">${safeText(r.__loc)}</p></div>
           </div>
+          <div class="flex flex-wrap gap-1.5 mb-3">${badges.map(b => `<span class="text-[10px] px-2 py-1 rounded-full border ${badgeClass(b)}">${b}</span>`).join('')}</div>
+          <a href="${safeText(r.url) || '#'}" target="_blank" rel="noopener noreferrer" class="block text-center bg-[var(--brand)] text-white rounded-xl py-2 text-sm font-semibold hover:opacity-90">Ver detalle</a>
+        </article>`;
+      }).join('');
 
-          <div class="flex flex-wrap items-center gap-2 mb-4">
-            <span class="px-2.5 py-1 rounded-full text-xs border ${isOpen ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-700 border-slate-200'}">${isOpen ? 'Activa / Abierta' : 'Histórica / Cerrada'}</span>
-            <span class="px-2.5 py-1 rounded-full text-xs border bg-blue-50 text-blue-700 border-blue-200">Oportunidad detectada</span>
-          </div>
-
-          <div class="flex gap-2">
-            <a href="${safeText(item.url, '#')}" target="_blank" rel="noopener noreferrer" class="flex-1 text-center px-3 py-2.5 rounded-xl bg-[var(--brand)] text-white text-sm font-semibold hover:opacity-90">Ver detalle</a>
-            <button class="flex-1 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-white text-sm font-semibold hover:bg-[var(--bg-soft)]">Analizar IA</button>
-          </div>
-        `;
-        fragment.appendChild(card);
-      });
-
-      container.appendChild(fragment);
-      const loadMoreBtn = document.getElementById('loadMoreBtn');
-      const hasMore = filtered.length > visibleCards;
-      loadMoreBtn.classList.toggle('hidden', !hasMore);
+      document.getElementById('loadMoreBtn').classList.toggle('hidden', state.filtered.length <= state.visible);
     }
 
     function renderAll() {
-      renderOperationalKPIs();
-      renderHistoricalKPIs();
-      renderInsights();
-      createCharts();
-      renderCards();
+      kpis();
+      insights();
+      renderActiveFilters();
+      chart();
+      cards();
     }
 
-    function debounce(fn, delay = 220) {
-      let timer = null;
-      return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn(...args), delay);
-      };
+    function clearAll() {
+      state.filters = { q: '', estado: new Set(), tipo: new Set(), ubicacion: new Set(), minBudget: null, maxBudget: null, fecha: 'all', flags: new Set() };
+      state.visible = 24;
+      document.getElementById('searchInput').value = '';
+      document.getElementById('minBudget').value = '';
+      document.getElementById('maxBudget').value = '';
+      renderFilterUI();
+      applyFilters();
     }
 
-    async function loadOpenData() {
-      try {
-        const res = await fetch('./data/licitaciones_abiertas.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-        const data = await res.json();
-        if (!Array.isArray(data)) throw new Error('Formato inválido: se esperaba array');
-        console.log('[GovAI] loadOpenData(): JSON cargado', { fetchedCount: data.length });
-
-        licitaciones = data
-          .filter(x => x && typeof x === 'object')
-          .filter(x => safeText(x.licitacion_id) && (safeText(x.title) || safeText(x.organo_contratacion)));
-        filtered = [...licitaciones];
-        console.log('[GovAI] loadOpenData(): registros válidos', { validCount: licitaciones.length });
-
-        populateFilters();
+    function bindEvents() {
+      document.getElementById('searchInput').addEventListener('input', e => {
+        state.filters.q = safeText(e.target.value).toLowerCase();
+        state.visible = 24;
         applyFilters();
-      } catch (error) {
-        console.error(error);
-        setError('No se pudo cargar data/licitaciones_abiertas.json. Revisa ruta y formato del archivo.');
+      });
+
+      document.getElementById('minBudget').addEventListener('input', e => {
+        const v = Number(e.target.value);
+        state.filters.minBudget = Number.isFinite(v) && v > 0 ? v : null;
+        state.visible = 24;
+        applyFilters();
+      });
+
+      document.getElementById('maxBudget').addEventListener('input', e => {
+        const v = Number(e.target.value);
+        state.filters.maxBudget = Number.isFinite(v) && v > 0 ? v : null;
+        state.visible = 24;
+        applyFilters();
+      });
+
+      function toggleSet(set, value) { set.has(value) ? set.delete(value) : set.add(value); }
+
+      document.getElementById('estadoChips').addEventListener('click', e => {
+        const b = e.target.closest('button[data-id]'); if (!b) return;
+        toggleSet(state.filters.estado, b.dataset.id);
+        renderFilterUI(); applyFilters();
+      });
+
+      document.getElementById('tipoChips').addEventListener('click', e => {
+        const b = e.target.closest('button[data-id]'); if (!b) return;
+        toggleSet(state.filters.tipo, b.dataset.id);
+        renderFilterUI(); applyFilters();
+      });
+
+      document.getElementById('ubicacionChips').addEventListener('click', e => {
+        const b = e.target.closest('button[data-id]'); if (!b) return;
+        toggleSet(state.filters.ubicacion, b.dataset.id);
+        renderFilterUI(); applyFilters();
+      });
+
+      document.getElementById('fechaChips').addEventListener('click', e => {
+        const b = e.target.closest('button[data-id]'); if (!b) return;
+        state.filters.fecha = b.dataset.id;
+        renderFilterUI(); applyFilters();
+      });
+
+      document.getElementById('iaChips').addEventListener('click', e => {
+        const b = e.target.closest('button[data-id]'); if (!b) return;
+        toggleSet(state.filters.flags, b.dataset.id);
+        renderFilterUI(); applyFilters();
+      });
+
+      document.getElementById('quickFilters').addEventListener('click', e => {
+        const b = e.target.closest('button[data-quick]'); if (!b) return;
+        const v = b.dataset.quick;
+        if (['7d', '30d', '90d', 'all'].includes(v)) state.filters.fecha = v;
+        else state.filters.flags.has(v) ? state.filters.flags.delete(v) : state.filters.flags.add(v);
+        renderFilterUI(); applyFilters();
+      });
+
+      document.getElementById('clearAllFilters').addEventListener('click', clearAll);
+      document.getElementById('loadMoreBtn').addEventListener('click', () => { state.visible += 24; cards(); });
+    }
+
+    async function init() {
+      renderSkeleton();
+      try {
+        const res = await fetch('./data/licitaciones_abiertas_v2.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!Array.isArray(data)) throw new Error('JSON inválido: se esperaba array');
+
+        state.raw = enrich(data.filter(x => x && typeof x === 'object'));
+        state.filtered = [...state.raw];
+
+        renderFilterUI();
+        bindEvents();
+        applyFilters();
+      } catch (err) {
+        console.error('[GovAI] init error:', err);
+        document.getElementById('cardsContainer').innerHTML = '<div class="soft-card rounded-2xl p-8 text-center col-span-full"><h3 class="text-xl font-bold mb-2 text-red-700">Error de carga</h3><p class="text-sm text-[var(--muted)]">No se pudo cargar data/licitaciones_abiertas_v2.json</p></div>';
       }
     }
 
-    async function loadHistoricalData() {
-      // En GitHub Pages, licitaciones.json vive en LFS y no se parsea como JSON en cliente.
-      // Mantenemos KPI histórico funcional usando dataset abierto como fallback local.
-      historicas = [];
-      renderHistoricalKPIs();
-    }
-
-    const debouncedApplyFilters = debounce(applyFilters, 200);
-
-    ['searchInput', 'estadoFilter', 'tipoFilter', 'organoFilter', 'budgetFilter', 'healthFilter'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const eventName = ['estadoFilter', 'tipoFilter', 'organoFilter', 'healthFilter'].includes(id) ? 'change' : 'input';
-      el.addEventListener(eventName, debouncedApplyFilters);
-    });
-
-    document.getElementById('searchButton').addEventListener('click', applyFilters);
-
-    document.querySelectorAll('.quick-query').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.getElementById('searchInput').value = btn.dataset.query || '';
-        applyFilters();
-      });
-    });
-
-    document.getElementById('toggleFilters').addEventListener('click', () => {
-      const panel = document.getElementById('filtersPanel');
-      const chevron = document.getElementById('filtersChevron');
-      panel.classList.toggle('hidden');
-      chevron.classList.toggle('rotate-180');
-    });
-
-    document.getElementById('loadMoreBtn').addEventListener('click', () => {
-      visibleCards += 30;
-      renderCards();
-    });
-
-    loadOpenData();
-    loadHistoricalData();
+    init();
   </script>
 </body>
 </html>
