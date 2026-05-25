@@ -8,7 +8,7 @@ from typing import Any
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 SOURCE_PATH = DATA_DIR / "licitaciones.json"
-OUTPUT_PATH = DATA_DIR / "licitaciones_abiertas_v2.json"
+OUTPUT_PATH = DATA_DIR / "licitaciones_abiertas.json"
 
 OPEN_STATE_CODES = {
     "EV", "PUB", "PCP", "PRES", "ABI", "AB", "OPEN", "ACT", "ACTIVA", "ACTIVO"

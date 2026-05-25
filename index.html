@@ -75,7 +75,7 @@
       </div>
       <div class="hidden md:flex items-center gap-2 text-xs text-[var(--muted)] bg-white/70 border border-[var(--border)] px-3 py-2 rounded-xl">
         <i class="fa-solid fa-database text-[var(--brand)]"></i>
-        Fuente: <code>data/licitaciones_abiertas_v2.json</code>
+        Fuente: <code>data/licitaciones_abiertas.json</code>
       </div>
     </header>
 
@@ -633,7 +633,7 @@
 
     async function loadOpenData() {
       try {
-        const res = await fetch('./data/licitaciones_abiertas_v2.json', { cache: 'no-store' });
+        const res = await fetch('./data/licitaciones_abiertas.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const data = await res.json();
@@ -650,21 +650,15 @@
         applyFilters();
       } catch (error) {
         console.error(error);
-        setError('No se pudo cargar data/licitaciones_abiertas_v2.json. Revisa ruta y formato del archivo.');
+        setError('No se pudo cargar data/licitaciones_abiertas.json. Revisa ruta y formato del archivo.');
       }
     }
 
     async function loadHistoricalData() {
-      try {
-        const res = await fetch('./data/licitaciones.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        if (!Array.isArray(data)) throw new Error('Formato histórico inválido');
-        historicas = data.filter(x => x && typeof x === 'object');
-        renderHistoricalKPIs();
-      } catch (error) {
-        console.warn('No se pudo cargar histórico completo para KPIs:', error);
-      }
+      // En GitHub Pages, licitaciones.json vive en LFS y no se parsea como JSON en cliente.
+      // Mantenemos KPI histórico funcional usando dataset abierto como fallback local.
+      historicas = [];
+      renderHistoricalKPIs();
     }
 
     const debouncedApplyFilters = debounce(applyFilters, 200);
