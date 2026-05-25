@@ -72,7 +72,7 @@
           <p class="text-sm text-[var(--muted)]">IA para contratación pública y estrategia de ofertas</p>
         </div>
       </div>
-      <div class="hidden md:flex text-xs text-[var(--muted)] bg-white border border-[var(--border)] px-3 py-2 rounded-xl">Fuente: <code class="ml-1">data/licitaciones_abiertas_v2.json</code></div>
+      <div class="hidden md:flex text-xs text-[var(--muted)] bg-white border border-[var(--border)] px-3 py-2 rounded-xl">Fuente: <code class="ml-1">data/licitaciones_abiertas.json</code></div>
     </header>
 
     <section class="soft-card rounded-3xl p-6 md:p-8 mb-6">
@@ -555,7 +555,7 @@
     async function init() {
       renderSkeleton();
       try {
-        const res = await fetch('./data/licitaciones_abiertas_v2.json', { cache: 'no-store' });
+        const res = await fetch('./data/licitaciones_abiertas.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (!Array.isArray(data)) throw new Error('JSON inválido: se esperaba array');
@@ -568,7 +568,7 @@
         applyFilters();
       } catch (err) {
         console.error('[GovAI] init error:', err);
-        document.getElementById('cardsContainer').innerHTML = '<div class="soft-card rounded-2xl p-8 text-center col-span-full"><h3 class="text-xl font-bold mb-2 text-red-700">Error de carga</h3><p class="text-sm text-[var(--muted)]">No se pudo cargar data/licitaciones_abiertas_v2.json</p></div>';
+        document.getElementById('cardsContainer').innerHTML = '<div class="soft-card rounded-2xl p-8 text-center col-span-full"><h3 class="text-xl font-bold mb-2 text-red-700">Error de carga</h3><p class="text-sm text-[var(--muted)]">No se pudo cargar data/licitaciones_abiertas.json</p></div>';
       }
     }
 
@@ -576,3 +576,4 @@
   </script>
 </body>
 </html>
+
