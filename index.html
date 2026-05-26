@@ -99,10 +99,6 @@
               <div id="estadoChips" class="flex flex-wrap gap-2"></div>
             </div>
             <div>
-              <p class="text-xs text-[var(--muted)] mb-2">Tipo de contrato</p>
-              <div id="tipoChips" class="flex flex-wrap gap-2"></div>
-            </div>
-            <div>
               <p class="text-xs text-[var(--muted)] mb-2">Ubicación</p>
               <div id="ubicacionChips" class="flex flex-wrap gap-2"></div>
             </div>
@@ -133,9 +129,9 @@
       <div class="lg:col-span-8 xl:col-span-9 space-y-4">
         <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Licitaciones abiertas</p><p id="kpiAbiertas" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Presupuesto abierto</p><p id="kpiBudget" class="text-2xl font-extrabold mt-1">€0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Presupuesto abierto (servicios)</p><p id="kpiBudget" class="text-2xl font-extrabold mt-1">€0</p></div>
           <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Organismos activos</p><p id="kpiOrganismos" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Nuevas 7 días</p><p id="kpiSemana" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Servicios nuevos (7 días)</p><p id="kpiSemana" class="text-2xl font-extrabold mt-1">0</p></div>
         </section>
 
         <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -181,7 +177,6 @@
       filters: {
         q: '',
         estado: new Set(),
-        tipo: new Set(),
         ubicacion: new Set(),
         minBudget: null,
         maxBudget: null,
@@ -193,8 +188,6 @@
 
     const HEALTH = ['salud', 'sanidad', 'hospital', 'médic', 'clinic', 'farmac'];
     const TECH = ['software', 'aplicaci', 'sistema', 'digital', 'cloud', 'datos', 'ia'];
-    const WORKS = ['obra', 'construcción', 'rehabilitación', 'infraestructura'];
-
     function safeText(v) { return (v ?? '').toString().trim(); }
     function amount(v) {
       const n = Number((safeText(v).replace(/[^\d,.-]/g, '').replace(',', '.')));
@@ -236,8 +229,6 @@
         const tags = new Set();
         if (HEALTH.some(k => blob.includes(k))) tags.add('SALUD');
         if (TECH.some(k => blob.includes(k))) tags.add('TECH');
-        if (WORKS.some(k => blob.includes(k))) tags.add('OBRAS');
-
         const item = {
           ...r,
           __amount: amount(r.importe_total),
@@ -281,11 +272,9 @@
 
     function renderFilterUI() {
       const estado = topCounts('estado_codigo', 8);
-      const tipo = topCounts('tipo_contrato_codigo', 10);
       const loc = topLocations(12);
 
       document.getElementById('estadoChips').innerHTML = estado.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.estado.has(v))).join('');
-      document.getElementById('tipoChips').innerHTML = tipo.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.tipo.has(v))).join('');
       document.getElementById('ubicacionChips').innerHTML = loc.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.ubicacion.has(v))).join('');
 
       document.getElementById('fechaChips').innerHTML = [
@@ -306,7 +295,6 @@
       state.filtered = state.raw.filter(r => {
         if (f.q && !r.__blob.includes(f.q)) return false;
         if (f.estado.size && !f.estado.has(r.estado_codigo)) return false;
-        if (f.tipo.size && !f.tipo.has(r.tipo_contrato_codigo)) return false;
         if (f.ubicacion.size && !f.ubicacion.has(r.__loc)) return false;
         if (f.minBudget !== null && r.__amount < f.minBudget) return false;
         if (f.maxBudget !== null && r.__amount > f.maxBudget) return false;
@@ -381,7 +369,6 @@
       const out = [];
       if (state.filters.q) out.push(`Búsqueda: ${state.filters.q}`);
       state.filters.estado.forEach(v => out.push(`Estado: ${v}`));
-      state.filters.tipo.forEach(v => out.push(`Tipo: ${v}`));
       state.filters.ubicacion.forEach(v => out.push(`Ubicación: ${v}`));
       if (state.filters.minBudget !== null) out.push(`Min: ${formatEuro(state.filters.minBudget)}`);
       if (state.filters.maxBudget !== null) out.push(`Max: ${formatEuro(state.filters.maxBudget)}`);
@@ -422,7 +409,6 @@
         'ALTO': 'bg-blue-50 text-blue-700 border-blue-200',
         'SALUD': 'bg-pink-50 text-pink-700 border-pink-200',
         'TECH': 'bg-indigo-50 text-indigo-700 border-indigo-200',
-        'OBRAS': 'bg-slate-100 text-slate-700 border-slate-200',
         'IA': 'bg-violet-50 text-violet-700 border-violet-200'
       };
       return map[label] || 'bg-slate-100 text-slate-700 border-slate-200';
@@ -445,7 +431,6 @@
         if (r.__amount >= 500000) badges.push('ALTO');
         if (r.__tags.has('SALUD')) badges.push('SALUD');
         if (r.__tags.has('TECH')) badges.push('TECH');
-        if (r.__tags.has('OBRAS')) badges.push('OBRAS');
         if (r.__score >= 80) badges.push('IA');
 
         return `
@@ -478,7 +463,7 @@
     }
 
     function clearAll() {
-      state.filters = { q: '', estado: new Set(), tipo: new Set(), ubicacion: new Set(), minBudget: null, maxBudget: null, fecha: 'all', flags: new Set() };
+      state.filters = { q: '', estado: new Set(), ubicacion: new Set(), minBudget: null, maxBudget: null, fecha: 'all', flags: new Set() };
       state.visible = 24;
       document.getElementById('searchInput').value = '';
       document.getElementById('minBudget').value = '';
@@ -513,12 +498,6 @@
       document.getElementById('estadoChips').addEventListener('click', e => {
         const b = e.target.closest('button[data-id]'); if (!b) return;
         toggleSet(state.filters.estado, b.dataset.id);
-        renderFilterUI(); applyFilters();
-      });
-
-      document.getElementById('tipoChips').addEventListener('click', e => {
-        const b = e.target.closest('button[data-id]'); if (!b) return;
-        toggleSet(state.filters.tipo, b.dataset.id);
         renderFilterUI(); applyFilters();
       });
 

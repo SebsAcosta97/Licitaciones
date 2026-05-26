@@ -60,6 +60,7 @@ class TenderRecord:
     pais_codigo: str
     pais_nombre: str
     tipo_contrato_codigo: str
+    tipo_contrato: str
     subtipo_contrato_codigo: str
     lugar_ejecucion: str
     lugar_ejecucion_codigo: str
@@ -176,6 +177,17 @@ TIPO_CONTRATO_MAP = {
     "22": "Concesion de servicios",
     "50": "Mixto",
 }
+ESTADO_LICITACION_MAP = {
+    "EV": "En evaluación",
+    "PUB": "Publicado",
+    "RES": "Resuelto",
+    "ADJ": "Adjudicado",
+    "ANUL": "Anulado",
+    "DES": "Desierto",
+    "CERR": "Cerrado",
+}
+SERVICIOS_CODE = "2"
+SERVICIOS_LABELS = {"SERVICIOS", "SERVICIO", "SERVICES"}
 
 
 def is_health_tender(item: TenderRecord) -> bool:
@@ -302,6 +314,25 @@ def tipo_contrato_label(code: str) -> str:
     return TIPO_CONTRATO_MAP.get(c, c)
 
 
+def normalize_tipo_contrato_codigo(raw_code: str) -> str:
+    raw = (raw_code or "").strip()
+    if not raw:
+        return ""
+    if raw in TIPO_CONTRATO_MAP:
+        return raw
+    raw_upper = raw.upper()
+    if raw_upper in SERVICIOS_LABELS:
+        return SERVICIOS_CODE
+    for code, label in TIPO_CONTRATO_MAP.items():
+        if raw_upper == label.upper():
+            return code
+    return raw
+
+
+def is_service_contract(tipo_contrato_codigo: str) -> bool:
+    return normalize_tipo_contrato_codigo(tipo_contrato_codigo) == SERVICIOS_CODE
+
+
 def extract_documents_from_entry(
     entry: ET.Element,
     licitacion_id: str,
@@ -387,7 +418,7 @@ def extract_documents_from_entry(
 
 
 def parse_atom(
-    xml_text: str, query: str = "", limit: int = 0
+    xml_text: str, query: str = "", limit: int = 0, services_only: bool = True
 ) -> tuple[list[TenderRecord], list[TenderDocument]]:
     root = ET.fromstring(xml_text)
     out: list[TenderRecord] = []
@@ -419,7 +450,11 @@ def parse_atom(
                 ".//cac_place:LocatedContractingParty/cac:Party/cac:PostalAddress/cac:Country/cbc:Name",
             ],
         )
-        tipo_contrato_codigo = first_text(entry, [".//cac:ProcurementProject/cbc:TypeCode"])
+        tipo_contrato_codigo_raw = first_text(entry, [".//cac:ProcurementProject/cbc:TypeCode"])
+        tipo_contrato_codigo = normalize_tipo_contrato_codigo(tipo_contrato_codigo_raw)
+        if services_only and not is_service_contract(tipo_contrato_codigo):
+            continue
+        tipo_contrato = tipo_contrato_label(tipo_contrato_codigo)
         subtipo_contrato_codigo = first_text(
             entry, [".//cac:ProcurementProject/cbc:SubTypeCode"]
         )
@@ -555,7 +590,7 @@ def parse_atom(
                     "financiacion_ue": financiacion_ue_nombre or financiacion_ue_codigo,
                     "presupuesto_base_sin_impuestos": importe_sin_impuestos,
                     "valor_estimado_contrato": importe_estimado,
-                    "tipo_contrato": tipo_contrato_label(tipo_contrato_codigo),
+                    "tipo_contrato": tipo_contrato,
                     "codigo_cpv": cpv_codes,
                     "lugar_ejecucion": lugar_ejecucion,
                     "sistema_contratacion": sistema_contratacion,
@@ -573,7 +608,8 @@ def parse_atom(
                 expediente=expediente,
                 pais_codigo=pais_codigo,
                 pais_nombre=pais_nombre,
-                tipo_contrato_codigo=tipo_contrato_codigo,
+                tipo_contrato_codigo=tipo_contrato,
+                tipo_contrato=tipo_contrato,
                 subtipo_contrato_codigo=subtipo_contrato_codigo,
                 lugar_ejecucion=lugar_ejecucion,
                 lugar_ejecucion_codigo=lugar_ejecucion_codigo,
@@ -1461,7 +1497,19 @@ def main() -> None:
         action="store_true",
         help="Completa adjudicatario/NIF desde la ficha web cuando falte en el feed ATOM.",
     )
+    parser.add_argument(
+        "--services-only",
+        action="store_true",
+        default=True,
+        help="Limita extracción a contratos de SERVICIOS desde origen (por defecto activo).",
+    )
+    parser.add_argument(
+        "--all-contract-types",
+        action="store_true",
+        help="Desactiva filtro de servicios y extrae todos los tipos de contrato.",
+    )
     args = parser.parse_args()
+    services_only = args.services_only and not args.all_contract_types
 
     if args.source == "perfiles":
         urls = [FEED_PERFILES]
@@ -1475,7 +1523,9 @@ def main() -> None:
     for url in urls:
         raw_feed = download_text(url, timeout_seconds=args.timeout)
         try:
-            items, docs = parse_atom(raw_feed, query=args.query, limit=0)
+            items, docs = parse_atom(
+                raw_feed, query=args.query, limit=0, services_only=services_only
+            )
         except MemoryError:
             continue
         if args.health_only:
@@ -1502,7 +1552,9 @@ def main() -> None:
             hist_atom_count += len(atom_texts)
             for atom_text in atom_texts:
                 try:
-                    items, docs = parse_atom(atom_text, query=args.query, limit=0)
+                    items, docs = parse_atom(
+                        atom_text, query=args.query, limit=0, services_only=services_only
+                    )
                 except MemoryError:
                     continue
                 if args.health_only:
@@ -1543,6 +1595,8 @@ def main() -> None:
     print(f"Documentos exportados: {len(docs)}")
     if args.health_only:
         print("Filtro aplicado: solo sector salud/medicina")
+    if services_only:
+        print("Filtro aplicado: solo contratos tipo SERVICIOS")
     if args.include_historical:
         print(f"Historicos ZIP detectados: {hist_zip_count}")
         print(f"Historicos ATOM cargados: {hist_atom_count}")

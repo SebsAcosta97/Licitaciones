@@ -9,6 +9,28 @@ from typing import Any
 DATA_DIR = Path(__file__).resolve().parent / "data"
 SOURCE_PATH = DATA_DIR / "licitaciones.json"
 OUTPUT_PATH = DATA_DIR / "licitaciones_abiertas.json"
+SERVICIOS_CODE = "2"
+SERVICIOS_LABEL = "Servicios"
+
+TIPO_CONTRATO_MAP = {
+    "1": "Obras",
+    "2": "Servicios",
+    "3": "Suministros",
+    "8": "Patrimonial",
+    "21": "Concesión de obras",
+    "22": "Concesión de servicios",
+    "50": "Mixto",
+}
+
+ESTADO_MAP = {
+    "EV": "En evaluación",
+    "PUB": "Publicado",
+    "RES": "Resuelto",
+    "ADJ": "Adjudicado",
+    "ANUL": "Anulado",
+    "DES": "Desierto",
+    "CERR": "Cerrado",
+}
 
 OPEN_STATE_CODES = {
     "EV", "PUB", "PCP", "PRES", "ABI", "AB", "OPEN", "ACT", "ACTIVA", "ACTIVO"
@@ -35,6 +57,21 @@ def safe_text(value: Any) -> str:
     if value is None:
         return ""
     return str(value).strip()
+
+
+def normalize_contract_code(value: Any) -> str:
+    raw = safe_text(value)
+    if not raw:
+        return ""
+    if raw in TIPO_CONTRATO_MAP:
+        return raw
+    raw_upper = raw.upper()
+    if raw_upper in {"SERVICIOS", "SERVICIO", "SERVICES"}:
+        return SERVICIOS_CODE
+    for code, label in TIPO_CONTRATO_MAP.items():
+        if raw_upper == label.upper():
+            return code
+    return raw
 
 
 def parse_amount(value: Any) -> float | None:
@@ -116,7 +153,7 @@ def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
     title = safe_text(row.get("title"))
     organo = safe_text(row.get("organo_contratacion"))
     estado = safe_text(row.get("estado_codigo")).upper()
-    tipo = safe_text(row.get("tipo_contrato_codigo"))
+    tipo = normalize_contract_code(row.get("tipo_contrato_codigo"))
     fecha = safe_text(row.get("fecha_publicacion"))
     lugar = safe_text(row.get("lugar_ejecucion"))
     url = safe_text(row.get("url") or row.get("detail_url"))
@@ -135,7 +172,9 @@ def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
         "title": title,
         "organo_contratacion": organo,
         "estado_codigo": estado,
-        "tipo_contrato_codigo": tipo,
+        "estado": ESTADO_MAP.get(estado, estado),
+        "tipo_contrato_codigo": SERVICIOS_LABEL if tipo == SERVICIOS_CODE else TIPO_CONTRATO_MAP.get(tipo, tipo),
+        "tipo_contrato": SERVICIOS_LABEL if tipo == SERVICIOS_CODE else TIPO_CONTRATO_MAP.get(tipo, tipo),
         "importe_total": amount,
         "fecha_publicacion": fecha,
         "lugar_ejecucion": lugar,
@@ -232,6 +271,10 @@ def main() -> None:
             continue
 
         cleaned += 1
+
+        if normalize_contract_code(row.get("tipo_contrato_codigo")) != SERVICIOS_CODE:
+            filtered_open += 1
+            continue
 
         if not is_open_active(row):
             filtered_open += 1
