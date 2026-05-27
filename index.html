@@ -32,6 +32,11 @@
       background: var(--card);
       border: 1px solid var(--border);
       box-shadow: 0 8px 24px rgba(25, 43, 71, 0.06);
+      transition: all .2s ease;
+    }
+    .soft-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(25, 43, 71, 0.10);
     }
     .chip {
       border: 1px solid var(--border);
@@ -140,6 +145,49 @@
           <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Oportunidades IA</p><p id="kpiIA" class="text-2xl font-extrabold mt-1">0</p></div>
           <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Contratos recurrentes</p><p id="kpiRecurrentes" class="text-2xl font-extrabold mt-1">0</p></div>
         </section>
+
+        
+<section class="soft-card rounded-2xl p-5">
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h3 class="text-xl font-bold">Impacto Agenda 2030 / 2035</h3>
+      <p class="text-sm text-[var(--muted)]">GovTech · Transparencia · Innovación · Sostenibilidad</p>
+    </div>
+
+    <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-3 py-1">
+      ODS Intelligence
+    </span>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+    <button onclick="openODSModal('ODS9')"
+            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
+      <p class="text-xs text-[var(--muted)]">ODS 9</p>
+      <h4 class="font-bold mt-1">Innovación pública</h4>
+    </button>
+
+    <button onclick="openODSModal('ODS16')"
+            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
+      <p class="text-xs text-[var(--muted)]">ODS 16</p>
+      <h4 class="font-bold mt-1">Transparencia institucional</h4>
+    </button>
+
+    <button onclick="openODSModal('ODS8')"
+            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
+      <p class="text-xs text-[var(--muted)]">ODS 8</p>
+      <h4 class="font-bold mt-1">Competitividad empresarial</h4>
+    </button>
+
+    <button onclick="openODSModal('ODS12')"
+            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
+      <p class="text-xs text-[var(--muted)]">ODS 12</p>
+      <h4 class="font-bold mt-1">Optimización tecnológica</h4>
+    </button>
+
+  </div>
+</section>
+
 
         <section class="soft-card rounded-2xl p-4">
           <div class="flex items-center justify-between mb-3">
@@ -447,7 +495,21 @@
             <div><p class="text-[var(--muted)]">Ubicación</p><p class="font-semibold">${safeText(r.__loc)}</p></div>
           </div>
           <div class="flex flex-wrap gap-1.5 mb-3">${badges.map(b => `<span class="text-[10px] px-2 py-1 rounded-full border ${badgeClass(b)}">${b}</span>`).join('')}</div>
-          <a href="${safeText(r.url) || '#'}" target="_blank" rel="noopener noreferrer" class="block text-center bg-[var(--brand)] text-white rounded-xl py-2 text-sm font-semibold hover:opacity-90">Ver detalle</a>
+          
+<div class="grid grid-cols-2 gap-2 mt-4">
+  <a href="${safeText(r.url) || '#'}"
+     target="_blank"
+     rel="noopener noreferrer"
+     class="text-center bg-[var(--brand)] text-white rounded-xl py-2 text-sm font-semibold hover:opacity-90">
+     Ver licitación
+  </a>
+
+  <button onclick="openTenderAnalysis('${r.licitacion_id}')"
+          class="text-center bg-white border border-[var(--border)] rounded-xl py-2 text-sm font-semibold hover:bg-[var(--bg-soft)]">
+          Analizar IA
+  </button>
+</div>
+
         </article>`;
       }).join('');
 
@@ -551,8 +613,355 @@
       }
     }
 
+
+function openTenderAnalysis(id) {
+  const lic = state.raw.find(x => x.licitacion_id == id);
+  if (!lic) return;
+
+  document.getElementById('analysisModal').classList.remove('hidden');
+
+  const risk = lic.__score >= 85 ? 'Bajo' : lic.__score >= 70 ? 'Medio' : 'Alto';
+  const urgency = daysAgo(lic.__date) <= 7 ? 'Alta' : 'Media';
+
+  document.getElementById('analysisTitle').textContent = lic.title || 'Licitación';
+
+  document.getElementById('analysisContent').innerHTML = `
+  <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="soft-card rounded-2xl p-4">
+      <p class="text-xs text-[var(--muted)]">AI Opportunity Score</p>
+      <p class="text-3xl font-extrabold mt-1">${lic.__score}</p>
+    </div>
+
+    <div class="soft-card rounded-2xl p-4">
+      <p class="text-xs text-[var(--muted)]">Riesgo</p>
+      <p class="text-2xl font-bold mt-1">${risk}</p>
+    </div>
+
+    <div class="soft-card rounded-2xl p-4">
+      <p class="text-xs text-[var(--muted)]">Urgencia</p>
+      <p class="text-2xl font-bold mt-1">${urgency}</p>
+    </div>
+
+    <div class="soft-card rounded-2xl p-4">
+      <p class="text-xs text-[var(--muted)]">ODS Impacto</p>
+      <p class="text-xl font-bold mt-1">ODS 9 · ODS 16</p>
+    </div>
+  </section>
+
+  <section class="soft-card rounded-2xl p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-xl font-bold">Resumen Ejecutivo IA</h3>
+      <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 rounded-full px-3 py-1">AI Generated</span>
+    </div>
+
+    <div class="space-y-4 text-sm leading-relaxed">
+      <p>
+        Contrato orientado a ${lic.__tags.has('TECH') ? 'transformación digital y tecnología' : 'servicios especializados'}.
+      </p>
+
+      <p>
+        El organismo presenta actividad recurrente y potencial estratégico de colaboración.
+      </p>
+
+      <p>
+        Presupuesto estimado de <strong>${formatEuro(lic.__amount)}</strong>
+        y nivel de oportunidad IA de <strong>${lic.__score}/100</strong>.
+      </p>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+    <div class="soft-card rounded-2xl p-6">
+      <h3 class="text-xl font-bold mb-4">Información clave</h3>
+
+      <div class="space-y-4 text-sm">
+        <div class="flex justify-between border-b border-[var(--border)] pb-2">
+          <span class="text-[var(--muted)]">Organismo</span>
+          <span class="font-semibold text-right">${lic.organo_contratacion || '-'}</span>
+        </div>
+
+        <div class="flex justify-between border-b border-[var(--border)] pb-2">
+          <span class="text-[var(--muted)]">Presupuesto</span>
+          <span class="font-semibold">${formatEuro(lic.__amount)}</span>
+        </div>
+
+        <div class="flex justify-between border-b border-[var(--border)] pb-2">
+          <span class="text-[var(--muted)]">Ubicación</span>
+          <span class="font-semibold">${lic.__loc}</span>
+        </div>
+
+        <div class="flex justify-between border-b border-[var(--border)] pb-2">
+          <span class="text-[var(--muted)]">Estado</span>
+          <span class="font-semibold">${lic.estado_codigo || '-'}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="soft-card rounded-2xl p-6">
+      <h3 class="text-xl font-bold mb-4">Documentación recomendada</h3>
+
+      <div class="space-y-3 text-sm">
+        <div class="flex items-center gap-3">
+          <i class="fa-solid fa-circle-check text-emerald-600"></i>
+          <span>Certificado AEAT</span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <i class="fa-solid fa-circle-check text-emerald-600"></i>
+          <span>Seguridad Social</span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+          <span>Solvencia técnica especializada</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="soft-card rounded-2xl p-6">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-xl font-bold">IA Documental</h3>
+      <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-3 py-1">
+        Enterprise AI
+      </span>
+    </div>
+
+    <div class="border-2 border-dashed border-[var(--border)] rounded-2xl p-8 text-center bg-[var(--bg-soft)]">
+      <i class="fa-solid fa-cloud-arrow-up text-4xl text-[var(--brand)] mb-4"></i>
+
+      <h4 class="font-bold text-lg mb-2">Subir documentación empresarial</h4>
+
+      <p class="text-sm text-[var(--muted)] mb-5">
+        La IA analizará certificados, solvencia y documentación administrativa.
+      </p>
+
+      <input type="file" multiple class="mb-4" />
+    </div>
+  </section>
+  `;
+}
+
+function closeTenderAnalysis() {
+  document.getElementById('analysisModal').classList.add('hidden');
+}
+
+
+function openODSModal(ods) {
+
+  const modal = document.getElementById('odsModal');
+  modal.classList.remove('hidden');
+
+  const data = {
+    ODS9: {
+      title: 'ODS 9 · Innovación pública',
+      subtitle: 'Transformación digital y GovTech',
+      metrics: [
+        ['GovTech', 'Activo'],
+        ['Digitalización', 'Alta'],
+        ['AI Score', '87/100'],
+        ['Servicios IA', '61%']
+      ],
+      insights: [
+        'La contratación pública tecnológica sigue creciendo.',
+        'Las oportunidades GovTech tienen alto potencial empresarial.',
+        'Existe fuerte demanda de modernización institucional.'
+      ]
+    },
+
+    ODS16: {
+      title: 'ODS 16 · Transparencia institucional',
+      subtitle: 'Acceso y transparencia pública',
+      metrics: [
+        ['Open Data', '92%'],
+        ['Organismos', '152'],
+        ['Contratos', '2.000+'],
+        ['Gov Score', '91/100']
+      ],
+      insights: [
+        'La plataforma facilita acceso competitivo a oportunidades públicas.',
+        'La transparencia digital reduce asimetrías de información.',
+        'Los datos abiertos mejoran eficiencia institucional.'
+      ]
+    },
+
+    ODS8: {
+      title: 'ODS 8 · Competitividad empresarial',
+      subtitle: 'Crecimiento económico y servicios',
+      metrics: [
+        ['Servicios', '72%'],
+        ['Empresas', 'Alta'],
+        ['Mercado', 'Activo'],
+        ['Impacto', 'Elevado']
+      ],
+      insights: [
+        'La contratación pública impulsa actividad empresarial.',
+        'Las PYMEs pueden acceder a nuevas oportunidades.',
+        'La plataforma mejora el discovery comercial.'
+      ]
+    },
+
+    ODS12: {
+      title: 'ODS 12 · Optimización tecnológica',
+      subtitle: 'Infraestructura eficiente y sostenible',
+      metrics: [
+        ['Frontend', 'Ligero'],
+        ['Cloud', 'Optimizado'],
+        ['GitHub Pages', 'Activo'],
+        ['Eficiencia', 'Alta']
+      ],
+      insights: [
+        'La arquitectura ligera reduce consumo computacional.',
+        'El frontend optimizado mejora sostenibilidad tecnológica.',
+        'La solución evita infraestructura pesada innecesaria.'
+      ]
+    }
+  };
+
+  const d = data[ods];
+
+  document.getElementById('odsModalTitle').textContent = d.title;
+  document.getElementById('odsModalSubtitle').textContent = d.subtitle;
+
+  document.getElementById('odsModalContent').innerHTML = `
+
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+      ${d.metrics.map(m => `
+        <div class="soft-card rounded-2xl p-4">
+          <p class="text-xs text-[var(--muted)]">${m[0]}</p>
+          <h3 class="text-2xl font-extrabold mt-1">${m[1]}</h3>
+        </div>
+      `).join('')}
+
+    </section>
+
+    <section class="soft-card rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-bold">Insights estratégicos</h3>
+
+        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-3 py-1">
+          Sustainability Intelligence
+        </span>
+      </div>
+
+      <div class="space-y-3">
+        ${d.insights.map(i => `
+          <div class="bg-[var(--bg-soft)] rounded-2xl p-4 text-sm">
+            ${i}
+          </div>
+        `).join('')}
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+      <div class="soft-card rounded-2xl p-6">
+        <h3 class="text-xl font-bold mb-4">Flujos GovTech</h3>
+
+        <div class="space-y-3 text-sm">
+
+          <div class="flex justify-between border-b border-[var(--border)] pb-2">
+            <span>AI Opportunity Scoring</span>
+            <span class="font-semibold">Activo</span>
+          </div>
+
+          <div class="flex justify-between border-b border-[var(--border)] pb-2">
+            <span>Procurement Intelligence</span>
+            <span class="font-semibold">Enterprise</span>
+          </div>
+
+          <div class="flex justify-between border-b border-[var(--border)] pb-2">
+            <span>IA documental</span>
+            <span class="font-semibold">Roadmap</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span>Sostenibilidad GovTech</span>
+            <span class="font-semibold">ODS Ready</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="soft-card rounded-2xl p-6">
+        <h3 class="text-xl font-bold mb-4">Impacto Agenda 2030 / 2035</h3>
+
+        <ul class="space-y-3 text-sm list-disc ml-5">
+          <li>Modernización institucional</li>
+          <li>Transformación digital pública</li>
+          <li>Acceso competitivo empresarial</li>
+          <li>Sostenibilidad tecnológica</li>
+          <li>Optimización operativa</li>
+        </ul>
+      </div>
+
+    </section>
+  `;
+}
+
+function closeODSModal() {
+  document.getElementById('odsModal').classList.add('hidden');
+}
+
+
+
     init();
   </script>
+
+<div id="analysisModal"
+     class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 overflow-y-auto">
+
+  <div class="min-h-screen flex items-start justify-center p-6">
+    <div class="bg-white w-full max-w-6xl rounded-3xl shadow-2xl overflow-hidden">
+
+      <div class="border-b border-[var(--border)] px-8 py-6 flex items-center justify-between sticky top-0 bg-white z-10">
+        <div>
+          <h2 id="analysisTitle" class="text-2xl font-extrabold">Análisis IA de Licitación</h2>
+          <p class="text-sm text-[var(--muted)]">Procurement Intelligence · GovAI</p>
+        </div>
+
+        <button onclick="closeTenderAnalysis()"
+                class="w-10 h-10 rounded-xl hover:bg-[var(--bg-soft)]">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="analysisContent" class="p-8 space-y-6"></div>
+    </div>
+  </div>
+</div>
+
+
+
+<div id="odsModal"
+     class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 overflow-y-auto">
+
+  <div class="min-h-screen flex items-start justify-center p-6">
+
+    <div class="bg-white w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden">
+
+      <div class="border-b border-[var(--border)] px-8 py-6 flex items-center justify-between sticky top-0 bg-white z-10">
+        <div>
+          <h2 id="odsModalTitle" class="text-2xl font-extrabold">ODS Intelligence</h2>
+          <p id="odsModalSubtitle" class="text-sm text-[var(--muted)]">Agenda 2030 / 2035</p>
+        </div>
+
+        <button onclick="closeODSModal()"
+                class="w-10 h-10 rounded-xl hover:bg-[var(--bg-soft)]">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="odsModalContent" class="p-8 space-y-6"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
 </body>
 </html>
 
