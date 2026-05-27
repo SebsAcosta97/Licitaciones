@@ -160,25 +160,31 @@
   </div>
 
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <button onclick="openODSModal('ODS9')" class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:scale-[1.01] transition">
+
+    <button onclick="openODSModal('ODS9')"
+            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
       <p class="text-xs text-[var(--muted)]">ODS 9</p>
       <h4 class="font-bold mt-1">Innovación pública</h4>
-    </div>
+    </button>
 
-    <button onclick="openODSModal('ODS16')" class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:scale-[1.01] transition">
+    <button onclick="openODSModal('ODS16')"
+            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
       <p class="text-xs text-[var(--muted)]">ODS 16</p>
       <h4 class="font-bold mt-1">Transparencia institucional</h4>
-    </div>
+    </button>
 
-    <button onclick="openODSModal('ODS8')" class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:scale-[1.01] transition">
+    <button onclick="openODSModal('ODS8')"
+            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
       <p class="text-xs text-[var(--muted)]">ODS 8</p>
       <h4 class="font-bold mt-1">Competitividad empresarial</h4>
-    </div>
+    </button>
 
-    <button onclick="openODSModal('ODS12')" class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:scale-[1.01] transition">
+    <button onclick="openODSModal('ODS12')"
+            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
       <p class="text-xs text-[var(--muted)]">ODS 12</p>
       <h4 class="font-bold mt-1">Optimización tecnológica</h4>
     </button>
+
   </div>
 </section>
 
@@ -608,178 +614,6 @@
     }
 
 
-
-
-function openODSModal(ods) {
-
-  document.getElementById('odsModal').classList.remove('hidden');
-
-  const content = {
-    ODS9: {
-      title: 'ODS 9 · Industria, Innovación e Infraestructura',
-      subtitle: 'Transformación digital pública y GovTech',
-      metrics: [
-        ['Licitaciones GovTech', '428'],
-        ['Servicios tecnológicos', '61%'],
-        ['Digitalización pública', 'Alta'],
-        ['AI Readiness', '87/100']
-      ],
-      insights: [
-        'Madrid y Cataluña concentran gran parte de las oportunidades de digitalización pública.',
-        'El sector salud presenta alta demanda tecnológica.',
-        'Existe crecimiento sostenido en modernización institucional.'
-      ]
-    },
-
-    ODS16: {
-      title: 'ODS 16 · Instituciones Sólidas',
-      subtitle: 'Transparencia y acceso a información pública',
-      metrics: [
-        ['Organismos activos', '152'],
-        ['Contratos abiertos', '2.000+'],
-        ['Transparencia digital', 'Alta'],
-        ['Open Data Score', '91/100']
-      ],
-      insights: [
-        'La contratación pública digital mejora la transparencia institucional.',
-        'El acceso centralizado reduce asimetrías de información.',
-        'Los procesos abiertos facilitan la competitividad empresarial.'
-      ]
-    },
-
-    ODS8: {
-      title: 'ODS 8 · Trabajo y Crecimiento Económico',
-      subtitle: 'Competitividad y oportunidades empresariales',
-      metrics: [
-        ['Oportunidades activas', '1.200'],
-        ['PYMEs potenciales', 'Alta'],
-        ['Servicios especializados', '72%'],
-        ['Impacto económico', 'Muy alto']
-      ],
-      insights: [
-        'Las licitaciones de servicios impulsan actividad empresarial.',
-        'Existe alta demanda de proveedores especializados.',
-        'La plataforma reduce barreras de acceso a contratación pública.'
-      ]
-    },
-
-    ODS12: {
-      title: 'ODS 12 · Producción Responsable',
-      subtitle: 'Optimización tecnológica y eficiencia',
-      metrics: [
-        ['Frontend ligero', 'Sí'],
-        ['Arquitectura sostenible', 'Optimizada'],
-        ['Infraestructura cloud', 'Mínima'],
-        ['Eficiencia operativa', 'Alta']
-      ],
-      insights: [
-        'La arquitectura estática reduce consumo computacional.',
-        'El uso de JSON optimizado mejora eficiencia.',
-        'GitHub Pages permite infraestructura ligera y sostenible.'
-      ]
-    }
-  };
-
-  const d = content[ods];
-
-  document.getElementById('odsTitle').textContent = d.title;
-  document.getElementById('odsSubtitle').textContent = d.subtitle;
-
-  document.getElementById('odsContent').innerHTML = `
-
-    <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
-
-      ${d.metrics.map(m => `
-        <div class="soft-card rounded-2xl p-5">
-          <p class="text-xs text-[var(--muted)]">${m[0]}</p>
-          <h3 class="text-2xl font-extrabold mt-2">${m[1]}</h3>
-        </div>
-      `).join('')}
-
-    </section>
-
-    <section class="soft-card rounded-2xl p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-xl font-bold">Insights estratégicos</h3>
-
-        <span class="text-xs bg-blue-50 text-blue-700 border border-blue-200 rounded-full px-3 py-1">
-          Sustainability Intelligence
-        </span>
-      </div>
-
-      <div class="space-y-4">
-
-        ${d.insights.map(i => `
-          <div class="border border-[var(--border)] rounded-2xl p-4 bg-[var(--bg-soft)]">
-            <div class="flex items-start gap-3">
-              <i class="fa-solid fa-lightbulb text-[var(--brand)] mt-1"></i>
-              <p class="text-sm leading-relaxed">${i}</p>
-            </div>
-          </div>
-        `).join('')}
-
-      </div>
-    </section>
-
-    <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-
-      <div class="soft-card rounded-2xl p-6">
-        <h3 class="text-xl font-bold mb-4">Flujos relacionados</h3>
-
-        <div class="space-y-3 text-sm">
-
-          <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
-            <span>Discovery inteligente</span>
-            <span class="font-bold">Activo</span>
-          </div>
-
-          <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
-            <span>AI Opportunity Scoring</span>
-            <span class="font-bold">Operativo</span>
-          </div>
-
-          <div class="flex items-center justify-between border-b border-[var(--border)] pb-3">
-            <span>IA documental</span>
-            <span class="font-bold">Roadmap</span>
-          </div>
-
-          <div class="flex items-center justify-between">
-            <span>Procurement Intelligence</span>
-            <span class="font-bold">Enterprise</span>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="soft-card rounded-2xl p-6">
-        <h3 class="text-xl font-bold mb-4">Impacto GovTech</h3>
-
-        <div class="space-y-4 text-sm leading-relaxed">
-
-          <p>
-            Este módulo se encuentra alineado con la Agenda 2030/2035 y busca mejorar:
-          </p>
-
-          <ul class="list-disc ml-5 space-y-2">
-            <li>Transparencia institucional</li>
-            <li>Transformación digital pública</li>
-            <li>Acceso empresarial a contratación pública</li>
-            <li>Sostenibilidad tecnológica</li>
-            <li>Eficiencia operativa</li>
-          </ul>
-
-        </div>
-      </div>
-
-    </section>
-  `;
-}
-
-function closeODSModal() {
-  document.getElementById('odsModal').classList.add('hidden');
-}
-
-
 function openTenderAnalysis(id) {
   const lic = state.raw.find(x => x.licitacion_id == id);
   if (!lic) return;
@@ -913,6 +747,165 @@ function closeTenderAnalysis() {
 }
 
 
+function openODSModal(ods) {
+
+  const modal = document.getElementById('odsModal');
+  modal.classList.remove('hidden');
+
+  const data = {
+    ODS9: {
+      title: 'ODS 9 · Innovación pública',
+      subtitle: 'Transformación digital y GovTech',
+      metrics: [
+        ['GovTech', 'Activo'],
+        ['Digitalización', 'Alta'],
+        ['AI Score', '87/100'],
+        ['Servicios IA', '61%']
+      ],
+      insights: [
+        'La contratación pública tecnológica sigue creciendo.',
+        'Las oportunidades GovTech tienen alto potencial empresarial.',
+        'Existe fuerte demanda de modernización institucional.'
+      ]
+    },
+
+    ODS16: {
+      title: 'ODS 16 · Transparencia institucional',
+      subtitle: 'Acceso y transparencia pública',
+      metrics: [
+        ['Open Data', '92%'],
+        ['Organismos', '152'],
+        ['Contratos', '2.000+'],
+        ['Gov Score', '91/100']
+      ],
+      insights: [
+        'La plataforma facilita acceso competitivo a oportunidades públicas.',
+        'La transparencia digital reduce asimetrías de información.',
+        'Los datos abiertos mejoran eficiencia institucional.'
+      ]
+    },
+
+    ODS8: {
+      title: 'ODS 8 · Competitividad empresarial',
+      subtitle: 'Crecimiento económico y servicios',
+      metrics: [
+        ['Servicios', '72%'],
+        ['Empresas', 'Alta'],
+        ['Mercado', 'Activo'],
+        ['Impacto', 'Elevado']
+      ],
+      insights: [
+        'La contratación pública impulsa actividad empresarial.',
+        'Las PYMEs pueden acceder a nuevas oportunidades.',
+        'La plataforma mejora el discovery comercial.'
+      ]
+    },
+
+    ODS12: {
+      title: 'ODS 12 · Optimización tecnológica',
+      subtitle: 'Infraestructura eficiente y sostenible',
+      metrics: [
+        ['Frontend', 'Ligero'],
+        ['Cloud', 'Optimizado'],
+        ['GitHub Pages', 'Activo'],
+        ['Eficiencia', 'Alta']
+      ],
+      insights: [
+        'La arquitectura ligera reduce consumo computacional.',
+        'El frontend optimizado mejora sostenibilidad tecnológica.',
+        'La solución evita infraestructura pesada innecesaria.'
+      ]
+    }
+  };
+
+  const d = data[ods];
+
+  document.getElementById('odsModalTitle').textContent = d.title;
+  document.getElementById('odsModalSubtitle').textContent = d.subtitle;
+
+  document.getElementById('odsModalContent').innerHTML = `
+
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+      ${d.metrics.map(m => `
+        <div class="soft-card rounded-2xl p-4">
+          <p class="text-xs text-[var(--muted)]">${m[0]}</p>
+          <h3 class="text-2xl font-extrabold mt-1">${m[1]}</h3>
+        </div>
+      `).join('')}
+
+    </section>
+
+    <section class="soft-card rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-bold">Insights estratégicos</h3>
+
+        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-3 py-1">
+          Sustainability Intelligence
+        </span>
+      </div>
+
+      <div class="space-y-3">
+        ${d.insights.map(i => `
+          <div class="bg-[var(--bg-soft)] rounded-2xl p-4 text-sm">
+            ${i}
+          </div>
+        `).join('')}
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+
+      <div class="soft-card rounded-2xl p-6">
+        <h3 class="text-xl font-bold mb-4">Flujos GovTech</h3>
+
+        <div class="space-y-3 text-sm">
+
+          <div class="flex justify-between border-b border-[var(--border)] pb-2">
+            <span>AI Opportunity Scoring</span>
+            <span class="font-semibold">Activo</span>
+          </div>
+
+          <div class="flex justify-between border-b border-[var(--border)] pb-2">
+            <span>Procurement Intelligence</span>
+            <span class="font-semibold">Enterprise</span>
+          </div>
+
+          <div class="flex justify-between border-b border-[var(--border)] pb-2">
+            <span>IA documental</span>
+            <span class="font-semibold">Roadmap</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span>Sostenibilidad GovTech</span>
+            <span class="font-semibold">ODS Ready</span>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="soft-card rounded-2xl p-6">
+        <h3 class="text-xl font-bold mb-4">Impacto Agenda 2030 / 2035</h3>
+
+        <ul class="space-y-3 text-sm list-disc ml-5">
+          <li>Modernización institucional</li>
+          <li>Transformación digital pública</li>
+          <li>Acceso competitivo empresarial</li>
+          <li>Sostenibilidad tecnológica</li>
+          <li>Optimización operativa</li>
+        </ul>
+      </div>
+
+    </section>
+  `;
+}
+
+function closeODSModal() {
+  document.getElementById('odsModal').classList.add('hidden');
+}
+
+
+
     init();
   </script>
 
@@ -940,16 +933,18 @@ function closeTenderAnalysis() {
 </div>
 
 
+
 <div id="odsModal"
      class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 overflow-y-auto">
 
   <div class="min-h-screen flex items-start justify-center p-6">
+
     <div class="bg-white w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden">
 
       <div class="border-b border-[var(--border)] px-8 py-6 flex items-center justify-between sticky top-0 bg-white z-10">
         <div>
-          <h2 id="odsTitle" class="text-2xl font-extrabold">ODS Intelligence</h2>
-          <p id="odsSubtitle" class="text-sm text-[var(--muted)]">Agenda 2030 / 2035</p>
+          <h2 id="odsModalTitle" class="text-2xl font-extrabold">ODS Intelligence</h2>
+          <p id="odsModalSubtitle" class="text-sm text-[var(--muted)]">Agenda 2030 / 2035</p>
         </div>
 
         <button onclick="closeODSModal()"
@@ -958,10 +953,14 @@ function closeTenderAnalysis() {
         </button>
       </div>
 
-      <div id="odsContent" class="p-8 space-y-6"></div>
+      <div id="odsModalContent" class="p-8 space-y-6"></div>
+
     </div>
+
   </div>
+
 </div>
+
 
 </body>
 </html>
