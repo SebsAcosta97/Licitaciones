@@ -77,7 +77,7 @@
           <p class="text-sm text-[var(--muted)]">IA para contratación pública y estrategia de ofertas</p>
         </div>
       </div>
-      <div class="hidden md:flex text-xs text-[var(--muted)] bg-white border border-[var(--border)] px-3 py-2 rounded-xl">Fuente: <code class="ml-1">data/licitaciones_abiertas.json</code></div>
+      <div class="hidden md:flex text-xs text-[var(--muted)] bg-white border border-[var(--border)] px-3 py-2 rounded-xl">Fuente: <code id="datasetSourceLabel" class="ml-1">data/licitaciones_abiertas.json</code></div>
     </header>
 
     <section class="soft-card rounded-3xl p-6 md:p-8 mb-6">
@@ -233,6 +233,11 @@
       },
       meta: { recurrentOrg: new Set() }
     };
+
+    const DATASET_PATHS = [
+      './data/licitaciones_abiertas.json',
+      './data/Bronze/licitaciones_abiertas.json'
+    ];
 
     const HEALTH = ['salud', 'sanidad', 'hospital', 'médic', 'clinic', 'farmac'];
     const TECH = ['software', 'aplicaci', 'sistema', 'digital', 'cloud', 'datos', 'ia'];
@@ -593,13 +598,35 @@
       document.getElementById('loadMoreBtn').addEventListener('click', () => { state.visible += 24; cards(); });
     }
 
+    async function fetchDashboardDataset() {
+      const errors = [];
+
+      for (const path of DATASET_PATHS) {
+        try {
+          console.info(`[GovAI] Intentando cargar dataset: ${path}`);
+          const res = await fetch(path, { cache: 'no-store' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+          const data = await res.json();
+          if (!Array.isArray(data)) throw new Error('JSON inválido: se esperaba array');
+
+          const label = path.replace('./', '');
+          document.getElementById('datasetSourceLabel').textContent = label;
+          console.info(`[GovAI] Dataset cargado: ${label}. Registros: ${data.length}`);
+          return data;
+        } catch (err) {
+          errors.push(`${path}: ${err.message}`);
+          console.warn(`[GovAI] No se pudo cargar ${path}`, err);
+        }
+      }
+
+      throw new Error(`No se pudo cargar ningún dataset frontend. ${errors.join(' | ')}`);
+    }
+
     async function init() {
       renderSkeleton();
       try {
-        const res = await fetch('./data/licitaciones_abiertas.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        if (!Array.isArray(data)) throw new Error('JSON inválido: se esperaba array');
+        const data = await fetchDashboardDataset();
 
         state.raw = enrich(data.filter(x => x && typeof x === 'object'));
         state.filtered = [...state.raw];
@@ -609,7 +636,7 @@
         applyFilters();
       } catch (err) {
         console.error('[GovAI] init error:', err);
-        document.getElementById('cardsContainer').innerHTML = '<div class="soft-card rounded-2xl p-8 text-center col-span-full"><h3 class="text-xl font-bold mb-2 text-red-700">Error de carga</h3><p class="text-sm text-[var(--muted)]">No se pudo cargar data/licitaciones_abiertas.json</p></div>';
+        document.getElementById('cardsContainer').innerHTML = '<div class="soft-card rounded-2xl p-8 text-center col-span-full"><h3 class="text-xl font-bold mb-2 text-red-700">Error de carga</h3><p class="text-sm text-[var(--muted)]">No se pudo cargar el dataset frontend de licitaciones abiertas.</p></div>';
       }
     }
 
@@ -964,4 +991,3 @@ function closeODSModal() {
 
 </body>
 </html>
-

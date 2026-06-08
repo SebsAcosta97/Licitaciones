@@ -1,8 +1,6 @@
-data/**/*.txt
-data/**/*.bak
-data/**/*.html
-data/backup_*/
+# Python
 __pycache__/
-data/documentos_por_tipo/
-data/frontend/
+*.pyc
 
+# Backups
+data/backup_*/

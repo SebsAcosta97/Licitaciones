@@ -1,2 +1,4 @@
 data/licitaciones.json filter=lfs diff=lfs merge=lfs -text
 data/documentos_licitacion.json filter=lfs diff=lfs merge=lfs -text
+data/Bronze/licitaciones.json filter=lfs diff=lfs merge=lfs -text
+data/Bronze/documentos_licitacion.json filter=lfs diff=lfs merge=lfs -text
