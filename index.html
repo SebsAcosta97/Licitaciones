@@ -77,7 +77,7 @@
           <p class="text-sm text-[var(--muted)]">IA para contratación pública y estrategia de ofertas</p>
         </div>
       </div>
-      <div class="hidden md:flex text-xs text-[var(--muted)] bg-white border border-[var(--border)] px-3 py-2 rounded-xl">Fuente: <code id="datasetSourceLabel" class="ml-1">data/licitaciones_abiertas.json</code></div>
+      <div class="hidden md:flex text-xs text-[var(--muted)] bg-white border border-[var(--border)] px-3 py-2 rounded-xl">Fuente: <code id="datasetSourceLabel" class="ml-1">data/silver/licitaciones_abiertas.json</code></div>
     </header>
 
     <section class="soft-card rounded-3xl p-6 md:p-8 mb-6">
@@ -235,8 +235,8 @@
     };
 
     const DATASET_PATHS = [
+      './data/Silver/licitaciones_abiertas.json',
       './data/licitaciones_abiertas.json',
-      './data/Bronze/licitaciones_abiertas.json'
     ];
 
     const HEALTH = ['salud', 'sanidad', 'hospital', 'médic', 'clinic', 'farmac'];

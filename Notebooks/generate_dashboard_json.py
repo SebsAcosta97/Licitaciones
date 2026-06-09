@@ -4,15 +4,15 @@ import argparse
 import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+import pandas as pd
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
-BRONZE_DIR = DATA_DIR / "Bronze"
-SOURCE_PATH = BRONZE_DIR / "licitaciones.json"
-OUTPUT_PATH = DATA_DIR / "licitaciones_abiertas.json"
-SERVICIOS_CODE = "2"
-SERVICIOS_LABEL = "Servicios"
+SILVER_DIR = DATA_DIR / "Silver"
+SOURCE_PATH = SILVER_DIR / "df_tilos_limpio.parquet"
+OUTPUT_PATH = SILVER_DIR / "licitaciones_abiertas.json"
+
 
 TIPO_CONTRATO_MAP = {
     "1": "Obras",
@@ -68,8 +68,6 @@ def normalize_contract_code(value: Any) -> str:
     if raw in TIPO_CONTRATO_MAP:
         return raw
     raw_upper = raw.upper()
-    if raw_upper in {"SERVICIOS", "SERVICIO", "SERVICES"}:
-        return SERVICIOS_CODE
     for code, label in TIPO_CONTRATO_MAP.items():
         if raw_upper == label.upper():
             return code
@@ -152,12 +150,13 @@ def is_recent(row: dict[str, Any], cutoff: datetime) -> bool:
 
 def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
     licitacion_id = safe_text(row.get("licitacion_id"))
-    title = safe_text(row.get("title"))
+    title = safe_text(row.get("titulo"))
     organo = safe_text(row.get("organo_contratacion"))
     estado = safe_text(row.get("estado_codigo")).upper()
-    tipo = normalize_contract_code(row.get("tipo_contrato_codigo"))
+    tipo = safe_text(row.get("tipo_contrato"))
+    tipo_codigo = safe_text(row.get("tipo_contrato_codigo"))
     fecha = safe_text(row.get("fecha_publicacion"))
-    lugar = safe_text(row.get("lugar_ejecucion"))
+    lugar = safe_text(row.get("lugar_ejecucion_codigo"))
     url = safe_text(row.get("url") or row.get("detail_url"))
 
     if not licitacion_id:
@@ -165,7 +164,7 @@ def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
     if not title and not organo:
         return None
 
-    amount = parse_amount(row.get("importe_total"))
+    amount = parse_amount(row.get("importe_sin_impuestos"))
     if amount is None:
         amount = parse_amount(row.get("importe_estimado"))
 
@@ -175,8 +174,8 @@ def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
         "organo_contratacion": organo,
         "estado_codigo": estado,
         "estado": ESTADO_MAP.get(estado, estado),
-        "tipo_contrato_codigo": SERVICIOS_LABEL if tipo == SERVICIOS_CODE else TIPO_CONTRATO_MAP.get(tipo, tipo),
-        "tipo_contrato": SERVICIOS_LABEL if tipo == SERVICIOS_CODE else TIPO_CONTRATO_MAP.get(tipo, tipo),
+        "tipo_contrato_codigo": tipo,
+        "tipo_contrato": tipo_codigo,
         "importe_total": amount,
         "fecha_publicacion": fecha,
         "lugar_ejecucion": lugar,
@@ -246,8 +245,8 @@ def main() -> None:
     log(f"Salida: {output_path}")
     log(f"Ventana de recencia: últimos {args.months} meses (desde {cutoff.date()})")
 
-    with input_path.open("r", encoding="utf-8") as f:
-        raw = json.load(f)
+    df = pd.read_parquet(input_path)
+    raw = df.to_dict(orient="records")
 
     if not isinstance(raw, list):
         raise ValueError("El JSON de entrada debe ser una lista de objetos.")
@@ -274,10 +273,6 @@ def main() -> None:
 
         cleaned += 1
 
-        if normalize_contract_code(row.get("tipo_contrato_codigo")) != SERVICIOS_CODE:
-            filtered_open += 1
-            continue
-
         if not is_open_active(row):
             filtered_open += 1
             continue
@@ -295,10 +290,15 @@ def main() -> None:
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as f:
-        json.dump(deduped, f, ensure_ascii=False, separators=(",", ":"))
-
-    output_size = to_json_size(output_path)
-
+        json.dump(
+            deduped,
+            f,
+            ensure_ascii=False,
+            separators=(",", ":")
+        )
+    
+    output_size = output_path.stat().st_size
+    
     reduction_pct = 0.0
     if total_input > 0:
         reduction_pct = (1 - (len(deduped) / total_input)) * 100
