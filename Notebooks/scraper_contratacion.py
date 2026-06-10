@@ -1345,7 +1345,7 @@ def main() -> None:
     parser.add_argument(
         "--timeout",
         type=int,
-        default=90,
+        default=300,
         help="Timeout HTTP en segundos.",
     )
     parser.add_argument(
