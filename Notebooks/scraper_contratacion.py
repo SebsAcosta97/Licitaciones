@@ -1404,13 +1404,17 @@ def main() -> None:
     all_items: list[TenderRecord] = []
     all_docs: list[TenderDocument] = []
     for url in urls:
-        raw_feed = download_text(url, timeout_seconds=args.timeout)
+        
         try:
-            items, docs = parse_atom(
-                raw_feed, query=args.query, limit=0, services_only=services_only
+            raw_feed = download_text(
+                url,
+                timeout_seconds=args.timeout
             )
-        except MemoryError:
+        except Exception as e:
+            print(f"[WARNING] No se pudo descargar {url}")
+            print(str(e))
             continue
+        
         if args.health_only:
             items = [x for x in items if is_health_tender(x)]
             allowed_ids = {x.licitacion_id for x in items}
