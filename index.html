@@ -59,6 +59,24 @@
       background: linear-gradient(90deg, #edf2f9 25%, #e3ebf6 37%, #edf2f9 63%);
       background-size: 400% 100%;
     }
+    .data-table th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .data-table td {
+      font-size: 12px;
+      vertical-align: top;
+      border-top: 1px solid var(--border);
+    }
+    .sort-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+    }
     @keyframes pulse {
       0% { background-position: 100% 50%; }
       100% { background-position: 0 50%; }
@@ -77,7 +95,7 @@
           <p class="text-sm text-[var(--muted)]">IA para contratación pública y estrategia de ofertas</p>
         </div>
       </div>
-      <div class="hidden md:flex text-xs text-[var(--muted)] bg-white border border-[var(--border)] px-3 py-2 rounded-xl">Fuente: <code id="datasetSourceLabel" class="ml-1">data/silver/licitaciones_abiertas.json</code></div>
+      <div class="hidden md:flex text-xs text-[var(--muted)] bg-white border border-[var(--border)] px-3 py-2 rounded-xl">Fuente: <code id="datasetSourceLabel" class="ml-1">data/Silver/licitaciones_abiertas.json</code></div>
     </header>
 
     <section class="soft-card rounded-3xl p-6 md:p-8 mb-6">
@@ -100,8 +118,20 @@
 
           <div class="space-y-4">
             <div>
+              <p class="text-xs text-[var(--muted)] mb-2">Tipo de contrato</p>
+              <div id="tipoChips" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div>
               <p class="text-xs text-[var(--muted)] mb-2">Estado</p>
               <div id="estadoChips" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div>
+              <p class="text-xs text-[var(--muted)] mb-2">Órgano contratante</p>
+              <div id="organoChips" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div>
+              <p class="text-xs text-[var(--muted)] mb-2">CPV</p>
+              <div id="cpvChips" class="flex flex-wrap gap-2"></div>
             </div>
             <div>
               <p class="text-xs text-[var(--muted)] mb-2">Ubicación</p>
@@ -133,17 +163,17 @@
 
       <div class="lg:col-span-8 xl:col-span-9 space-y-4">
         <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Licitaciones abiertas</p><p id="kpiAbiertas" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Presupuesto abierto (servicios)</p><p id="kpiBudget" class="text-2xl font-extrabold mt-1">€0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Licitaciones activas</p><p id="kpiAbiertas" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Presupuesto acumulado</p><p id="kpiBudget" class="text-2xl font-extrabold mt-1">€0</p></div>
           <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Organismos activos</p><p id="kpiOrganismos" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Servicios nuevos (7 días)</p><p id="kpiSemana" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Presupuesto medio</p><p id="kpiSemana" class="text-2xl font-extrabold mt-1">€0</p></div>
         </section>
 
         <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Base analítica IA</p><p id="kpiHistorico" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Sectores detectados</p><p id="kpiSectores" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Oportunidades IA</p><p id="kpiIA" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Contratos recurrentes</p><p id="kpiRecurrentes" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">CPV distintos</p><p id="kpiHistorico" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Adjudicatarios distintos</p><p id="kpiSectores" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Ofertas recibidas</p><p id="kpiIA" class="text-2xl font-extrabold mt-1">0</p></div>
+          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Con adjudicatario</p><p id="kpiRecurrentes" class="text-2xl font-extrabold mt-1">0</p></div>
         </section>
 
         
@@ -198,8 +228,13 @@
         </section>
 
         <section class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Estados</h3><div class="h-64"><canvas id="estadoChart"></canvas></div></div>
-          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Top organismos</h3><div class="h-64"><canvas id="orgChart"></canvas></div></div>
+          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Licitaciones por tipo</h3><div class="h-64"><canvas id="tipoChart"></canvas></div></div>
+          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Importe por tipo</h3><div class="h-64"><canvas id="importeTipoChart"></canvas></div></div>
+          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Top órganos contratantes</h3><div class="h-64"><canvas id="orgChart"></canvas></div></div>
+          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Top CPV</h3><div class="h-64"><canvas id="cpvChart"></canvas></div></div>
+          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Distribución por estado</h3><div class="h-64"><canvas id="estadoChart"></canvas></div></div>
+          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Evolución temporal</h3><div class="h-64"><canvas id="temporalChart"></canvas></div></div>
+          <div class="soft-card rounded-2xl p-4 xl:col-span-2"><h3 class="font-bold mb-2">Evolución del importe licitado</h3><div class="h-72"><canvas id="temporalImporteChart"></canvas></div></div>
         </section>
 
         <section class="flex items-center justify-between pt-1">
@@ -212,6 +247,42 @@
 
         <section id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3"></section>
         <div class="text-center"><button id="loadMoreBtn" class="hidden px-5 py-2.5 rounded-xl border border-[var(--border)] bg-white hover:bg-[var(--bg-soft)] text-sm font-semibold">Cargar más</button></div>
+
+        <section class="soft-card rounded-2xl p-4">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
+            <div>
+              <h3 class="text-xl font-bold">Tabla analítica de licitaciones</h3>
+              <p class="text-sm text-[var(--muted)]">Vista tabular con búsqueda, ordenación y paginación</p>
+            </div>
+            <p class="text-sm text-[var(--muted)]"><span id="tableCount">0</span> registros filtrados</p>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="data-table min-w-[1300px] w-full">
+              <thead>
+                <tr class="text-left">
+                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="titulo">Título <i class="fa-solid fa-sort"></i></button></th>
+                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="expediente">Expediente <i class="fa-solid fa-sort"></i></button></th>
+                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="organo_contratacion">Órgano <i class="fa-solid fa-sort"></i></button></th>
+                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="tipo_contrato">Tipo <i class="fa-solid fa-sort"></i></button></th>
+                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="estado">Estado <i class="fa-solid fa-sort"></i></button></th>
+                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="importe_total">Importe total <i class="fa-solid fa-sort"></i></button></th>
+                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="importe_sin_impuestos">Importe sin impuestos <i class="fa-solid fa-sort"></i></button></th>
+                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="fecha_publicacion">Fecha publicación <i class="fa-solid fa-sort"></i></button></th>
+                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="presentacion_hasta">Fecha límite <i class="fa-solid fa-sort"></i></button></th>
+                  <th class="py-3 pr-3">Lugar ejecución</th>
+                  <th class="py-3 pr-3">CPV</th>
+                  <th class="py-3 pr-3">Adjudicatario</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+          <div class="flex items-center justify-between mt-4">
+            <button id="prevPageBtn" class="px-4 py-2 rounded-xl border border-[var(--border)] bg-white text-sm font-semibold">Anterior</button>
+            <span id="pageInfo" class="text-sm text-[var(--muted)]">Página 1</span>
+            <button id="nextPageBtn" class="px-4 py-2 rounded-xl border border-[var(--border)] bg-white text-sm font-semibold">Siguiente</button>
+          </div>
+        </section>
       </div>
     </section>
   </div>
@@ -221,10 +292,16 @@
       raw: [],
       filtered: [],
       visible: 24,
-      charts: { estado: null, org: null },
+      tablePage: 1,
+      pageSize: 12,
+      sort: { field: 'fecha_publicacion', direction: 'desc' },
+      charts: {},
       filters: {
         q: '',
+        tipo: new Set(),
         estado: new Set(),
+        organo: new Set(),
+        cpv: new Set(),
         ubicacion: new Set(),
         minBudget: null,
         maxBudget: null,
@@ -242,6 +319,14 @@
     const HEALTH = ['salud', 'sanidad', 'hospital', 'médic', 'clinic', 'farmac'];
     const TECH = ['software', 'aplicaci', 'sistema', 'digital', 'cloud', 'datos', 'ia'];
     function safeText(v) { return (v ?? '').toString().trim(); }
+    function escapeHtml(v) {
+      return safeText(v)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
     function amount(v) {
       const n = Number((safeText(v).replace(/[^\d,.-]/g, '').replace(',', '.')));
       return Number.isFinite(n) ? n : 0;
@@ -255,7 +340,7 @@
       return Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
     }
     function locationBucket(item) {
-      const loc = safeText(item.lugar_ejecucion);
+      const loc = safeText(item.lugar_ejecucion || item.lugar_ejecucion_codigo);
       if (!loc) return 'No especificado';
       return loc.split(/[\/,]/)[0].trim() || 'No especificado';
     }
@@ -276,17 +361,28 @@
       state.meta.recurrentOrg = new Set(Object.entries(orgCounter).filter(([, c]) => c >= 5).map(([o]) => o));
 
       return rows.map(r => {
-        const title = safeText(r.title);
+        const title = safeText(r.titulo || r.title);
         const org = safeText(r.organo_contratacion);
-        const blob = `${title} ${org} ${safeText(r.lugar_ejecucion)} ${safeText(r.tipo_contrato_codigo)} ${safeText(r.estado_codigo)}`.toLowerCase();
+        const tipo = safeText(r.tipo_contrato || r.tipo_contrato_codigo);
+        const cpv = safeText(r.cpv_codes);
+        const adjudicatario = safeText(r.adjudicatario);
+        const blob = `${title} ${safeText(r.expediente)} ${org} ${safeText(r.organo_dir3)} ${safeText(r.lugar_ejecucion)} ${safeText(r.lugar_ejecucion_codigo)} ${tipo} ${safeText(r.estado)} ${safeText(r.estado_codigo)} ${cpv} ${safeText(r.cpv_descripcion)} ${adjudicatario}`.toLowerCase();
         const tags = new Set();
         if (HEALTH.some(k => blob.includes(k))) tags.add('SALUD');
         if (TECH.some(k => blob.includes(k))) tags.add('TECH');
         const item = {
           ...r,
+          title,
           __amount: amount(r.importe_total),
+          __amountNoTax: amount(r.importe_sin_impuestos),
           __date: dateVal(r.fecha_publicacion),
+          __deadline: dateVal(r.presentacion_hasta),
           __loc: locationBucket(r),
+          __tipo: tipo || 'No especificado',
+          __estado: safeText(r.estado || r.estado_codigo) || 'No especificado',
+          __org: org || 'No especificado',
+          __cpv: cpv || 'No especificado',
+          __adjudicatario: adjudicatario,
           __blob: blob,
           __tags: tags
         };
@@ -308,12 +404,21 @@
     }
 
     function chip(id, label, active = false) {
-      return `<button data-id="${id}" class="chip ${active ? 'active' : ''}">${label}</button>`;
+      return `<button data-id="${escapeHtml(id)}" class="chip ${active ? 'active' : ''}">${escapeHtml(label)}</button>`;
     }
 
     function topCounts(field, max = 10) {
       const map = {};
       state.raw.forEach(r => { const k = safeText(r[field]); if (k) map[k] = (map[k] || 0) + 1; });
+      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
+    }
+
+    function topByAccessor(accessor, max = 10) {
+      const map = {};
+      state.raw.forEach(r => {
+        const k = safeText(accessor(r));
+        if (k) map[k] = (map[k] || 0) + 1;
+      });
       return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
     }
 
@@ -324,10 +429,16 @@
     }
 
     function renderFilterUI() {
-      const estado = topCounts('estado_codigo', 8);
+      const tipo = topByAccessor(r => r.__tipo, 8);
+      const estado = topByAccessor(r => r.__estado, 8);
+      const organo = topByAccessor(r => r.__org, 8);
+      const cpv = topByAccessor(r => r.__cpv, 8);
       const loc = topLocations(12);
 
+      document.getElementById('tipoChips').innerHTML = tipo.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.tipo.has(v))).join('');
       document.getElementById('estadoChips').innerHTML = estado.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.estado.has(v))).join('');
+      document.getElementById('organoChips').innerHTML = organo.map(([v, c]) => chip(v, `${v.slice(0, 34)}${v.length > 34 ? '…' : ''} (${c})`, state.filters.organo.has(v))).join('');
+      document.getElementById('cpvChips').innerHTML = cpv.map(([v, c]) => chip(v, `${v.slice(0, 22)}${v.length > 22 ? '…' : ''} (${c})`, state.filters.cpv.has(v))).join('');
       document.getElementById('ubicacionChips').innerHTML = loc.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.ubicacion.has(v))).join('');
 
       document.getElementById('fechaChips').innerHTML = [
@@ -347,7 +458,10 @@
       const f = state.filters;
       state.filtered = state.raw.filter(r => {
         if (f.q && !r.__blob.includes(f.q)) return false;
-        if (f.estado.size && !f.estado.has(r.estado_codigo)) return false;
+        if (f.tipo.size && !f.tipo.has(r.__tipo)) return false;
+        if (f.estado.size && !f.estado.has(r.__estado)) return false;
+        if (f.organo.size && !f.organo.has(r.__org)) return false;
+        if (f.cpv.size && !f.cpv.has(r.__cpv)) return false;
         if (f.ubicacion.size && !f.ubicacion.has(r.__loc)) return false;
         if (f.minBudget !== null && r.__amount < f.minBudget) return false;
         if (f.maxBudget !== null && r.__amount > f.maxBudget) return false;
@@ -374,6 +488,7 @@
         return b.__score - a.__score;
       });
 
+      state.tablePage = 1;
       renderAll();
     }
 
@@ -385,21 +500,22 @@
       const rows = state.filtered;
       const base = state.raw;
       const budget = rows.reduce((a, r) => a + r.__amount, 0);
-      const orgs = new Set(rows.map(r => r.organo_contratacion).filter(Boolean));
-      const week = rows.filter(r => daysAgo(r.__date) <= 7).length;
-      const sectors = new Set(base.flatMap(r => [...r.__tags]));
-      const ia = rows.filter(r => r.__score >= 80).length;
-      const rec = rows.filter(r => state.meta.recurrentOrg.has(r.organo_contratacion)).length;
+      const avgBudget = rows.length ? budget / rows.length : 0;
+      const orgs = new Set(rows.map(r => r.__org).filter(Boolean));
+      const cpvs = new Set(rows.map(r => r.__cpv).filter(v => v && v !== 'No especificado'));
+      const adjudicatarios = new Set(rows.map(r => r.__adjudicatario).filter(Boolean));
+      const ofertas = rows.reduce((a, r) => a + amount(r.ofertas_recibidas), 0);
+      const adjudicadas = rows.filter(r => r.__adjudicatario).length;
 
       document.getElementById('kpiAbiertas').textContent = rows.length.toLocaleString('es-ES');
       document.getElementById('kpiBudget').textContent = formatEuro(budget);
       document.getElementById('kpiOrganismos').textContent = orgs.size.toLocaleString('es-ES');
-      document.getElementById('kpiSemana').textContent = week.toLocaleString('es-ES');
+      document.getElementById('kpiSemana').textContent = formatEuro(avgBudget);
 
-      document.getElementById('kpiHistorico').textContent = base.length.toLocaleString('es-ES');
-      document.getElementById('kpiSectores').textContent = sectors.size.toLocaleString('es-ES');
-      document.getElementById('kpiIA').textContent = ia.toLocaleString('es-ES');
-      document.getElementById('kpiRecurrentes').textContent = rec.toLocaleString('es-ES');
+      document.getElementById('kpiHistorico').textContent = cpvs.size.toLocaleString('es-ES');
+      document.getElementById('kpiSectores').textContent = adjudicatarios.size.toLocaleString('es-ES');
+      document.getElementById('kpiIA').textContent = ofertas.toLocaleString('es-ES');
+      document.getElementById('kpiRecurrentes').textContent = adjudicadas.toLocaleString('es-ES');
     }
 
     function insights() {
@@ -421,7 +537,10 @@
     function renderActiveFilters() {
       const out = [];
       if (state.filters.q) out.push(`Búsqueda: ${state.filters.q}`);
+      state.filters.tipo.forEach(v => out.push(`Tipo: ${v}`));
       state.filters.estado.forEach(v => out.push(`Estado: ${v}`));
+      state.filters.organo.forEach(v => out.push(`Órgano: ${v}`));
+      state.filters.cpv.forEach(v => out.push(`CPV: ${v}`));
       state.filters.ubicacion.forEach(v => out.push(`Ubicación: ${v}`));
       if (state.filters.minBudget !== null) out.push(`Min: ${formatEuro(state.filters.minBudget)}`);
       if (state.filters.maxBudget !== null) out.push(`Max: ${formatEuro(state.filters.maxBudget)}`);
@@ -433,26 +552,61 @@
         : '<span class="text-sm text-[var(--muted)]">Sin filtros activos</span>';
     }
 
+    function aggregate(rows, accessor, reducer = 'count', max = 8) {
+      const map = {};
+      rows.forEach(r => {
+        const key = safeText(accessor(r)) || 'No especificado';
+        map[key] = (map[key] || 0) + (reducer === 'sumAmount' ? r.__amount : 1);
+      });
+      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
+    }
+
+    function monthKey(date) {
+      if (!date) return 'Sin fecha';
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    }
+
+    function makeChart(id, type, labels, values, label, color = '#2f7ff7') {
+      if (state.charts[id]) state.charts[id].destroy();
+      state.charts[id] = new Chart(document.getElementById(id), {
+        type,
+        data: {
+          labels,
+          datasets: [{
+            label,
+            data: values,
+            backgroundColor: type === 'doughnut' ? ['#2f7ff7','#8fd5be','#ffd08a','#b9a6ff','#ff9eb5','#7bdff2','#c7d2fe'] : color,
+            borderColor: color,
+            borderRadius: type === 'bar' ? 8 : 0,
+            tension: .3,
+            fill: type === 'line'
+          }]
+        },
+        options: {
+          plugins: { legend: { display: type === 'doughnut', position: 'bottom' } },
+          maintainAspectRatio: false,
+          scales: type === 'doughnut' ? {} : { x: { ticks: { maxRotation: 35, minRotation: 0 } }, y: { beginAtZero: true } }
+        }
+      });
+    }
+
     function chart() {
       const rows = state.filtered;
-      const estado = rows.reduce((m, r) => (m[r.estado_codigo] = (m[r.estado_codigo] || 0) + 1, m), {});
-      const org = rows.reduce((m, r) => (m[r.organo_contratacion] = (m[r.organo_contratacion] || 0) + 1, m), {});
-      const topOrg = Object.entries(org).sort((a, b) => b[1] - a[1]).slice(0, 7);
+      const tipo = aggregate(rows, r => r.__tipo, 'count', 8);
+      const importeTipo = aggregate(rows, r => r.__tipo, 'sumAmount', 8);
+      const org = aggregate(rows, r => r.__org, 'count', 8);
+      const cpv = aggregate(rows, r => r.__cpv, 'count', 8);
+      const estado = aggregate(rows, r => r.__estado, 'count', 8);
+      const temporalCount = Object.entries(rows.reduce((m, r) => (m[monthKey(r.__date)] = (m[monthKey(r.__date)] || 0) + 1, m), {})).sort((a, b) => a[0].localeCompare(b[0]));
+      const temporalAmount = Object.entries(rows.reduce((m, r) => (m[monthKey(r.__date)] = (m[monthKey(r.__date)] || 0) + r.__amount, m), {})).sort((a, b) => a[0].localeCompare(b[0]));
 
-      if (state.charts.estado) state.charts.estado.destroy();
-      if (state.charts.org) state.charts.org.destroy();
-
-      state.charts.estado = new Chart(document.getElementById('estadoChart'), {
-        type: 'doughnut',
-        data: { labels: Object.keys(estado), datasets: [{ data: Object.values(estado), backgroundColor: ['#2f7ff7','#8cb8ff','#8fd5be','#ffd08a','#b9a6ff','#90caf9'] }] },
-        options: { plugins: { legend: { position: 'bottom' } }, maintainAspectRatio: false }
-      });
-
-      state.charts.org = new Chart(document.getElementById('orgChart'), {
-        type: 'bar',
-        data: { labels: topOrg.map(x => x[0]), datasets: [{ data: topOrg.map(x => x[1]), backgroundColor: '#2f7ff7', borderRadius: 8 }] },
-        options: { plugins: { legend: { display: false } }, maintainAspectRatio: false }
-      });
+      makeChart('tipoChart', 'bar', tipo.map(x => x[0]), tipo.map(x => x[1]), 'Licitaciones');
+      makeChart('importeTipoChart', 'bar', importeTipo.map(x => x[0]), importeTipo.map(x => x[1]), 'Importe', '#1f9d7a');
+      makeChart('orgChart', 'bar', org.map(x => x[0]), org.map(x => x[1]), 'Licitaciones', '#2f7ff7');
+      makeChart('cpvChart', 'bar', cpv.map(x => x[0]), cpv.map(x => x[1]), 'Licitaciones', '#6d7dfc');
+      makeChart('estadoChart', 'doughnut', estado.map(x => x[0]), estado.map(x => x[1]), 'Estado');
+      makeChart('temporalChart', 'line', temporalCount.map(x => x[0]), temporalCount.map(x => x[1]), 'Licitaciones', '#2f7ff7');
+      makeChart('temporalImporteChart', 'line', temporalAmount.map(x => x[0]), temporalAmount.map(x => x[1]), 'Importe', '#1f9d7a');
     }
 
     function badgeClass(label) {
@@ -489,15 +643,17 @@
         return `
         <article class="soft-card rounded-2xl p-4">
           <div class="flex items-start justify-between gap-3 mb-3">
-            <h4 class="font-bold leading-snug text-sm md:text-base">${safeText(r.title) || 'Sin título'}</h4>
+            <h4 class="font-bold leading-snug text-sm md:text-base">${escapeHtml(r.title) || 'Sin título'}</h4>
             <span class="text-xs px-2 py-1 rounded-full border ${badgeClass('IA')}">${r.__score}%</span>
           </div>
-          <p class="text-xs text-[var(--muted)] mb-3">${safeText(r.organo_contratacion) || 'Organismo no informado'}</p>
+          <p class="text-xs text-[var(--muted)] mb-3">${escapeHtml(r.__org) || 'Organismo no informado'}</p>
           <div class="grid grid-cols-2 gap-2 text-xs mb-3">
-            <div><p class="text-[var(--muted)]">Estado</p><p class="font-semibold">${safeText(r.estado_codigo) || '-'}</p></div>
+            <div><p class="text-[var(--muted)]">Estado</p><p class="font-semibold">${escapeHtml(r.__estado) || '-'}</p></div>
             <div><p class="text-[var(--muted)]">Fecha</p><p class="font-semibold">${r.__date ? r.__date.toLocaleDateString('es-ES') : '-'}</p></div>
             <div><p class="text-[var(--muted)]">Importe</p><p class="font-semibold">${formatEuro(r.__amount)}</p></div>
-            <div><p class="text-[var(--muted)]">Ubicación</p><p class="font-semibold">${safeText(r.__loc)}</p></div>
+            <div><p class="text-[var(--muted)]">Ubicación</p><p class="font-semibold">${escapeHtml(r.__loc)}</p></div>
+            <div><p class="text-[var(--muted)]">CPV</p><p class="font-semibold">${escapeHtml(r.__cpv)}</p></div>
+            <div><p class="text-[var(--muted)]">Fecha límite</p><p class="font-semibold">${r.__deadline ? r.__deadline.toLocaleDateString('es-ES') : '-'}</p></div>
           </div>
           <div class="flex flex-wrap gap-1.5 mb-3">${badges.map(b => `<span class="text-[10px] px-2 py-1 rounded-full border ${badgeClass(b)}">${b}</span>`).join('')}</div>
           
@@ -521,17 +677,68 @@
       document.getElementById('loadMoreBtn').classList.toggle('hidden', state.filtered.length <= state.visible);
     }
 
+    function sortValue(row, field) {
+      if (field === 'importe_total') return row.__amount;
+      if (field === 'importe_sin_impuestos') return row.__amountNoTax;
+      if (field === 'fecha_publicacion') return row.__date?.getTime() || 0;
+      if (field === 'presentacion_hasta') return row.__deadline?.getTime() || 0;
+      return safeText(row[field] ?? row[`__${field}`]).toLowerCase();
+    }
+
+    function sortedTableRows() {
+      const { field, direction } = state.sort;
+      return [...state.filtered].sort((a, b) => {
+        const av = sortValue(a, field);
+        const bv = sortValue(b, field);
+        if (av < bv) return direction === 'asc' ? -1 : 1;
+        if (av > bv) return direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    function renderTable() {
+      const rows = sortedTableRows();
+      const totalPages = Math.max(1, Math.ceil(rows.length / state.pageSize));
+      state.tablePage = Math.min(state.tablePage, totalPages);
+      const start = (state.tablePage - 1) * state.pageSize;
+      const pageRows = rows.slice(start, start + state.pageSize);
+
+      document.getElementById('tableCount').textContent = rows.length.toLocaleString('es-ES');
+      document.getElementById('pageInfo').textContent = `Página ${state.tablePage} de ${totalPages}`;
+      document.getElementById('prevPageBtn').disabled = state.tablePage <= 1;
+      document.getElementById('nextPageBtn').disabled = state.tablePage >= totalPages;
+
+      document.getElementById('tableBody').innerHTML = pageRows.map(r => `
+        <tr>
+          <td class="py-3 pr-3 min-w-[260px] font-semibold">${escapeHtml(r.title)}</td>
+          <td class="py-3 pr-3">${escapeHtml(r.expediente)}</td>
+          <td class="py-3 pr-3 min-w-[220px]">${escapeHtml(r.__org)}</td>
+          <td class="py-3 pr-3">${escapeHtml(r.__tipo)}</td>
+          <td class="py-3 pr-3">${escapeHtml(r.__estado)}</td>
+          <td class="py-3 pr-3 font-semibold">${formatEuro(r.__amount)}</td>
+          <td class="py-3 pr-3">${formatEuro(r.__amountNoTax)}</td>
+          <td class="py-3 pr-3">${r.__date ? r.__date.toLocaleDateString('es-ES') : '-'}</td>
+          <td class="py-3 pr-3">${r.__deadline ? r.__deadline.toLocaleDateString('es-ES') : '-'}</td>
+          <td class="py-3 pr-3">${escapeHtml(r.__loc)}</td>
+          <td class="py-3 pr-3">${escapeHtml(r.__cpv)}<br><span class="text-[var(--muted)]">${escapeHtml(r.cpv_descripcion)}</span></td>
+          <td class="py-3 pr-3">${escapeHtml(r.__adjudicatario) || '-'}</td>
+        </tr>
+      `).join('');
+    }
+
     function renderAll() {
       kpis();
       insights();
       renderActiveFilters();
       chart();
       cards();
+      renderTable();
     }
 
     function clearAll() {
-      state.filters = { q: '', estado: new Set(), ubicacion: new Set(), minBudget: null, maxBudget: null, fecha: 'all', flags: new Set() };
+      state.filters = { q: '', tipo: new Set(), estado: new Set(), organo: new Set(), cpv: new Set(), ubicacion: new Set(), minBudget: null, maxBudget: null, fecha: 'all', flags: new Set() };
       state.visible = 24;
+      state.tablePage = 1;
       document.getElementById('searchInput').value = '';
       document.getElementById('minBudget').value = '';
       document.getElementById('maxBudget').value = '';
@@ -562,9 +769,27 @@
 
       function toggleSet(set, value) { set.has(value) ? set.delete(value) : set.add(value); }
 
+      document.getElementById('tipoChips').addEventListener('click', e => {
+        const b = e.target.closest('button[data-id]'); if (!b) return;
+        toggleSet(state.filters.tipo, b.dataset.id);
+        renderFilterUI(); applyFilters();
+      });
+
       document.getElementById('estadoChips').addEventListener('click', e => {
         const b = e.target.closest('button[data-id]'); if (!b) return;
         toggleSet(state.filters.estado, b.dataset.id);
+        renderFilterUI(); applyFilters();
+      });
+
+      document.getElementById('organoChips').addEventListener('click', e => {
+        const b = e.target.closest('button[data-id]'); if (!b) return;
+        toggleSet(state.filters.organo, b.dataset.id);
+        renderFilterUI(); applyFilters();
+      });
+
+      document.getElementById('cpvChips').addEventListener('click', e => {
+        const b = e.target.closest('button[data-id]'); if (!b) return;
+        toggleSet(state.filters.cpv, b.dataset.id);
         renderFilterUI(); applyFilters();
       });
 
@@ -596,6 +821,19 @@
 
       document.getElementById('clearAllFilters').addEventListener('click', clearAll);
       document.getElementById('loadMoreBtn').addEventListener('click', () => { state.visible += 24; cards(); });
+      document.getElementById('prevPageBtn').addEventListener('click', () => { state.tablePage = Math.max(1, state.tablePage - 1); renderTable(); });
+      document.getElementById('nextPageBtn').addEventListener('click', () => { state.tablePage += 1; renderTable(); });
+      document.querySelectorAll('button[data-sort]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const field = btn.dataset.sort;
+          state.sort = {
+            field,
+            direction: state.sort.field === field && state.sort.direction === 'asc' ? 'desc' : 'asc'
+          };
+          state.tablePage = 1;
+          renderTable();
+        });
+      });
     }
 
     async function fetchDashboardDataset() {

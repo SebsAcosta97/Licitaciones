@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import math
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import pandas as pd
@@ -12,6 +13,39 @@ DATA_DIR = PROJECT_ROOT / "data"
 SILVER_DIR = DATA_DIR / "Silver"
 SOURCE_PATH = SILVER_DIR / "df_tilos_limpio.parquet"
 OUTPUT_PATH = SILVER_DIR / "licitaciones_abiertas.json"
+
+EXPORT_COLUMNS = [
+    "licitacion_id",
+    "titulo",
+    "expediente",
+    "detail_url",
+    "url",
+    "updated",
+    "fecha_publicacion",
+    "presentacion_hasta",
+    "presentacion_hora",
+    "organo_contratacion",
+    "organo_dir3",
+    "estado",
+    "estado_codigo",
+    "tipo_contrato",
+    "tipo_contrato_codigo",
+    "procedimiento_codigo",
+    "importe_total",
+    "importe_sin_impuestos",
+    "adjudicatario",
+    "adjudicatario_nif",
+    "cpv_codes",
+    "cpv_descripcion",
+    "cpv_nivel",
+    "lugar_ejecucion",
+    "lugar_ejecucion_codigo",
+    "contrato_duracion",
+    "contrato_duracion_unidad",
+    "ofertas_recibidas",
+    "fuente_publicacion",
+    "notice_types",
+]
 
 
 TIPO_CONTRATO_MAP = {
@@ -58,6 +92,13 @@ def log(msg: str) -> None:
 def safe_text(value: Any) -> str:
     if value is None:
         return ""
+    try:
+        if pd.isna(value):
+            return ""
+    except (TypeError, ValueError):
+        pass
+    if isinstance(value, float) and math.isnan(value):
+        return ""
     return str(value).strip()
 
 
@@ -92,6 +133,14 @@ def parse_amount(value: Any) -> float | None:
 
 
 def parse_date(value: Any) -> datetime | None:
+    if isinstance(value, pd.Timestamp):
+        if pd.isna(value):
+            return None
+        dt = value.to_pydatetime()
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc)
+
     text = safe_text(value)
     if not text:
         return None
@@ -150,13 +199,13 @@ def is_recent(row: dict[str, Any], cutoff: datetime) -> bool:
 
 def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
     licitacion_id = safe_text(row.get("licitacion_id"))
-    title = safe_text(row.get("titulo"))
+    title = safe_text(row.get("titulo") or row.get("title"))
     organo = safe_text(row.get("organo_contratacion"))
     estado = safe_text(row.get("estado_codigo")).upper()
     tipo = safe_text(row.get("tipo_contrato"))
     tipo_codigo = safe_text(row.get("tipo_contrato_codigo"))
     fecha = safe_text(row.get("fecha_publicacion"))
-    lugar = safe_text(row.get("lugar_ejecucion_codigo"))
+    lugar = safe_text(row.get("lugar_ejecucion") or row.get("lugar_ejecucion_codigo"))
     url = safe_text(row.get("url") or row.get("detail_url"))
 
     if not licitacion_id:
@@ -164,23 +213,44 @@ def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
     if not title and not organo:
         return None
 
-    amount = parse_amount(row.get("importe_sin_impuestos"))
-    if amount is None:
-        amount = parse_amount(row.get("importe_estimado"))
+    importe_sin_impuestos = parse_amount(row.get("importe_sin_impuestos"))
+    importe_total = parse_amount(row.get("importe_total"))
+    if importe_total is None:
+        # El parquet actual no incluye importe_total; se usa importe_sin_impuestos
+        # como proxy para mantener compatibilidad con el frontend.
+        importe_total = importe_sin_impuestos
 
-    normalized = {
-        "licitacion_id": licitacion_id,
-        "title": title,
-        "organo_contratacion": organo,
-        "estado_codigo": estado,
-        "estado": ESTADO_MAP.get(estado, estado),
-        "tipo_contrato_codigo": tipo,
-        "tipo_contrato": tipo_codigo,
-        "importe_total": amount,
-        "fecha_publicacion": fecha,
-        "lugar_ejecucion": lugar,
-        "url": url,
-    }
+    normalized: dict[str, Any] = {}
+    for column in EXPORT_COLUMNS:
+        value = row.get(column)
+        if column == "licitacion_id":
+            normalized[column] = licitacion_id
+        elif column == "titulo":
+            normalized[column] = title
+        elif column == "estado_codigo":
+            normalized[column] = estado
+        elif column == "estado":
+            normalized[column] = safe_text(value) or ESTADO_MAP.get(estado, estado)
+        elif column == "tipo_contrato":
+            normalized[column] = tipo or TIPO_CONTRATO_MAP.get(normalize_contract_code(tipo_codigo), tipo_codigo)
+        elif column == "tipo_contrato_codigo":
+            normalized[column] = tipo_codigo or normalize_contract_code(tipo)
+        elif column == "importe_total":
+            normalized[column] = importe_total
+        elif column == "importe_sin_impuestos":
+            normalized[column] = importe_sin_impuestos
+        elif column == "lugar_ejecucion":
+            normalized[column] = lugar
+        elif column in {"updated", "fecha_publicacion", "presentacion_hasta"}:
+            dt = parse_date(value)
+            normalized[column] = dt.date().isoformat() if dt else ""
+        elif column in {"contrato_duracion", "ofertas_recibidas"}:
+            amount = parse_amount(value)
+            normalized[column] = amount
+        else:
+            normalized[column] = safe_text(value)
+
+    normalized["title"] = title
     return normalized
 
 
