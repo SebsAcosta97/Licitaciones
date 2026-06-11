@@ -1,3 +1,13 @@
 requests==2.32.3
 beautifulsoup4==4.13.4
 pypdf==4.3.1
+
+pandas
+numpy
+pyarrow
+openpyxl
+
+jupyter
+notebook
+nbconvert
+ipykernel
