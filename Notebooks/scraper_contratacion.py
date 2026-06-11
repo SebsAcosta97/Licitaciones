@@ -1407,14 +1407,23 @@ def main() -> None:
         
         try:
             raw_feed = download_text(
-                url,
-                timeout_seconds=args.timeout
+            url,
+            timeout_seconds=args.timeout
             )
         except Exception as e:
             print(f"[WARNING] No se pudo descargar {url}")
             print(str(e))
             continue
         
+        try:
+            items, docs = parse_atom(
+                raw_feed, query=args.query, limit=args.limit, services_only=services_only
+            )
+
+        except Exception as e:
+            print(f"[WARNING] Error parsing feed from {url}: {e}")
+            continue
+
         if args.health_only:
             items = [x for x in items if is_health_tender(x)]
             allowed_ids = {x.licitacion_id for x in items}

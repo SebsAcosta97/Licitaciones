@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -37,22 +37,24 @@
       border: 1px solid var(--border);
       box-shadow: 0 10px 28px rgba(20, 32, 51, .06);
     }
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .location-select {
+      width: 100%;
+      min-height: 54px;
       border: 1px solid var(--border);
+      border-radius: 18px;
       background: white;
       color: var(--text);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 12px;
+      font-size: 15px;
       font-weight: 700;
-      line-height: 1;
-      transition: all .15s ease;
+      padding: 0 44px 0 42px;
+      outline: none;
+      appearance: none;
+      box-shadow: 0 10px 24px rgba(20, 32, 51, .05);
     }
-    .chip:hover { border-color: #b9c8dd; background: var(--panel-soft); }
-    .chip.active { background: var(--blue-soft); border-color: #b8ccff; color: #174ea6; }
+    .location-select:focus {
+      border-color: #9bb8ff;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, .10);
+    }
     .metric-card {
       border-radius: 14px;
       border: 1px solid var(--border);
@@ -94,7 +96,7 @@
 </head>
 <body>
   <main class="max-w-7xl mx-auto px-4 md:px-8 py-5 md:py-8">
-    <header class="flex flex-col lg:flex-row lg:items-center gap-4 mb-5">
+    <header class="mb-5">
       <div class="flex items-center gap-3 min-w-fit">
         <div class="w-11 h-11 rounded-2xl bg-[var(--blue)] text-white flex items-center justify-center shadow-lg shadow-blue-200">
           <i class="fa-solid fa-chart-line"></i>
@@ -105,57 +107,21 @@
         </div>
       </div>
 
-      <div class="panel rounded-2xl px-4 py-3 flex items-center gap-3 flex-1">
-        <i class="fa-solid fa-magnifying-glass text-[var(--blue)]"></i>
-        <input id="searchInput" class="w-full bg-transparent outline-none text-base" aria-label="Buscar licitaciones" placeholder="Buscar licitaciones, CPV, expediente, organismo, ciudad..." />
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-3 mt-5">
+        <div class="panel rounded-2xl px-5 py-4 flex items-center gap-3">
+          <i class="fa-solid fa-magnifying-glass text-[var(--blue)]"></i>
+          <input id="searchInput" class="w-full bg-transparent outline-none text-lg" aria-label="Buscar licitaciones" placeholder="Buscar licitaciones, organismo, CPV, expediente o ubicación..." />
+        </div>
+        <div class="relative">
+          <label for="locationFilter" class="sr-only">Ubicación</label>
+          <select id="locationFilter" class="location-select">
+            <option value="">Todas las ubicaciones</option>
+          </select>
+          <i class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-[var(--blue)] pointer-events-none"></i>
+          <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[var(--muted)] pointer-events-none"></i>
+        </div>
       </div>
     </header>
-
-    <section class="panel rounded-2xl p-4 mb-5">
-      <div class="flex items-center justify-between gap-3 mb-3">
-        <h2 class="font-extrabold">Filtros</h2>
-        <button id="clearAllFilters" class="text-sm font-bold text-[var(--blue)]">Limpiar filtros</button>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div>
-          <p class="text-xs text-[var(--muted)] mb-2">Tipo</p>
-          <div id="tipoChips" class="flex flex-wrap gap-2"></div>
-        </div>
-        <div>
-          <p class="text-xs text-[var(--muted)] mb-2">Estado</p>
-          <div id="estadoChips" class="flex flex-wrap gap-2"></div>
-        </div>
-        <div>
-          <p class="text-xs text-[var(--muted)] mb-2">Ubicación</p>
-          <div id="ubicacionChips" class="flex flex-wrap gap-2"></div>
-        </div>
-        <div>
-          <p class="text-xs text-[var(--muted)] mb-2">Probabilidad de adjudicación</p>
-          <div id="probabilityChips" class="flex flex-wrap gap-2"></div>
-        </div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
-        <div>
-          <label class="text-xs text-[var(--muted)] mb-2 block">Órgano contratante</label>
-          <select id="orgFilter" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm bg-white"></select>
-        </div>
-        <div>
-          <label class="text-xs text-[var(--muted)] mb-2 block">CPV</label>
-          <select id="cpvFilter" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm bg-white"></select>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="text-xs text-[var(--muted)] mb-2 block">Importe mínimo</label>
-            <input id="minBudget" type="number" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm" />
-          </div>
-          <div>
-            <label class="text-xs text-[var(--muted)] mb-2 block">Importe máximo</label>
-            <input id="maxBudget" type="number" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm" />
-          </div>
-        </div>
-      </div>
-      <div id="activeFilters" class="flex flex-wrap gap-2 mt-4"></div>
-    </section>
 
     <section class="mb-6">
       <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-3">
@@ -163,7 +129,6 @@
           <h2 class="text-2xl font-extrabold">Licitaciones destacadas</h2>
           <p class="text-sm text-[var(--muted)]"><span id="resultsCount">0</span> oportunidades encontradas</p>
         </div>
-        <div id="quickFilters" class="flex flex-wrap gap-2"></div>
       </div>
       <section id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></section>
       <div class="text-center mt-4">
@@ -238,14 +203,7 @@
       sort: { field: 'presentacion_hasta', direction: 'asc' },
       filters: {
         q: '',
-        tipo: new Set(),
-        estado: new Set(),
-        ubicacion: new Set(),
-        probabilidad: new Set(),
-        organo: '',
-        cpv: '',
-        minBudget: null,
-        maxBudget: null
+        ubicacion: ''
       }
     };
 
@@ -316,9 +274,6 @@
       const cls = score >= 75 ? 'prob-high' : score >= 50 ? 'prob-mid' : 'prob-low';
       return { score, label, cls };
     }
-    function chip(id, label, set) {
-      return `<button data-id="${escapeHtml(id)}" class="chip ${set.has(id) ? 'active' : ''}">${escapeHtml(label)}</button>`;
-    }
     function topCounts(rows, accessor, max = 8) {
       const map = {};
       rows.forEach(r => {
@@ -358,60 +313,26 @@
     }
 
     function renderFilters() {
-      document.getElementById('tipoChips').innerHTML = topCounts(state.raw, r => r.__tipo, 6).map(([v, c]) => chip(v, `${v} (${c})`, state.filters.tipo)).join('');
-      document.getElementById('estadoChips').innerHTML = topCounts(state.raw, r => r.__estado, 6).map(([v, c]) => chip(v, `${v} (${c})`, state.filters.estado)).join('');
-      document.getElementById('ubicacionChips').innerHTML = topCounts(state.raw, r => r.__loc, 8).map(([v, c]) => chip(v, `${v} (${c})`, state.filters.ubicacion)).join('');
-      document.getElementById('probabilityChips').innerHTML = ['Alta probabilidad','Media probabilidad','Baja probabilidad'].map(v => chip(v, v, state.filters.probabilidad)).join('');
-      document.getElementById('quickFilters').innerHTML = [
-        ['Alta probabilidad', 'Alta probabilidad'],
-        ['lowOffers', 'Baja competencia'],
-        ['highBudget', 'Alto presupuesto']
-      ].map(([k, l]) => `<button class="chip" data-quick="${k}">${escapeHtml(l)}</button>`).join('');
-
-      fillSelect('orgFilter', topCounts(state.raw, r => r.__org, 40), 'Todos los órganos');
-      fillSelect('cpvFilter', topCounts(state.raw, r => r.__cpv, 40), 'Todos los CPV');
-    }
-    function fillSelect(id, entries, label) {
-      const el = document.getElementById(id);
-      const current = el.value;
-      el.innerHTML = `<option value="">${label}</option>` + entries.map(([v, c]) => `<option value="${escapeHtml(v)}">${escapeHtml(v)} (${c})</option>`).join('');
-      el.value = current;
+      const entries = topCounts(state.raw, r => r.__loc, 80);
+      const select = document.getElementById('locationFilter');
+      const current = select.value;
+      select.innerHTML = '<option value="">Todas las ubicaciones</option>' + entries
+        .map(([value]) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`)
+        .join('');
+      select.value = current;
     }
 
     function applyFilters() {
       const f = state.filters;
       state.filtered = state.raw.filter(r => {
         if (f.q && !r.__blob.includes(f.q)) return false;
-        if (f.tipo.size && !f.tipo.has(r.__tipo)) return false;
-        if (f.estado.size && !f.estado.has(r.__estado)) return false;
-        if (f.ubicacion.size && !f.ubicacion.has(r.__loc)) return false;
-        if (f.probabilidad.size && !f.probabilidad.has(r.__probability.label)) return false;
-        if (f.organo && r.__org !== f.organo) return false;
-        if (f.cpv && r.__cpv !== f.cpv) return false;
-        if (f.minBudget !== null && r.__amount < f.minBudget) return false;
-        if (f.maxBudget !== null && r.__amount > f.maxBudget) return false;
-        if (f.lowOffers && amount(r.ofertas_recibidas) > 2) return false;
-        if (f.highBudget && r.__amount < 500000) return false;
+        if (f.ubicacion && r.__loc !== f.ubicacion) return false;
         return true;
       }).sort((a, b) => b.__probability.score - a.__probability.score || (a.__deadline?.getTime() || 0) - (b.__deadline?.getTime() || 0));
 
       state.visible = Math.min(state.visible, Math.max(18, state.filtered.length));
       state.tablePage = 1;
       renderAll();
-    }
-
-    function renderActiveFilters() {
-      const tags = [];
-      if (state.filters.q) tags.push(`Búsqueda: ${state.filters.q}`);
-      state.filters.tipo.forEach(v => tags.push(`Tipo: ${v}`));
-      state.filters.estado.forEach(v => tags.push(`Estado: ${v}`));
-      state.filters.ubicacion.forEach(v => tags.push(`Ubicación: ${v}`));
-      state.filters.probabilidad.forEach(v => tags.push(v));
-      if (state.filters.organo) tags.push(`Órgano: ${state.filters.organo}`);
-      if (state.filters.cpv) tags.push(`CPV: ${state.filters.cpv}`);
-      if (state.filters.minBudget !== null) tags.push(`Min: ${formatEuro(state.filters.minBudget)}`);
-      if (state.filters.maxBudget !== null) tags.push(`Max: ${formatEuro(state.filters.maxBudget)}`);
-      document.getElementById('activeFilters').innerHTML = tags.length ? tags.map(t => `<span class="chip active">${escapeHtml(t)}</span>`).join('') : '<span class="text-sm text-[var(--muted)]">Sin filtros activos</span>';
     }
 
     function renderCards() {
@@ -429,7 +350,7 @@
             <h3 class="font-extrabold leading-snug">${escapeHtml(r.title)}</h3>
             <span class="text-xs font-extrabold px-2 py-1 rounded-full border ${r.__probability.cls}">${r.__probability.score}%</span>
           </div>
-          <p class="text-xs text-[var(--muted)] mb-4">${escapeHtml(r.expediente)} · ${escapeHtml(r.__org)}</p>
+          <p class="text-xs text-[var(--muted)] mb-4">${escapeHtml(r.expediente)} Â· ${escapeHtml(r.__org)}</p>
           <div class="grid grid-cols-2 gap-3 text-xs">
             <div><p class="text-[var(--muted)]">Ubicación</p><p class="font-bold">${escapeHtml(r.__loc)}</p></div>
             <div><p class="text-[var(--muted)]">Presupuesto</p><p class="font-bold">${formatEuro(r.__amount)}</p></div>
@@ -539,7 +460,6 @@
     }
 
     function renderAll() {
-      renderActiveFilters();
       renderCards();
       renderKpis();
       renderInsights();
@@ -547,43 +467,15 @@
       renderTable();
     }
 
-    function toggleSet(set, value) {
-      set.has(value) ? set.delete(value) : set.add(value);
-    }
-    function bindChipGroup(id, set) {
-      document.getElementById(id).addEventListener('click', e => {
-        const btn = e.target.closest('button[data-id]');
-        if (!btn) return;
-        toggleSet(set, btn.dataset.id);
-        renderFilters();
+    function bindEvents() {
+      document.getElementById('searchInput').addEventListener('input', e => {
+        state.filters.q = safeText(e.target.value).toLowerCase();
         applyFilters();
       });
-    }
-    function clearAll() {
-      state.filters = { q: '', tipo: new Set(), estado: new Set(), ubicacion: new Set(), probabilidad: new Set(), organo: '', cpv: '', minBudget: null, maxBudget: null };
-      state.visible = 18;
-      state.tablePage = 1;
-      document.getElementById('searchInput').value = '';
-      document.getElementById('orgFilter').value = '';
-      document.getElementById('cpvFilter').value = '';
-      document.getElementById('minBudget').value = '';
-      document.getElementById('maxBudget').value = '';
-      delete state.filters.lowOffers;
-      delete state.filters.highBudget;
-      renderFilters();
-      applyFilters();
-    }
-    function bindEvents() {
-      document.getElementById('searchInput').addEventListener('input', e => { state.filters.q = safeText(e.target.value).toLowerCase(); applyFilters(); });
-      document.getElementById('orgFilter').addEventListener('change', e => { state.filters.organo = e.target.value; applyFilters(); });
-      document.getElementById('cpvFilter').addEventListener('change', e => { state.filters.cpv = e.target.value; applyFilters(); });
-      document.getElementById('minBudget').addEventListener('input', e => { const v = Number(e.target.value); state.filters.minBudget = Number.isFinite(v) && v > 0 ? v : null; applyFilters(); });
-      document.getElementById('maxBudget').addEventListener('input', e => { const v = Number(e.target.value); state.filters.maxBudget = Number.isFinite(v) && v > 0 ? v : null; applyFilters(); });
-      bindChipGroup('tipoChips', state.filters.tipo);
-      bindChipGroup('estadoChips', state.filters.estado);
-      bindChipGroup('ubicacionChips', state.filters.ubicacion);
-      bindChipGroup('probabilityChips', state.filters.probabilidad);
-      document.getElementById('clearAllFilters').addEventListener('click', clearAll);
+      document.getElementById('locationFilter').addEventListener('change', e => {
+        state.filters.ubicacion = e.target.value;
+        applyFilters();
+      });
       document.getElementById('loadMoreBtn').addEventListener('click', () => { state.visible += 18; renderCards(); });
       document.getElementById('prevPageBtn').addEventListener('click', () => { state.tablePage = Math.max(1, state.tablePage - 1); renderTable(); });
       document.getElementById('nextPageBtn').addEventListener('click', () => { state.tablePage += 1; renderTable(); });
@@ -593,16 +485,6 @@
           state.sort = { field, direction: state.sort.field === field && state.sort.direction === 'asc' ? 'desc' : 'asc' };
           renderTable();
         });
-      });
-      document.getElementById('quickFilters').addEventListener('click', e => {
-        const btn = e.target.closest('button[data-quick]');
-        if (!btn) return;
-        const key = btn.dataset.quick;
-        if (key === 'Alta probabilidad') toggleSet(state.filters.probabilidad, key);
-        if (key === 'lowOffers') state.filters.lowOffers = !state.filters.lowOffers;
-        if (key === 'highBudget') state.filters.highBudget = !state.filters.highBudget;
-        renderFilters();
-        applyFilters();
       });
     }
 
@@ -641,3 +523,5 @@
   </script>
 </body>
 </html>
+
+
