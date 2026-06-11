@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -13,130 +13,416 @@
 
   <style>
     :root {
-      --bg: #f6f8fb;
+      --bg: #F8FAFC;
       --panel: #ffffff;
-      --panel-soft: #f0f5fb;
-      --border: #dfe7f1;
-      --text: #142033;
-      --muted: #64748b;
-      --blue: #2563eb;
-      --blue-soft: #e8f0ff;
-      --green: #12a678;
-      --green-soft: #e7f8f2;
-      --orange: #f59e0b;
-      --orange-soft: #fff3db;
+      --panel-soft: #F1F5F9;
+      --border: #E2E8F0;
+      --border-focus: #93C5FD;
+      --text: #0F172A;
+      --muted: #64748B;
+      --muted-light: #94A3B8;
+      --blue: #2563EB;
+      --blue-hover: #1D4ED8;
+      --blue-soft: #EFF6FF;
+      --blue-mid: #DBEAFE;
+      --green: #10B981;
+      --green-soft: #ECFDF5;
+      --green-border: #A7F3D0;
+      --amber: #F59E0B;
+      --amber-soft: #FFFBEB;
+      --amber-border: #FDE68A;
+      --red: #EF4444;
+      --red-soft: #FEF2F2;
+      --slate-soft: #F1F5F9;
+      --slate-border: #CBD5E1;
     }
-    * { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0; }
+
+    * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.01em;
+      box-sizing: border-box;
+    }
+
     body {
-      background: linear-gradient(180deg, #eef5ff 0%, var(--bg) 260px);
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Navbar ── */
+    .topbar {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    /* ── Search bar ── */
+    .search-wrap {
+      background: var(--panel);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .search-wrap:focus-within {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    }
+    .search-wrap input {
+      background: transparent;
+      outline: none;
+      width: 100%;
+      font-size: 15px;
       color: var(--text);
     }
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      box-shadow: 0 10px 28px rgba(20, 32, 51, .06);
-    }
+    .search-wrap input::placeholder { color: var(--muted-light); }
+
+    /* ── Location select ── */
     .location-select {
       width: 100%;
-      min-height: 54px;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      background: white;
+      height: 48px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--panel);
       color: var(--text);
-      font-size: 15px;
-      font-weight: 700;
-      padding: 0 44px 0 42px;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 0 40px 0 40px;
       outline: none;
       appearance: none;
-      box-shadow: 0 10px 24px rgba(20, 32, 51, .05);
+      cursor: pointer;
+      transition: border-color .15s, box-shadow .15s;
     }
     .location-select:focus {
-      border-color: #9bb8ff;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, .10);
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
     }
-    .metric-card {
-      border-radius: 14px;
+
+    /* ── Cards ── */
+    .lic-card {
+      background: var(--panel);
       border: 1px solid var(--border);
-      background: white;
-      padding: 14px;
+      border-radius: 16px;
+      padding: 20px;
+      cursor: pointer;
+      transition: border-color .15s, box-shadow .15s, transform .15s;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
     }
-    .metric-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
+    .lic-card:hover {
+      border-color: #BFDBFE;
+      box-shadow: 0 4px 24px rgba(37,99,235,.09);
+      transform: translateY(-1px);
+    }
+
+    /* ── Probability badges ── */
+    .prob-high {
+      background: var(--green-soft);
+      color: #065F46;
+      border: 1px solid var(--green-border);
+    }
+    .prob-mid {
+      background: var(--amber-soft);
+      color: #92400E;
+      border: 1px solid var(--amber-border);
+    }
+    .prob-low {
+      background: var(--slate-soft);
+      color: #475569;
+      border: 1px solid var(--slate-border);
+    }
+
+    /* ── Estado badge ── */
+    .estado-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
+      gap: 5px;
     }
-    .prob-high { background: var(--green-soft); color: #057a55; border-color: #a7ead1; }
-    .prob-mid { background: var(--orange-soft); color: #9a5b00; border-color: #ffd58a; }
-    .prob-low { background: #eef2f7; color: #475569; border-color: #d8e1ec; }
+    .estado-badge::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: .7;
+    }
+
+    /* ── Skeleton ── */
     .skeleton {
-      animation: pulse 1.2s infinite;
-      background: linear-gradient(90deg, #edf2f9 25%, #e3ebf6 37%, #edf2f9 63%);
+      animation: shimmer 1.4s infinite;
+      background: linear-gradient(90deg, #F1F5F9 25%, #E8EEF6 50%, #F1F5F9 75%);
       background-size: 400% 100%;
+      border-radius: 8px;
     }
-    .data-table th {
-      font-size: 11px;
-      color: var(--muted);
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-    .data-table td {
-      font-size: 12px;
-      border-top: 1px solid var(--border);
-      vertical-align: top;
-    }
-    @keyframes pulse {
+    @keyframes shimmer {
       0% { background-position: 100% 50%; }
       100% { background-position: 0 50%; }
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      background: rgba(15,23,42,.55);
+      backdrop-filter: blur(3px);
+    }
+    .modal-panel {
+      background: var(--panel);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 64px rgba(15,23,42,.18);
+    }
+
+    /* ── Section headers in modal ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Info rows ── */
+    .info-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label {
+      color: var(--muted);
+      font-weight: 500;
+      min-width: 140px;
+      flex-shrink: 0;
+    }
+    .info-value {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ── AI block ── */
+    .ai-card {
+      background: linear-gradient(135deg, #EFF6FF 0%, #F0FDF4 100%);
+      border: 1px solid #DBEAFE;
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .ai-check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #065F46;
+      padding: 6px 0;
+    }
+    .ai-check i {
+      width: 20px;
+      height: 20px;
+      background: var(--green-soft);
+      border: 1px solid var(--green-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+
+    /* ── Upload zone ── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      position: relative;
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+    }
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* ── Metric pill ── */
+    .metric-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--muted);
+    }
+
+    /* ── Load more ── */
+    #loadMoreBtn {
+      height: 44px;
+      padding: 0 28px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--panel);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      transition: background .15s, border-color .15s;
+    }
+    #loadMoreBtn:hover {
+      background: var(--panel-soft);
+      border-color: #CBD5E1;
+    }
+
+    /* ── Scrollbar ── */
+    .modal-scroll::-webkit-scrollbar { width: 6px; }
+    .modal-scroll::-webkit-scrollbar-track { background: transparent; }
+    .modal-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .info-label { min-width: 110px; }
+      .modal-panel { border-radius: 16px; }
     }
   </style>
 </head>
 <body>
-  <main class="max-w-7xl mx-auto px-4 md:px-8 py-5 md:py-8">
-    <header class="mb-5">
-      <div class="flex items-center gap-3 min-w-fit">
-        <div class="w-11 h-11 rounded-2xl bg-[var(--blue)] text-white flex items-center justify-center shadow-lg shadow-blue-200">
+
+  <!-- ═══════════════════════════════════════
+       TOPBAR
+  ════════════════════════════════════════ -->
+  <div class="topbar">
+    <div class="max-w-7xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm" style="background:#2563EB;">
           <i class="fa-solid fa-chart-line"></i>
         </div>
-        <div>
-          <h1 class="text-2xl font-extrabold">GovAI Opportunities</h1>
-          <p class="text-sm text-[var(--muted)]">Inteligencia de licitaciones públicas</p>
-        </div>
+        <span class="text-base font-800 font-extrabold tracking-tight">GovAI</span>
+        <span class="hidden sm:inline text-xs font-semibold text-[var(--muted)] ml-1 mt-0.5">Oportunidades</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="hidden md:flex items-center gap-1.5 text-xs font-semibold text-[var(--muted)] bg-[var(--panel-soft)] border border-[var(--border)] px-3 py-1.5 rounded-lg">
+          <i class="fa-solid fa-circle text-green-400" style="font-size:7px;"></i>
+          Datos actualizados
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       MAIN
+  ════════════════════════════════════════ -->
+  <main class="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-10">
+
+    <!-- Hero search block -->
+    <div class="mb-10">
+      <div class="mb-6">
+        <h1 class="text-2xl md:text-3xl font-extrabold text-[var(--text)] mb-1.5">Licitaciones públicas</h1>
+        <p class="text-[var(--muted)] text-sm md:text-base">Encuentra y analiza oportunidades de contratación pública en España.</p>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-3 mt-5">
-        <div class="panel rounded-2xl px-5 py-4 flex items-center gap-3">
-          <i class="fa-solid fa-magnifying-glass text-[var(--blue)]"></i>
-          <input id="searchInput" class="w-full bg-transparent outline-none text-lg" aria-label="Buscar licitaciones" placeholder="Buscar licitaciones, organismo, CPV, expediente o ubicación..." />
+      <div class="flex flex-col sm:flex-row gap-3">
+        <!-- Search -->
+        <div class="search-wrap flex items-center gap-3 px-4 py-3 flex-1">
+          <i class="fa-solid fa-magnifying-glass text-[var(--muted-light)] flex-shrink-0"></i>
+          <input
+            id="searchInput"
+            type="search"
+            aria-label="Buscar licitaciones"
+            placeholder="Buscar por título, organismo, CPV, expediente o ubicación…"
+          />
         </div>
-        <div class="relative">
+
+        <!-- Location filter -->
+        <div class="relative flex-shrink-0 sm:w-56">
           <label for="locationFilter" class="sr-only">Ubicación</label>
+          <i class="fa-solid fa-location-dot absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted-light)] pointer-events-none text-sm"></i>
           <select id="locationFilter" class="location-select">
             <option value="">Todas las ubicaciones</option>
           </select>
-          <i class="fa-solid fa-location-dot absolute left-4 top-1/2 -translate-y-1/2 text-[var(--blue)] pointer-events-none"></i>
-          <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[var(--muted)] pointer-events-none"></i>
+          <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--muted-light)] pointer-events-none text-xs"></i>
         </div>
       </div>
-    </header>
+    </div>
 
-    <section class="mb-6">
-      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-3">
-        <div>
-          <h2 class="text-2xl font-extrabold">Licitaciones destacadas</h2>
-          <p class="text-sm text-[var(--muted)]"><span id="resultsCount">0</span> oportunidades encontradas</p>
-        </div>
+    <!-- Results header -->
+    <div class="flex items-baseline justify-between gap-4 mb-5">
+      <div>
+        <h2 class="text-base font-bold text-[var(--text)]">Resultados</h2>
+        <p class="text-sm text-[var(--muted)] mt-0.5"><span id="resultsCount">0</span> oportunidades encontradas</p>
       </div>
-      <section id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></section>
-      <div class="text-center mt-4">
-        <button id="loadMoreBtn" class="hidden px-5 py-2.5 rounded-xl border border-[var(--border)] bg-white hover:bg-[var(--panel-soft)] text-sm font-semibold">Cargar más</button>
-      </div>
-    </section>
+    </div>
+
+    <!-- Cards grid -->
+    <section id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></section>
+
+    <!-- Load more -->
+    <div class="text-center mt-8">
+      <button id="loadMoreBtn" class="hidden">
+        <i class="fa-solid fa-arrow-down mr-2 text-[var(--muted)]"></i>Cargar más
+      </button>
+    </div>
 
   </main>
 
+
+  <!-- ═══════════════════════════════════════
+       MODAL — FICHA DE LICITACIÓN
+  ════════════════════════════════════════ -->
+  <div id="detailModal" class="hidden fixed inset-0 modal-overlay z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="modal-panel modal-scroll w-full sm:max-w-4xl max-h-[95dvh] sm:max-h-[90vh] overflow-y-auto">
+
+      <!-- Modal header -->
+      <div class="sticky top-0 bg-white border-b border-[var(--border)] px-6 py-4 flex items-center justify-between z-10 rounded-t-[20px]">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-[var(--blue-soft)] flex items-center justify-center">
+            <i class="fa-solid fa-file-contract text-[var(--blue)] text-xs"></i>
+          </div>
+          <span class="text-sm font-bold text-[var(--text)]">Ficha de Licitación</span>
+        </div>
+        <button onclick="closeModal()" aria-label="Cerrar" class="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--muted)] hover:bg-[var(--panel-soft)] hover:text-[var(--text)] transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal body -->
+      <div id="detailContent" class="px-6 py-6 space-y-6"></div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       SCRIPTS — LÓGICA ORIGINAL INTACTA
+  ════════════════════════════════════════ -->
   <script>
     const DATASET_PATHS = [
       './data/Silver/licitaciones_abiertas.json',
@@ -144,20 +430,17 @@
     ];
 
     const state = {
-  raw: [],
-  filtered: [],
-  visible: 18,
-  filters: {
-    q: '',
-    ubicacion: ''
-  }
-};
+      raw: [],
+      filtered: [],
+      visible: 18,
+      filters: { q: '', ubicacion: '' }
+    };
 
     const REGION_MAP = {
-      ES11: 'Galicia', ES12: 'Asturias', ES13: 'Cantabria', ES21: 'País Vasco', ES22: 'Navarra',
-      ES23: 'La Rioja', ES24: 'Aragón', ES30: 'Madrid', ES41: 'Castilla y León', ES42: 'Castilla-La Mancha',
-      ES43: 'Extremadura', ES51: 'Cataluña', ES52: 'Comunidad Valenciana', ES53: 'Illes Balears',
-      ES61: 'Andalucía', ES62: 'Región de Murcia', ES63: 'Ceuta', ES64: 'Melilla', ES70: 'Canarias'
+      ES11:'Galicia',ES12:'Asturias',ES13:'Cantabria',ES21:'País Vasco',ES22:'Navarra',
+      ES23:'La Rioja',ES24:'Aragón',ES30:'Madrid',ES41:'Castilla y León',ES42:'Castilla-La Mancha',
+      ES43:'Extremadura',ES51:'Cataluña',ES52:'Comunidad Valenciana',ES53:'Illes Balears',
+      ES61:'Andalucía',ES62:'Región de Murcia',ES63:'Ceuta',ES64:'Melilla',ES70:'Canarias'
     };
 
     const PROVINCE_HINTS = [
@@ -168,10 +451,12 @@
 
     function safeText(v) { return (v ?? '').toString().trim(); }
     function escapeHtml(v) {
-      return safeText(v).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+      return safeText(v)
+        .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+        .replaceAll('"','&quot;').replaceAll("'","&#039;");
     }
     function amount(v) {
-      const n = Number(safeText(v).replace(/[^\d,.-]/g, '').replace(',', '.'));
+      const n = Number(safeText(v).replace(/[^\d,.-]/g,'').replace(',','.'));
       return Number.isFinite(n) ? n : 0;
     }
     function dateVal(v) {
@@ -179,26 +464,26 @@
       return Number.isNaN(d.getTime()) ? null : d;
     }
     function formatEuro(n) {
-      return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number.isFinite(n) ? n : 0);
+      return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(Number.isFinite(n)?n:0);
     }
     function daysUntil(d) {
       if (!d) return 9999;
-      return Math.ceil((d.getTime() - Date.now()) / 86400000);
+      return Math.ceil((d.getTime()-Date.now())/86400000);
     }
     function locationName(row) {
       const text = `${safeText(row.lugar_ejecucion)} ${safeText(row.titulo)}`;
       const city = PROVINCE_HINTS.find(x => text.toLowerCase().includes(x.toLowerCase()));
       if (city) return city;
-      const code = safeText(row.lugar_ejecucion_codigo || row.lugar_ejecucion).slice(0, 4).toUpperCase();
+      const code = safeText(row.lugar_ejecucion_codigo||row.lugar_ejecucion).slice(0,4).toUpperCase();
       return REGION_MAP[code] || safeText(row.lugar_ejecucion) || 'No especificado';
     }
     function probability(row) {
       let score = 50;
       const offers = amount(row.ofertas_recibidas);
-      const budget = amount(row.importe_total || row.importe_sin_impuestos);
+      const budget = amount(row.importe_total||row.importe_sin_impuestos);
       const cpv = safeText(row.cpv_codes);
       const procedure = safeText(row.procedimiento_codigo);
-      const estado = safeText(row.estado || row.estado_codigo).toLowerCase();
+      const estado = safeText(row.estado||row.estado_codigo).toLowerCase();
 
       if (!offers) score += 14;
       else if (offers <= 2) score += 18;
@@ -220,29 +505,29 @@
       const cls = score >= 75 ? 'prob-high' : score >= 50 ? 'prob-mid' : 'prob-low';
       return { score, label, cls };
     }
-    function topCounts(rows, accessor, max = 8) {
+    function topCounts(rows, accessor, max=8) {
       const map = {};
       rows.forEach(r => {
         const key = safeText(accessor(r)) || 'No especificado';
-        map[key] = (map[key] || 0) + 1;
+        map[key] = (map[key]||0)+1;
       });
-      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
+      return Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,max);
     }
 
     function enrich(rows) {
       return rows.map(row => {
-        const title = safeText(row.titulo || row.title);
+        const title = safeText(row.titulo||row.title);
         const enriched = {
           ...row,
           title,
-          __amount: amount(row.importe_total || row.importe_sin_impuestos),
+          __amount: amount(row.importe_total||row.importe_sin_impuestos),
           __noTax: amount(row.importe_sin_impuestos),
           __date: dateVal(row.fecha_publicacion),
           __deadline: dateVal(row.presentacion_hasta),
-          __tipo: safeText(row.tipo_contrato || row.tipo_contrato_codigo) || 'No especificado',
-          __estado: safeText(row.estado || row.estado_codigo) || 'No especificado',
-          __org: safeText(row.organo_contratacion) || 'No especificado',
-          __cpv: safeText(row.cpv_codes) || 'No especificado',
+          __tipo: safeText(row.tipo_contrato||row.tipo_contrato_codigo)||'No especificado',
+          __estado: safeText(row.estado||row.estado_codigo)||'No especificado',
+          __org: safeText(row.organo_contratacion)||'No especificado',
+          __cpv: safeText(row.cpv_codes)||'No especificado',
           __loc: locationName(row),
           __adjudicatario: safeText(row.adjudicatario)
         };
@@ -252,143 +537,174 @@
       });
     }
 
+    /* ── Skeleton ── */
     function renderSkeleton() {
-      document.getElementById('cardsContainer').innerHTML = Array.from({ length: 6 }).map(() => `
-        <div class="panel rounded-2xl p-5"><div class="skeleton h-5 rounded w-4/5 mb-3"></div><div class="skeleton h-3 rounded w-2/3 mb-5"></div><div class="skeleton h-24 rounded"></div></div>
+      document.getElementById('cardsContainer').innerHTML = Array.from({length:6}).map(()=>`
+        <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+          <div class="skeleton h-4 w-3/4 mb-2"></div>
+          <div class="skeleton h-3 w-1/2 mb-5"></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="skeleton h-8 rounded-lg"></div>
+            <div class="skeleton h-8 rounded-lg"></div>
+            <div class="skeleton h-8 rounded-lg"></div>
+            <div class="skeleton h-8 rounded-lg"></div>
+          </div>
+          <div class="skeleton h-9 rounded-xl mt-4"></div>
+        </div>
       `).join('');
     }
 
+    /* ── Filters ── */
     function renderFilters() {
       const entries = topCounts(state.raw, r => r.__loc, 80);
       const select = document.getElementById('locationFilter');
       const current = select.value;
-      select.innerHTML = '<option value="">Todas las ubicaciones</option>' + entries
-        .map(([value]) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`)
-        .join('');
+      select.innerHTML = '<option value="">Todas las ubicaciones</option>' +
+        entries.map(([value]) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
       select.value = current;
     }
 
+    /* ── Apply filters ── */
     function applyFilters() {
       const f = state.filters;
       state.filtered = state.raw.filter(r => {
         if (f.q && !r.__blob.includes(f.q)) return false;
         if (f.ubicacion && r.__loc !== f.ubicacion) return false;
         return true;
-      }).sort((a, b) => b.__probability.score - a.__probability.score || (a.__deadline?.getTime() || 0) - (b.__deadline?.getTime() || 0));
+      }).sort((a,b) => b.__probability.score - a.__probability.score || (a.__deadline?.getTime()||0) - (b.__deadline?.getTime()||0));
 
       state.visible = Math.min(state.visible, Math.max(18, state.filtered.length));
       state.tablePage = 1;
       renderAll();
     }
 
+    /* ── Estado badge helper ── */
+    function estadoBadge(estado) {
+      const e = estado.toLowerCase();
+      if (e.includes('evalu') || e.includes('evaluac')) {
+        return `<span class="estado-badge" style="background:var(--amber-soft);color:#92400E;border:1px solid var(--amber-border);">${escapeHtml(estado)}</span>`;
+      }
+      if (e.includes('cerr') || e.includes('adjudic') || e.includes('finaliz')) {
+        return `<span class="estado-badge" style="background:var(--slate-soft);color:#475569;border:1px solid var(--slate-border);">${escapeHtml(estado)}</span>`;
+      }
+      return `<span class="estado-badge" style="background:var(--green-soft);color:#065F46;border:1px solid var(--green-border);">${escapeHtml(estado)}</span>`;
+    }
+
+    /* ── Urgency indicator ── */
+    function urgencyLabel(deadline) {
+      if (!deadline) return '';
+      const days = daysUntil(deadline);
+      if (days < 0) return `<span class="metric-pill" style="background:var(--red-soft);color:var(--red);border-color:#FECACA;"><i class="fa-solid fa-clock"></i>Cerrado</span>`;
+      if (days <= 7) return `<span class="metric-pill" style="background:var(--red-soft);color:var(--red);border-color:#FECACA;"><i class="fa-solid fa-fire-flame-curved"></i>${days}d restantes</span>`;
+      if (days <= 21) return `<span class="metric-pill" style="background:var(--amber-soft);color:#92400E;border-color:var(--amber-border);"><i class="fa-solid fa-clock"></i>${days}d restantes</span>`;
+      return '';
+    }
+
+    /* ── Render cards ── */
     function renderCards() {
       const rows = state.filtered.slice(0, state.visible);
       document.getElementById('resultsCount').textContent = state.filtered.length.toLocaleString('es-ES');
       const container = document.getElementById('cardsContainer');
+
       if (!rows.length) {
-        container.innerHTML = '<div class="panel rounded-2xl p-8 text-center md:col-span-2 xl:col-span-3"><h3 class="text-xl font-extrabold mb-2">Sin resultados</h3><p class="text-sm text-[var(--muted)]">Prueba con otros filtros o una búsqueda más amplia.</p></div>';
+        container.innerHTML = `
+          <div class="bg-white border border-[var(--border)] rounded-2xl p-10 text-center md:col-span-2 xl:col-span-3">
+            <div class="w-12 h-12 rounded-2xl bg-[var(--panel-soft)] flex items-center justify-center mx-auto mb-4">
+              <i class="fa-solid fa-magnifying-glass text-[var(--muted-light)] text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold mb-1.5">Sin resultados</h3>
+            <p class="text-sm text-[var(--muted)]">Prueba con otros filtros o una búsqueda más amplia.</p>
+          </div>`;
         document.getElementById('loadMoreBtn').classList.add('hidden');
         return;
       }
-      container.innerHTML = rows.map(r => `
-        <article class="panel rounded-2xl p-5 hover:shadow-xl transition">
+
+      container.innerHTML = rows.map(r => {
+        const days = daysUntil(r.__deadline);
+        const urgent = urgencyLabel(r.__deadline);
+        return `
+        <article class="lic-card" onclick="showTenderDetail('${r.licitacion_id}')">
+
+          <!-- Header row -->
           <div class="flex items-start justify-between gap-3 mb-3">
-            <h3 class="font-extrabold leading-snug">${escapeHtml(r.title)}</h3>
-            <span class="text-xs font-extrabold px-2 py-1 rounded-full border ${r.__probability.cls}">${r.__probability.score}%</span>
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${r.__probability.cls}">${r.__probability.score}% · ${r.__probability.label}</span>
+            ${estadoBadge(r.__estado)}
           </div>
-          <p class="text-xs text-[var(--muted)] mb-4">${escapeHtml(r.expediente)} Â· ${escapeHtml(r.__org)}</p>
-          <div class="grid grid-cols-2 gap-3 text-xs">
-            <div><p class="text-[var(--muted)]">Ubicación</p><p class="font-bold">${escapeHtml(r.__loc)}</p></div>
-            <div><p class="text-[var(--muted)]">Presupuesto</p><p class="font-bold">${formatEuro(r.__amount)}</p></div>
-            <div><p class="text-[var(--muted)]">Fecha límite</p><p class="font-bold">${r.__deadline ? r.__deadline.toLocaleDateString('es-ES') : '-'}</p></div>
-            <div><p class="text-[var(--muted)]">Estado</p><p class="font-bold">${escapeHtml(r.__estado)}</p></div>
-            <div><p class="text-[var(--muted)]">Tipo</p><p class="font-bold">${escapeHtml(r.__tipo)}</p></div>
-            <div><p class="text-[var(--muted)]">CPV</p><p class="font-bold">${escapeHtml(r.__cpv)}</p></div>
+
+          <!-- Title -->
+          <h3 class="font-bold text-[15px] leading-snug text-[var(--text)] mb-1.5 line-clamp-2">${escapeHtml(r.title)}</h3>
+          <p class="text-xs text-[var(--muted)] mb-4 truncate">${escapeHtml(r.__org)}</p>
+
+          <!-- Metrics grid -->
+          <div class="grid grid-cols-2 gap-x-4 gap-y-3 mb-4">
+            <div>
+              <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-0.5">Presupuesto</p>
+              <p class="text-sm font-bold text-[var(--text)]">${formatEuro(r.__amount)}</p>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-0.5">Fecha límite</p>
+              <p class="text-sm font-bold text-[var(--text)]">${r.__deadline ? r.__deadline.toLocaleDateString('es-ES') : '—'}</p>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-0.5">Ubicación</p>
+              <p class="text-sm font-bold text-[var(--text)] truncate">${escapeHtml(r.__loc)}</p>
+            </div>
+            <div>
+              <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-0.5">Tipo</p>
+              <p class="text-sm font-bold text-[var(--text)] truncate">${escapeHtml(r.__tipo)}</p>
+            </div>
           </div>
-          <div class="flex items-center justify-between gap-3 mt-4">
-            <span class="text-xs font-bold px-2 py-1 rounded-full border ${r.__probability.cls}">${r.__probability.label}</span>
-            <button onclick="showTenderDetail(\'${r.licitacion_id}\')" class="px-4 py-2 rounded-xl border border-[var(--border)] text-sm font-bold">Ver análisis</button><a href="${escapeHtml(r.url || r.detail_url)}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-[var(--blue)] text-white text-sm font-bold hover:opacity-90">Portal oficial</a>
+
+          ${urgent ? `<div class="mb-3">${urgent}</div>` : ''}
+
+          <!-- Divider -->
+          <div class="h-px bg-[var(--border)] mb-3"></div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-2">
+            <button
+              onclick="event.stopPropagation();showTenderDetail('${r.licitacion_id}')"
+              class="flex-1 h-9 rounded-lg border border-[var(--border)] bg-white text-xs font-bold text-[var(--text)] hover:bg-[var(--panel-soft)] transition flex items-center justify-center gap-1.5"
+            >
+              <i class="fa-solid fa-chart-bar text-[var(--muted)] text-[11px]"></i>Ver análisis
+            </button>
+            <a
+              href="${escapeHtml(r.url || r.detail_url || '#')}"
+              target="_blank"
+              rel="noopener noreferrer"
+              onclick="event.stopPropagation()"
+              class="flex-1 h-9 rounded-lg bg-[var(--blue)] text-white text-xs font-bold hover:bg-[var(--blue-hover)] transition flex items-center justify-center gap-1.5"
+            >
+              <i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i>Portal oficial
+            </a>
           </div>
-        </article>
-      `).join('');
+
+        </article>`;
+      }).join('');
+
       document.getElementById('loadMoreBtn').classList.toggle('hidden', state.filtered.length <= state.visible);
     }
 
+    function renderAll() { renderCards(); }
 
-
-
-
-    function monthKey(d) {
-      return d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` : 'Sin fecha';
-    }
-    function makeChart(id, type, labels, values, label, color) {
-      if (state.charts[id]) state.charts[id].destroy();
-      state.charts[id] = new Chart(document.getElementById(id), {
-        type,
-        data: { labels, datasets: [{ label, data: values, backgroundColor: color, borderColor: color, borderRadius: 10, tension: .35, fill: type === 'line' }] },
-        options: {
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false }, tooltip: { padding: 12, cornerRadius: 10 } },
-          scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#edf2f7' } } }
-        }
-      });
-    }
-
-
-    function sortValue(row, field) {
-      if (field === 'importe_total') return row.__amount;
-      if (field === 'presentacion_hasta') return row.__deadline?.getTime() || 0;
-      return safeText(row[field] ?? row[`__${field}`]).toLowerCase();
-    }
-    function renderTable() {
-      const rows = [...state.filtered].sort((a, b) => {
-        const av = sortValue(a, state.sort.field);
-        const bv = sortValue(b, state.sort.field);
-        if (av < bv) return state.sort.direction === 'asc' ? -1 : 1;
-        if (av > bv) return state.sort.direction === 'asc' ? 1 : -1;
-        return 0;
-      });
-      const pages = Math.max(1, Math.ceil(rows.length / state.pageSize));
-      state.tablePage = Math.min(state.tablePage, pages);
-      const pageRows = rows.slice((state.tablePage - 1) * state.pageSize, state.tablePage * state.pageSize);
-      document.getElementById('pageInfo').textContent = `Página ${state.tablePage} de ${pages}`;
-      document.getElementById('prevPageBtn').disabled = state.tablePage <= 1;
-      document.getElementById('nextPageBtn').disabled = state.tablePage >= pages;
-      document.getElementById('tableBody').innerHTML = pageRows.map(r => `
-        <tr>
-          <td class="py-3 pr-3 min-w-[240px] font-bold">${escapeHtml(r.title)}</td>
-          <td class="py-3 pr-3">${escapeHtml(r.expediente)}</td>
-          <td class="py-3 pr-3 min-w-[210px]">${escapeHtml(r.__org)}</td>
-          <td class="py-3 pr-3 font-bold">${formatEuro(r.__amount)}</td>
-          <td class="py-3 pr-3">${r.__deadline ? r.__deadline.toLocaleDateString('es-ES') : '-'}</td>
-          <td class="py-3 pr-3">${escapeHtml(r.__cpv)}</td>
-          <td class="py-3 pr-3"><span class="text-xs font-bold px-2 py-1 rounded-full border ${r.__probability.cls}">${r.__probability.score}%</span></td>
-        </tr>
-      `).join('');
-    }
-
-    function renderAll() {
-      renderCards()
-    }
-
+    /* ── Bind events ── */
     function bindEvents() {
-  document.getElementById('searchInput').addEventListener('input', e => {
-    state.filters.q = safeText(e.target.value).toLowerCase();
-    applyFilters();
-  });
+      document.getElementById('searchInput').addEventListener('input', e => {
+        state.filters.q = safeText(e.target.value).toLowerCase();
+        applyFilters();
+      });
+      document.getElementById('locationFilter').addEventListener('change', e => {
+        state.filters.ubicacion = e.target.value;
+        applyFilters();
+      });
+      document.getElementById('loadMoreBtn').addEventListener('click', () => {
+        state.visible += 18;
+        renderCards();
+      });
+    }
 
-  document.getElementById('locationFilter').addEventListener('change', e => {
-    state.filters.ubicacion = e.target.value;
-    applyFilters();
-  });
-
-  document.getElementById('loadMoreBtn').addEventListener('click', () => {
-    state.visible += 18;
-    renderCards();
-  });
-}
-
-async function fetchDashboardDataset() {
+    /* ── Fetch dataset ── */
+    async function fetchDashboardDataset() {
       const errors = [];
       for (const path of DATASET_PATHS) {
         try {
@@ -404,6 +720,7 @@ async function fetchDashboardDataset() {
       throw new Error(errors.join(' | '));
     }
 
+    /* ── Init ── */
     async function init() {
       renderSkeleton();
       try {
@@ -415,124 +732,165 @@ async function fetchDashboardDataset() {
         applyFilters();
       } catch (err) {
         console.error('[GovAI] Error de carga:', err);
-        document.getElementById('cardsContainer').innerHTML = '<div class="panel rounded-2xl p-8 text-center md:col-span-2 xl:col-span-3"><h3 class="text-xl font-extrabold text-red-700 mb-2">Error de carga</h3><p class="text-sm text-[var(--muted)]">No se pudo cargar el dataset de oportunidades.</p></div>';
+        document.getElementById('cardsContainer').innerHTML = `
+          <div class="bg-white border border-[var(--border)] rounded-2xl p-10 text-center md:col-span-2 xl:col-span-3">
+            <div class="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
+              <i class="fa-solid fa-triangle-exclamation text-red-400 text-lg"></i>
+            </div>
+            <h3 class="text-base font-bold text-red-700 mb-1.5">Error de carga</h3>
+            <p class="text-sm text-[var(--muted)]">No se pudo cargar el dataset de oportunidades.</p>
+          </div>`;
       }
     }
 
-    
-function closeModal() {
-  document.getElementById('detailModal').classList.add('hidden');
-}
+    /* ── Modal ── */
+    function closeModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
 
+    function showTenderDetail(id) {
+      const lic = state.raw.find(x => String(x.licitacion_id) === String(id));
+      if (!lic) return;
 
-function showTenderDetail(id) {
-  const lic = state.raw.find(x => String(x.licitacion_id) === String(id));
-  if (!lic) return;
+      const prob = lic.__probability;
+      const days = daysUntil(lic.__deadline);
+      const daysText = lic.__deadline
+        ? (days < 0 ? 'Plazo vencido' : days === 0 ? 'Vence hoy' : `${days} días restantes`)
+        : '—';
 
-  document.getElementById('detailContent').innerHTML = `
-  <div class="space-y-6">
+      document.getElementById('detailContent').innerHTML = `
 
-    <div class="rounded-3xl p-6 bg-slate-50 border">
-      <h2 class="text-3xl font-extrabold mb-3">${lic.titulo || '-'}</h2>
+        <!-- ── Executive header ── -->
+        <div style="background:linear-gradient(135deg,#EFF6FF 0%,#F8FAFC 100%);border:1px solid #DBEAFE;" class="rounded-2xl p-6">
+          <div class="flex flex-wrap items-center gap-2 mb-3">
+            ${estadoBadge(lic.__estado || 'Activa')}
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${prob.cls}">${prob.score}% · ${prob.label}</span>
+            ${lic.__tipo !== 'No especificado' ? `<span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-white border border-[var(--border)] text-[var(--muted)]">${escapeHtml(lic.__tipo)}</span>` : ''}
+          </div>
+          <h2 class="text-xl md:text-2xl font-extrabold text-[var(--text)] leading-snug mb-5">${escapeHtml(lic.titulo || '—')}</h2>
 
-      <div class="flex flex-wrap gap-2 mb-4">
-        <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold">
-          ${lic.estado || 'Activa'}
-        </span>
-        <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold">
-          ${lic.tipo_contrato || '-'}
-        </span>
-      </div>
-
-      <div class="grid md:grid-cols-4 gap-4">
-        <div>
-          <div class="text-slate-500 text-sm">Presupuesto</div>
-          <div class="font-bold text-xl">${formatEuro(amount(lic.importe_total))}</div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-white rounded-xl border border-[var(--border)] p-4">
+              <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-1">Presupuesto</p>
+              <p class="text-lg font-extrabold text-[var(--text)]">${formatEuro(amount(lic.importe_total))}</p>
+            </div>
+            <div class="bg-white rounded-xl border border-[var(--border)] p-4">
+              <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-1">Fecha límite</p>
+              <p class="text-base font-bold text-[var(--text)]">${lic.presentacion_hasta || '—'}</p>
+              <p class="text-[11px] font-semibold mt-0.5 ${days <= 7 && days >= 0 ? 'text-red-500' : 'text-[var(--muted)]'}">${daysText}</p>
+            </div>
+            <div class="bg-white rounded-xl border border-[var(--border)] p-4">
+              <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-1">Ubicación</p>
+              <p class="text-base font-bold text-[var(--text)]">${escapeHtml(lic.lugar_ejecucion || lic.__loc || '—')}</p>
+            </div>
+            <div class="bg-white rounded-xl border border-[var(--border)] p-4">
+              <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-1">Duración</p>
+              <p class="text-base font-bold text-[var(--text)]">${escapeHtml(lic.contrato_duracion || '—')} <span class="text-sm font-semibold text-[var(--muted)]">${escapeHtml(lic.contrato_duracion_unidad || '')}</span></p>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <div class="text-slate-500 text-sm">Fecha límite</div>
-          <div class="font-bold">${lic.presentacion_hasta || '-'}</div>
+        <!-- ── Info columns ── -->
+        <div class="grid md:grid-cols-2 gap-5">
+
+          <!-- Información General -->
+          <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+            <p class="section-label"><i class="fa-solid fa-circle-info text-[var(--blue)]"></i>Información General</p>
+            <div class="info-row"><span class="info-label">Expediente</span><span class="info-value font-mono text-sm">${escapeHtml(lic.expediente || '—')}</span></div>
+            <div class="info-row"><span class="info-label">Organismo</span><span class="info-value">${escapeHtml(lic.organo_contratacion || '—')}</span></div>
+            <div class="info-row"><span class="info-label">Procedimiento</span><span class="info-value">${escapeHtml(lic.procedimiento_codigo || '—')}</span></div>
+            <div class="info-row"><span class="info-label">Publicación</span><span class="info-value">${escapeHtml(lic.fecha_publicacion || '—')}</span></div>
+          </div>
+
+          <!-- Información Económica -->
+          <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+            <p class="section-label"><i class="fa-solid fa-euro-sign text-[var(--blue)]"></i>Información Económica</p>
+            <div class="info-row"><span class="info-label">Importe total</span><span class="info-value text-[var(--blue)]">${formatEuro(amount(lic.importe_total))}</span></div>
+            <div class="info-row"><span class="info-label">Sin impuestos</span><span class="info-value">${formatEuro(amount(lic.importe_sin_impuestos))}</span></div>
+            ${lic.ofertas_recibidas ? `<div class="info-row"><span class="info-label">Ofertas recibidas</span><span class="info-value">${escapeHtml(lic.ofertas_recibidas)}</span></div>` : ''}
+            ${lic.__adjudicatario ? `<div class="info-row"><span class="info-label">Adjudicatario</span><span class="info-value">${escapeHtml(lic.__adjudicatario)}</span></div>` : ''}
+          </div>
+
+          <!-- Información Técnica -->
+          <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+            <p class="section-label"><i class="fa-solid fa-code text-[var(--blue)]"></i>Información Técnica</p>
+            <div class="info-row"><span class="info-label">CPV</span><span class="info-value font-mono text-sm">${escapeHtml(lic.cpv_codes || '—')}</span></div>
+            <div class="info-row"><span class="info-label">Descripción CPV</span><span class="info-value">${escapeHtml(lic.cpv_descripcion || '—')}</span></div>
+            <div class="info-row"><span class="info-label">Fuente</span><span class="info-value">${escapeHtml(lic.fuente_publicacion || '—')}</span></div>
+          </div>
+
+          <!-- Análisis IA -->
+          <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+            <p class="section-label"><i class="fa-solid fa-brain text-[var(--blue)]"></i>Análisis IA</p>
+            <div class="ai-card">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-[var(--muted)]">Score de oportunidad</span>
+                <span class="text-2xl font-extrabold ${prob.score >= 75 ? 'text-green-600' : prob.score >= 50 ? 'text-amber-600' : 'text-slate-500'}">${prob.score}<span class="text-sm font-bold">%</span></span>
+              </div>
+              <div class="ai-check"><i class="fa-solid fa-check"></i>Licitación activa y vigente</div>
+              <div class="ai-check"><i class="fa-solid fa-check"></i>Información completa disponible</div>
+              <div class="ai-check"><i class="fa-solid fa-check"></i>Apta para revisión comercial</div>
+            </div>
+          </div>
+
         </div>
 
-        <div>
-          <div class="text-slate-500 text-sm">Ubicación</div>
-          <div class="font-bold">${lic.lugar_ejecucion || '-'}</div>
+        <!-- ── Documentación ── -->
+        <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+          <p class="section-label"><i class="fa-solid fa-folder-open text-[var(--blue)]"></i>Documentación</p>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" accept=".pdf,.doc,.docx" aria-label="Subir documentación" />
+            <div class="pointer-events-none">
+              <div class="w-10 h-10 rounded-xl bg-[var(--blue-soft)] flex items-center justify-center mx-auto mb-3">
+                <i class="fa-solid fa-cloud-arrow-up text-[var(--blue)] text-lg"></i>
+              </div>
+              <p class="text-sm font-bold text-[var(--text)] mb-1">Arrastra documentos aquí o haz clic para seleccionar</p>
+              <p class="text-xs text-[var(--muted)]">PDF, DOC, DOCX — preparado para análisis IA en versiones futuras</p>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <div class="text-slate-500 text-sm">Duración</div>
-          <div class="font-bold">${lic.contrato_duracion || '-'} ${lic.contrato_duracion_unidad || ''}</div>
+        <!-- ── CTA ── -->
+        <div class="flex flex-col sm:flex-row items-center gap-3 pt-1 pb-2">
+          <a
+            href="${escapeHtml(lic.detail_url || lic.url || '#')}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[var(--blue)] text-white font-bold text-sm hover:bg-[var(--blue-hover)] transition"
+          >
+            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            Ver licitación oficial
+          </a>
+          <button
+            onclick="closeModal()"
+            class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-[var(--border)] bg-white text-sm font-bold text-[var(--muted)] hover:bg-[var(--panel-soft)] transition"
+          >
+            Cerrar ficha
+          </button>
         </div>
-      </div>
-    </div>
 
-    <div class="grid md:grid-cols-2 gap-5">
+      `;
 
-      <div class="border rounded-2xl p-5">
-        <h3 class="font-bold text-lg mb-3">Información General</h3>
-        <div><b>Expediente:</b> ${lic.expediente || '-'}</div>
-        <div><b>Organismo:</b> ${lic.organo_contratacion || '-'}</div>
-        <div><b>Procedimiento:</b> ${lic.procedimiento_codigo || '-'}</div>
-        <div><b>Publicación:</b> ${lic.fecha_publicacion || '-'}</div>
-      </div>
+      document.getElementById('detailModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
 
-      <div class="border rounded-2xl p-5">
-        <h3 class="font-bold text-lg mb-3">Información Técnica</h3>
-        <div><b>CPV:</b> ${lic.cpv_codes || '-'}</div>
-        <div><b>Descripción:</b> ${lic.cpv_descripcion || '-'}</div>
-        <div><b>Fuente:</b> ${lic.fuente_publicacion || '-'}</div>
-      </div>
+      /* drag & drop visual feedback */
+      const zone = document.getElementById('uploadZone');
+      if (zone) {
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+        zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); });
+      }
+    }
 
-      <div class="border rounded-2xl p-5">
-        <h3 class="font-bold text-lg mb-3">Información Económica</h3>
-        <div><b>Importe total:</b> ${formatEuro(amount(lic.importe_total))}</div>
-        <div><b>Sin impuestos:</b> ${formatEuro(amount(lic.importe_sin_impuestos))}</div>
-      </div>
+    /* close on overlay click */
+    document.getElementById('detailModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
 
-      <div class="border rounded-2xl p-5">
-        <h3 class="font-bold text-lg mb-3">Análisis IA</h3>
-        <div>✔ Licitación activa</div>
-        <div>✔ Información completa</div>
-        <div>✔ Oportunidad apta para revisión comercial</div>
-      </div>
-
-    </div>
-
-    <div class="border-2 border-dashed rounded-2xl p-6">
-      <h3 class="font-bold text-lg mb-2">Analizar documentación</h3>
-      <p class="text-slate-500 mb-3">Preparado para futuras versiones del análisis IA.</p>
-      <input type="file" accept=".pdf,.doc,.docx"/>
-    </div>
-
-    <div class="flex gap-3">
-      <a href="${lic.detail_url || lic.url || '#'}" target="_blank"
-         class="px-4 py-3 rounded-xl bg-blue-600 text-white font-bold">
-         Ver licitación oficial
-      </a>
-    </div>
-
-  </div>`;
-
-  document.getElementById('detailModal').classList.remove('hidden');
-}
-
-
-
-init();
+    init();
   </script>
-
-<div id="detailModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-  <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto p-6">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-extrabold">Ficha de Licitación</h2>
-      <button onclick="closeModal()" class="text-gray-500 hover:text-black text-xl">✕</button>
-    </div>
-    <div id="detailContent" class="space-y-6"></div>
-  </div>
-</div>
 
 </body>
 </html>
-
-
