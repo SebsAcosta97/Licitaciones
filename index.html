@@ -424,45 +424,99 @@ function closeModal() {
   document.getElementById('detailModal').classList.add('hidden');
 }
 
+
 function showTenderDetail(id) {
   const lic = state.raw.find(x => String(x.licitacion_id) === String(id));
   if (!lic) return;
 
   document.getElementById('detailContent').innerHTML = `
-    <div class="space-y-6">
-      <div>
-        <h3 class="text-2xl font-extrabold">${lic.titulo || '-'}</h3>
+  <div class="space-y-6">
+
+    <div class="rounded-3xl p-6 bg-slate-50 border">
+      <h2 class="text-3xl font-extrabold mb-3">${lic.titulo || '-'}</h2>
+
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold">
+          ${lic.estado || 'Activa'}
+        </span>
+        <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold">
+          ${lic.tipo_contrato || '-'}
+        </span>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-        <div><b>Expediente:</b><br>${lic.expediente || '-'}</div>
-        <div><b>Estado:</b><br>${lic.estado || '-'}</div>
-        <div><b>Organismo:</b><br>${lic.organo_contratacion || '-'}</div>
-        <div><b>Tipo contrato:</b><br>${lic.tipo_contrato || '-'}</div>
-        <div><b>Procedimiento:</b><br>${lic.procedimiento_codigo || '-'}</div>
-        <div><b>Ubicación:</b><br>${lic.lugar_ejecucion || '-'}</div>
-        <div><b>Importe total:</b><br>${formatEuro(amount(lic.importe_total))}</div>
-        <div><b>Importe sin impuestos:</b><br>${formatEuro(amount(lic.importe_sin_impuestos))}</div>
-        <div><b>Fecha publicación:</b><br>${lic.fecha_publicacion || '-'}</div>
-        <div><b>Fecha límite:</b><br>${lic.presentacion_hasta || '-'}</div>
-        <div><b>Hora límite:</b><br>${lic.presentacion_hora || '-'}</div>
-        <div><b>Duración:</b><br>${lic.contrato_duracion || '-'} ${lic.contrato_duracion_unidad || ''}</div>
-        <div><b>CPV:</b><br>${lic.cpv_codes || '-'}</div>
-        <div><b>Descripción CPV:</b><br>${lic.cpv_descripcion || '-'}</div>
-        <div><b>Fuente:</b><br>${lic.fuente_publicacion || '-'}</div>
-        <div><b>Tipo anuncio:</b><br>${lic.notice_types || '-'}</div>
+      <div class="grid md:grid-cols-4 gap-4">
+        <div>
+          <div class="text-slate-500 text-sm">Presupuesto</div>
+          <div class="font-bold text-xl">${formatEuro(amount(lic.importe_total))}</div>
+        </div>
+
+        <div>
+          <div class="text-slate-500 text-sm">Fecha límite</div>
+          <div class="font-bold">${lic.presentacion_hasta || '-'}</div>
+        </div>
+
+        <div>
+          <div class="text-slate-500 text-sm">Ubicación</div>
+          <div class="font-bold">${lic.lugar_ejecucion || '-'}</div>
+        </div>
+
+        <div>
+          <div class="text-slate-500 text-sm">Duración</div>
+          <div class="font-bold">${lic.contrato_duracion || '-'} ${lic.contrato_duracion_unidad || ''}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-5">
+
+      <div class="border rounded-2xl p-5">
+        <h3 class="font-bold text-lg mb-3">Información General</h3>
+        <div><b>Expediente:</b> ${lic.expediente || '-'}</div>
+        <div><b>Organismo:</b> ${lic.organo_contratacion || '-'}</div>
+        <div><b>Procedimiento:</b> ${lic.procedimiento_codigo || '-'}</div>
+        <div><b>Publicación:</b> ${lic.fecha_publicacion || '-'}</div>
       </div>
 
-      <div>
-        <a href="${lic.detail_url || lic.url || '#'}" target="_blank"
-           class="inline-block px-4 py-2 rounded-xl bg-blue-600 text-white font-bold">
-           Ver licitación oficial
-        </a>
+      <div class="border rounded-2xl p-5">
+        <h3 class="font-bold text-lg mb-3">Información Técnica</h3>
+        <div><b>CPV:</b> ${lic.cpv_codes || '-'}</div>
+        <div><b>Descripción:</b> ${lic.cpv_descripcion || '-'}</div>
+        <div><b>Fuente:</b> ${lic.fuente_publicacion || '-'}</div>
       </div>
-    </div>`;
+
+      <div class="border rounded-2xl p-5">
+        <h3 class="font-bold text-lg mb-3">Información Económica</h3>
+        <div><b>Importe total:</b> ${formatEuro(amount(lic.importe_total))}</div>
+        <div><b>Sin impuestos:</b> ${formatEuro(amount(lic.importe_sin_impuestos))}</div>
+      </div>
+
+      <div class="border rounded-2xl p-5">
+        <h3 class="font-bold text-lg mb-3">Análisis IA</h3>
+        <div>✔ Licitación activa</div>
+        <div>✔ Información completa</div>
+        <div>✔ Oportunidad apta para revisión comercial</div>
+      </div>
+
+    </div>
+
+    <div class="border-2 border-dashed rounded-2xl p-6">
+      <h3 class="font-bold text-lg mb-2">Analizar documentación</h3>
+      <p class="text-slate-500 mb-3">Preparado para futuras versiones del análisis IA.</p>
+      <input type="file" accept=".pdf,.doc,.docx"/>
+    </div>
+
+    <div class="flex gap-3">
+      <a href="${lic.detail_url || lic.url || '#'}" target="_blank"
+         class="px-4 py-3 rounded-xl bg-blue-600 text-white font-bold">
+         Ver licitación oficial
+      </a>
+    </div>
+
+  </div>`;
 
   document.getElementById('detailModal').classList.remove('hidden');
 }
+
 
 
 init();
@@ -474,7 +528,7 @@ init();
       <h2 class="text-xl font-extrabold">Ficha de Licitación</h2>
       <button onclick="closeModal()" class="text-gray-500 hover:text-black text-xl">✕</button>
     </div>
-    <div id="detailContent"></div>
+    <div id="detailContent" class="space-y-6"></div>
   </div>
 </div>
 
