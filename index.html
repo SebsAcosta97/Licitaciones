@@ -6,7 +6,6 @@
   <title>GovAI | Oportunidades de Licitación</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -136,55 +135,6 @@
       </div>
     </section>
 
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-      <div class="metric-card"><div class="metric-icon bg-[var(--blue-soft)] text-[var(--blue)]"><i class="fa-solid fa-briefcase"></i></div><p class="text-xs text-[var(--muted)] mt-3">Licitaciones activas</p><p id="kpiAbiertas" class="text-2xl font-extrabold mt-1">0</p></div>
-      <div class="metric-card"><div class="metric-icon bg-[var(--green-soft)] text-[var(--green)]"><i class="fa-solid fa-euro-sign"></i></div><p class="text-xs text-[var(--muted)] mt-3">Presupuesto acumulado</p><p id="kpiBudget" class="text-2xl font-extrabold mt-1">€0</p></div>
-      <div class="metric-card"><div class="metric-icon bg-[var(--orange-soft)] text-[var(--orange)]"><i class="fa-solid fa-building-columns"></i></div><p class="text-xs text-[var(--muted)] mt-3">Organismos activos</p><p id="kpiOrganismos" class="text-2xl font-extrabold mt-1">0</p></div>
-      <div class="metric-card"><div class="metric-icon bg-slate-100 text-slate-700"><i class="fa-solid fa-calculator"></i></div><p class="text-xs text-[var(--muted)] mt-3">Presupuesto medio</p><p id="kpiPromedio" class="text-2xl font-extrabold mt-1">€0</p></div>
-    </section>
-
-    <section class="grid grid-cols-1 xl:grid-cols-5 gap-4 mb-5">
-      <div class="panel rounded-2xl p-4 xl:col-span-3">
-        <h3 class="font-extrabold mb-3">Tabla de oportunidades</h3>
-        <div class="overflow-x-auto">
-          <table class="data-table min-w-[1150px] w-full">
-            <thead>
-              <tr class="text-left">
-                <th class="py-3 pr-3"><button data-sort="titulo">Título <i class="fa-solid fa-sort"></i></button></th>
-                <th class="py-3 pr-3"><button data-sort="expediente">Expediente <i class="fa-solid fa-sort"></i></button></th>
-                <th class="py-3 pr-3"><button data-sort="organo_contratacion">Órgano <i class="fa-solid fa-sort"></i></button></th>
-                <th class="py-3 pr-3"><button data-sort="importe_total">Importe <i class="fa-solid fa-sort"></i></button></th>
-                <th class="py-3 pr-3"><button data-sort="presentacion_hasta">Fecha límite <i class="fa-solid fa-sort"></i></button></th>
-                <th class="py-3 pr-3">CPV</th>
-                <th class="py-3 pr-3">Probabilidad</th>
-              </tr>
-            </thead>
-            <tbody id="tableBody"></tbody>
-          </table>
-        </div>
-        <div class="flex items-center justify-between mt-4">
-          <button id="prevPageBtn" class="px-4 py-2 rounded-xl border border-[var(--border)] bg-white text-sm font-semibold">Anterior</button>
-          <span id="pageInfo" class="text-sm text-[var(--muted)]">Página 1</span>
-          <button id="nextPageBtn" class="px-4 py-2 rounded-xl border border-[var(--border)] bg-white text-sm font-semibold">Siguiente</button>
-        </div>
-      </div>
-
-      <div class="panel rounded-2xl p-4 xl:col-span-2">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-extrabold">Insights IA</h3>
-          <span class="text-xs font-bold px-2 py-1 rounded-full bg-[var(--green-soft)] text-[var(--green)]">Activo</span>
-        </div>
-        <ul id="aiInsights" class="text-sm space-y-3"></ul>
-      </div>
-    </section>
-
-    <section class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-      <div class="panel rounded-2xl p-4"><h3 class="font-extrabold mb-2">Licitaciones por tipo</h3><div class="h-64"><canvas id="tipoChart"></canvas></div></div>
-      <div class="panel rounded-2xl p-4"><h3 class="font-extrabold mb-2">Presupuesto por tipo</h3><div class="h-64"><canvas id="importeTipoChart"></canvas></div></div>
-      <div class="panel rounded-2xl p-4"><h3 class="font-extrabold mb-2">Top organismos</h3><div class="h-64"><canvas id="orgChart"></canvas></div></div>
-      <div class="panel rounded-2xl p-4"><h3 class="font-extrabold mb-2">Top CPV</h3><div class="h-64"><canvas id="cpvChart"></canvas></div></div>
-      <div class="panel rounded-2xl p-4 lg:col-span-2 xl:col-span-2"><h3 class="font-extrabold mb-2">Evolución temporal</h3><div class="h-72"><canvas id="temporalChart"></canvas></div></div>
-    </section>
   </main>
 
   <script>
@@ -368,36 +318,10 @@
       document.getElementById('loadMoreBtn').classList.toggle('hidden', state.filtered.length <= state.visible);
     }
 
-    function renderKpis() {
-      const rows = state.filtered;
-      const budget = rows.reduce((a, r) => a + r.__amount, 0);
-      document.getElementById('kpiAbiertas').textContent = rows.length.toLocaleString('es-ES');
-      document.getElementById('kpiBudget').textContent = formatEuro(budget);
-      document.getElementById('kpiOrganismos').textContent = new Set(rows.map(r => r.__org)).size.toLocaleString('es-ES');
-      document.getElementById('kpiPromedio').textContent = formatEuro(rows.length ? budget / rows.length : 0);
-    }
 
-    function renderInsights() {
-      const rows = state.filtered;
-      const best = [...rows].sort((a, b) => b.__probability.score - a.__probability.score)[0];
-      const topOrg = topCounts(rows, r => r.__org, 1)[0];
-      const lowCompetition = rows.filter(r => amount(r.ofertas_recibidas) <= 2).length;
-      const insights = [
-        best ? `Mejor oportunidad: ${best.__probability.score}% en "${best.title.slice(0, 78)}".` : 'No hay oportunidades filtradas.',
-        topOrg ? `${topOrg[0]} concentra más actividad en el conjunto filtrado.` : 'Sin organismo dominante.',
-        `${lowCompetition} oportunidades muestran baja competencia estimada.`
-      ];
-      document.getElementById('aiInsights').innerHTML = insights.map(i => `<li class="p-3 rounded-xl bg-[var(--panel-soft)]">${escapeHtml(i)}</li>`).join('');
-    }
 
-    function aggregate(rows, accessor, mode = 'count', max = 8) {
-      const map = {};
-      rows.forEach(r => {
-        const key = safeText(accessor(r)) || 'No especificado';
-        map[key] = (map[key] || 0) + (mode === 'amount' ? r.__amount : 1);
-      });
-      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
-    }
+
+
     function monthKey(d) {
       return d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` : 'Sin fecha';
     }
@@ -413,19 +337,7 @@
         }
       });
     }
-    function renderCharts() {
-      const rows = state.filtered;
-      const typeCount = aggregate(rows, r => r.__tipo, 'count', 8);
-      const typeAmount = aggregate(rows, r => r.__tipo, 'amount', 8);
-      const org = aggregate(rows, r => r.__org, 'count', 8);
-      const cpv = aggregate(rows, r => r.__cpv, 'count', 8);
-      const temporal = Object.entries(rows.reduce((m, r) => (m[monthKey(r.__date)] = (m[monthKey(r.__date)] || 0) + 1, m), {})).sort((a, b) => a[0].localeCompare(b[0]));
-      makeChart('tipoChart', 'bar', typeCount.map(x => x[0]), typeCount.map(x => x[1]), 'Licitaciones', '#2563eb');
-      makeChart('importeTipoChart', 'bar', typeAmount.map(x => x[0]), typeAmount.map(x => x[1]), 'Presupuesto', '#12a678');
-      makeChart('orgChart', 'bar', org.map(x => x[0]), org.map(x => x[1]), 'Organismos', '#f59e0b');
-      makeChart('cpvChart', 'bar', cpv.map(x => x[0]), cpv.map(x => x[1]), 'CPV', '#64748b');
-      makeChart('temporalChart', 'line', temporal.map(x => x[0]), temporal.map(x => x[1]), 'Licitaciones', '#2563eb');
-    }
+
 
     function sortValue(row, field) {
       if (field === 'importe_total') return row.__amount;
@@ -460,11 +372,7 @@
     }
 
     function renderAll() {
-      renderCards();
-      renderKpis();
-      renderInsights();
-      renderCharts();
-      renderTable();
+      renderCards()
     }
 
     function bindEvents() {
