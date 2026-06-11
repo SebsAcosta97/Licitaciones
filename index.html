@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GovAI | Inteligencia de Contratación Pública</title>
+  <title>GovAI | Oportunidades de Licitación</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,46 +14,62 @@
 
   <style>
     :root {
-      --bg: #f4f7fb;
-      --bg-soft: #eef3f9;
-      --card: #ffffff;
-      --border: #dfe7f2;
-      --text: #132238;
-      --muted: #5d6f87;
-      --brand: #2f7ff7;
-      --brand-soft: #e8f1ff;
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --panel-soft: #f0f5fb;
+      --border: #dfe7f1;
+      --text: #142033;
+      --muted: #64748b;
+      --blue: #2563eb;
+      --blue-soft: #e8f0ff;
+      --green: #12a678;
+      --green-soft: #e7f8f2;
+      --orange: #f59e0b;
+      --orange-soft: #fff3db;
     }
-    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    * { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0; }
     body {
-      background: radial-gradient(circle at 15% 0%, #e9f2ff 0, transparent 40%), radial-gradient(circle at 100% 20%, #edf8f2 0, transparent 35%), var(--bg);
+      background: linear-gradient(180deg, #eef5ff 0%, var(--bg) 260px);
       color: var(--text);
     }
-    .soft-card {
-      background: var(--card);
+    .panel {
+      background: var(--panel);
       border: 1px solid var(--border);
-      box-shadow: 0 8px 24px rgba(25, 43, 71, 0.06);
-      transition: all .2s ease;
-    }
-    .soft-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(25, 43, 71, 0.10);
+      box-shadow: 0 10px 28px rgba(20, 32, 51, .06);
     }
     .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       border: 1px solid var(--border);
       background: white;
       color: var(--text);
       border-radius: 999px;
-      padding: 6px 10px;
+      padding: 8px 12px;
       font-size: 12px;
+      font-weight: 700;
       line-height: 1;
       transition: all .15s ease;
     }
-    .chip:hover { background: var(--bg-soft); }
-    .chip.active {
-      background: var(--brand-soft);
-      border-color: #bfd6ff;
-      color: #144ea3;
+    .chip:hover { border-color: #b9c8dd; background: var(--panel-soft); }
+    .chip.active { background: var(--blue-soft); border-color: #b8ccff; color: #174ea6; }
+    .metric-card {
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: white;
+      padding: 14px;
     }
+    .metric-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .prob-high { background: var(--green-soft); color: #057a55; border-color: #a7ead1; }
+    .prob-mid { background: var(--orange-soft); color: #9a5b00; border-color: #ffd58a; }
+    .prob-low { background: #eef2f7; color: #475569; border-color: #d8e1ec; }
     .skeleton {
       animation: pulse 1.2s infinite;
       background: linear-gradient(90deg, #edf2f9 25%, #e3ebf6 37%, #edf2f9 63%);
@@ -61,21 +77,14 @@
     }
     .data-table th {
       font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: .02em;
       color: var(--muted);
+      text-transform: uppercase;
       white-space: nowrap;
     }
     .data-table td {
       font-size: 12px;
-      vertical-align: top;
       border-top: 1px solid var(--border);
-    }
-    .sort-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 700;
+      vertical-align: top;
     }
     @keyframes pulse {
       0% { background-position: 100% 50%; }
@@ -84,374 +93,289 @@
   </style>
 </head>
 <body>
-  <div class="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-10">
-    <header class="flex items-center justify-between mb-8">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-[var(--brand-soft)] text-[var(--brand)] flex items-center justify-center">
-          <i class="fa-solid fa-sparkles"></i>
+  <main class="max-w-7xl mx-auto px-4 md:px-8 py-5 md:py-8">
+    <header class="flex flex-col lg:flex-row lg:items-center gap-4 mb-5">
+      <div class="flex items-center gap-3 min-w-fit">
+        <div class="w-11 h-11 rounded-2xl bg-[var(--blue)] text-white flex items-center justify-center shadow-lg shadow-blue-200">
+          <i class="fa-solid fa-chart-line"></i>
         </div>
         <div>
-          <h1 class="text-xl md:text-2xl font-extrabold tracking-tight">GovAI Intelligence</h1>
-          <p class="text-sm text-[var(--muted)]">IA para contratación pública y estrategia de ofertas</p>
+          <h1 class="text-2xl font-extrabold">GovAI Opportunities</h1>
+          <p class="text-sm text-[var(--muted)]">Inteligencia de licitaciones públicas</p>
         </div>
       </div>
-      <div class="hidden md:flex text-xs text-[var(--muted)] bg-white border border-[var(--border)] px-3 py-2 rounded-xl">Fuente: <code id="datasetSourceLabel" class="ml-1">data/Silver/licitaciones_abiertas.json</code></div>
+
+      <div class="panel rounded-2xl px-4 py-3 flex items-center gap-3 flex-1">
+        <i class="fa-solid fa-magnifying-glass text-[var(--blue)]"></i>
+        <input id="searchInput" class="w-full bg-transparent outline-none text-base" aria-label="Buscar licitaciones" placeholder="Buscar licitaciones, CPV, expediente, organismo, ciudad..." />
+      </div>
     </header>
 
-    <section class="soft-card rounded-3xl p-6 md:p-8 mb-6">
-      <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight mb-2">Encuentra oportunidades de contratación pública con IA</h2>
-      <p class="text-[var(--muted)] mb-5">Búsqueda instantánea sobre licitaciones abiertas y recientes para preparar mejores ofertas.</p>
-      <div class="flex gap-3 items-center bg-white border border-[var(--border)] rounded-2xl px-4 py-3">
-        <i class="fa-solid fa-magnifying-glass text-[var(--muted)]"></i>
-        <input id="searchInput" aria-label="Buscar licitaciones" class="w-full outline-none bg-transparent" placeholder="hospital, software, mantenimiento, Madrid, CPV..." />
+    <section class="panel rounded-2xl p-4 mb-5">
+      <div class="flex items-center justify-between gap-3 mb-3">
+        <h2 class="font-extrabold">Filtros</h2>
+        <button id="clearAllFilters" class="text-sm font-bold text-[var(--blue)]">Limpiar filtros</button>
       </div>
-      <div id="quickFilters" class="flex flex-wrap gap-2 mt-4"></div>
-    </section>
-
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
-      <aside class="lg:col-span-4 xl:col-span-3 space-y-4">
-        <div class="soft-card rounded-2xl p-4">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="font-bold">Filtros inteligentes</h3>
-            <button id="clearAllFilters" class="text-xs text-[var(--brand)] font-semibold">Limpiar</button>
-          </div>
-
-          <div class="space-y-4">
-            <div>
-              <p class="text-xs text-[var(--muted)] mb-2">Tipo de contrato</p>
-              <div id="tipoChips" class="flex flex-wrap gap-2"></div>
-            </div>
-            <div>
-              <p class="text-xs text-[var(--muted)] mb-2">Estado</p>
-              <div id="estadoChips" class="flex flex-wrap gap-2"></div>
-            </div>
-            <div>
-              <p class="text-xs text-[var(--muted)] mb-2">Órgano contratante</p>
-              <div id="organoChips" class="flex flex-wrap gap-2"></div>
-            </div>
-            <div>
-              <p class="text-xs text-[var(--muted)] mb-2">CPV</p>
-              <div id="cpvChips" class="flex flex-wrap gap-2"></div>
-            </div>
-            <div>
-              <p class="text-xs text-[var(--muted)] mb-2">Ubicación</p>
-              <div id="ubicacionChips" class="flex flex-wrap gap-2"></div>
-            </div>
-            <div>
-              <p class="text-xs text-[var(--muted)] mb-2">Presupuesto (€)</p>
-              <div class="grid grid-cols-2 gap-2">
-                <input id="minBudget" type="number" placeholder="Mínimo" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm" />
-                <input id="maxBudget" type="number" placeholder="Máximo" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm" />
-              </div>
-            </div>
-            <div>
-              <p class="text-xs text-[var(--muted)] mb-2">Fecha publicación</p>
-              <div id="fechaChips" class="flex flex-wrap gap-2"></div>
-            </div>
-            <div>
-              <p class="text-xs text-[var(--muted)] mb-2">IA y prioridad</p>
-              <div id="iaChips" class="flex flex-wrap gap-2"></div>
-            </div>
-          </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div>
+          <p class="text-xs text-[var(--muted)] mb-2">Tipo</p>
+          <div id="tipoChips" class="flex flex-wrap gap-2"></div>
         </div>
-
-        <div class="soft-card rounded-2xl p-4">
-          <h3 class="font-bold mb-2">Filtros activos</h3>
-          <div id="activeFilters" class="flex flex-wrap gap-2"></div>
+        <div>
+          <p class="text-xs text-[var(--muted)] mb-2">Estado</p>
+          <div id="estadoChips" class="flex flex-wrap gap-2"></div>
         </div>
-      </aside>
-
-      <div class="lg:col-span-8 xl:col-span-9 space-y-4">
-        <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Licitaciones activas</p><p id="kpiAbiertas" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Presupuesto acumulado</p><p id="kpiBudget" class="text-2xl font-extrabold mt-1">€0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Organismos activos</p><p id="kpiOrganismos" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Presupuesto medio</p><p id="kpiSemana" class="text-2xl font-extrabold mt-1">€0</p></div>
-        </section>
-
-        <section class="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">CPV distintos</p><p id="kpiHistorico" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Adjudicatarios distintos</p><p id="kpiSectores" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Ofertas recibidas</p><p id="kpiIA" class="text-2xl font-extrabold mt-1">0</p></div>
-          <div class="soft-card rounded-2xl p-4"><p class="text-xs text-[var(--muted)]">Con adjudicatario</p><p id="kpiRecurrentes" class="text-2xl font-extrabold mt-1">0</p></div>
-        </section>
-
-        
-<section class="soft-card rounded-2xl p-5">
-  <div class="flex items-center justify-between mb-4">
-    <div>
-      <h3 class="text-xl font-bold">Impacto Agenda 2030 / 2035</h3>
-      <p class="text-sm text-[var(--muted)]">GovTech · Transparencia · Innovación · Sostenibilidad</p>
-    </div>
-
-    <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-3 py-1">
-      ODS Intelligence
-    </span>
-  </div>
-
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-    <button onclick="openODSModal('ODS9')"
-            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
-      <p class="text-xs text-[var(--muted)]">ODS 9</p>
-      <h4 class="font-bold mt-1">Innovación pública</h4>
-    </button>
-
-    <button onclick="openODSModal('ODS16')"
-            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
-      <p class="text-xs text-[var(--muted)]">ODS 16</p>
-      <h4 class="font-bold mt-1">Transparencia institucional</h4>
-    </button>
-
-    <button onclick="openODSModal('ODS8')"
-            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
-      <p class="text-xs text-[var(--muted)]">ODS 8</p>
-      <h4 class="font-bold mt-1">Competitividad empresarial</h4>
-    </button>
-
-    <button onclick="openODSModal('ODS12')"
-            class="bg-[var(--bg-soft)] rounded-2xl p-4 text-left hover:shadow-md transition">
-      <p class="text-xs text-[var(--muted)]">ODS 12</p>
-      <h4 class="font-bold mt-1">Optimización tecnológica</h4>
-    </button>
-
-  </div>
-</section>
-
-
-        <section class="soft-card rounded-2xl p-4">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="font-bold">IA Insights</h3>
-            <span class="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-1">Activo</span>
-          </div>
-          <ul id="aiInsights" class="text-sm space-y-2"></ul>
-        </section>
-
-        <section class="grid grid-cols-1 xl:grid-cols-2 gap-4">
-          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Licitaciones por tipo</h3><div class="h-64"><canvas id="tipoChart"></canvas></div></div>
-          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Importe por tipo</h3><div class="h-64"><canvas id="importeTipoChart"></canvas></div></div>
-          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Top órganos contratantes</h3><div class="h-64"><canvas id="orgChart"></canvas></div></div>
-          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Top CPV</h3><div class="h-64"><canvas id="cpvChart"></canvas></div></div>
-          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Distribución por estado</h3><div class="h-64"><canvas id="estadoChart"></canvas></div></div>
-          <div class="soft-card rounded-2xl p-4"><h3 class="font-bold mb-2">Evolución temporal</h3><div class="h-64"><canvas id="temporalChart"></canvas></div></div>
-          <div class="soft-card rounded-2xl p-4 xl:col-span-2"><h3 class="font-bold mb-2">Evolución del importe licitado</h3><div class="h-72"><canvas id="temporalImporteChart"></canvas></div></div>
-        </section>
-
-        <section class="flex items-center justify-between pt-1">
+        <div>
+          <p class="text-xs text-[var(--muted)] mb-2">Ubicación</p>
+          <div id="ubicacionChips" class="flex flex-wrap gap-2"></div>
+        </div>
+        <div>
+          <p class="text-xs text-[var(--muted)] mb-2">Probabilidad de adjudicación</p>
+          <div id="probabilityChips" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+        <div>
+          <label class="text-xs text-[var(--muted)] mb-2 block">Órgano contratante</label>
+          <select id="orgFilter" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm bg-white"></select>
+        </div>
+        <div>
+          <label class="text-xs text-[var(--muted)] mb-2 block">CPV</label>
+          <select id="cpvFilter" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm bg-white"></select>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
           <div>
-            <h3 class="text-2xl font-extrabold">Oportunidades activas</h3>
-            <p class="text-sm text-[var(--muted)]">Listado dinámico para discovery comercial</p>
+            <label class="text-xs text-[var(--muted)] mb-2 block">Importe mínimo</label>
+            <input id="minBudget" type="number" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm" />
           </div>
-          <p class="text-sm text-[var(--muted)]"><span id="resultsCount">0</span> resultados</p>
-        </section>
+          <div>
+            <label class="text-xs text-[var(--muted)] mb-2 block">Importe máximo</label>
+            <input id="maxBudget" type="number" class="w-full rounded-xl border border-[var(--border)] px-3 py-2 text-sm" />
+          </div>
+        </div>
+      </div>
+      <div id="activeFilters" class="flex flex-wrap gap-2 mt-4"></div>
+    </section>
 
-        <section id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-3"></section>
-        <div class="text-center"><button id="loadMoreBtn" class="hidden px-5 py-2.5 rounded-xl border border-[var(--border)] bg-white hover:bg-[var(--bg-soft)] text-sm font-semibold">Cargar más</button></div>
-
-        <section class="soft-card rounded-2xl p-4">
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-3">
-            <div>
-              <h3 class="text-xl font-bold">Tabla analítica de licitaciones</h3>
-              <p class="text-sm text-[var(--muted)]">Vista tabular con búsqueda, ordenación y paginación</p>
-            </div>
-            <p class="text-sm text-[var(--muted)]"><span id="tableCount">0</span> registros filtrados</p>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="data-table min-w-[1300px] w-full">
-              <thead>
-                <tr class="text-left">
-                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="titulo">Título <i class="fa-solid fa-sort"></i></button></th>
-                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="expediente">Expediente <i class="fa-solid fa-sort"></i></button></th>
-                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="organo_contratacion">Órgano <i class="fa-solid fa-sort"></i></button></th>
-                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="tipo_contrato">Tipo <i class="fa-solid fa-sort"></i></button></th>
-                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="estado">Estado <i class="fa-solid fa-sort"></i></button></th>
-                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="importe_total">Importe total <i class="fa-solid fa-sort"></i></button></th>
-                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="importe_sin_impuestos">Importe sin impuestos <i class="fa-solid fa-sort"></i></button></th>
-                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="fecha_publicacion">Fecha publicación <i class="fa-solid fa-sort"></i></button></th>
-                  <th class="py-3 pr-3"><button class="sort-btn" data-sort="presentacion_hasta">Fecha límite <i class="fa-solid fa-sort"></i></button></th>
-                  <th class="py-3 pr-3">Lugar ejecución</th>
-                  <th class="py-3 pr-3">CPV</th>
-                  <th class="py-3 pr-3">Adjudicatario</th>
-                </tr>
-              </thead>
-              <tbody id="tableBody"></tbody>
-            </table>
-          </div>
-          <div class="flex items-center justify-between mt-4">
-            <button id="prevPageBtn" class="px-4 py-2 rounded-xl border border-[var(--border)] bg-white text-sm font-semibold">Anterior</button>
-            <span id="pageInfo" class="text-sm text-[var(--muted)]">Página 1</span>
-            <button id="nextPageBtn" class="px-4 py-2 rounded-xl border border-[var(--border)] bg-white text-sm font-semibold">Siguiente</button>
-          </div>
-        </section>
+    <section class="mb-6">
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-3 mb-3">
+        <div>
+          <h2 class="text-2xl font-extrabold">Licitaciones destacadas</h2>
+          <p class="text-sm text-[var(--muted)]"><span id="resultsCount">0</span> oportunidades encontradas</p>
+        </div>
+        <div id="quickFilters" class="flex flex-wrap gap-2"></div>
+      </div>
+      <section id="cardsContainer" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></section>
+      <div class="text-center mt-4">
+        <button id="loadMoreBtn" class="hidden px-5 py-2.5 rounded-xl border border-[var(--border)] bg-white hover:bg-[var(--panel-soft)] text-sm font-semibold">Cargar más</button>
       </div>
     </section>
-  </div>
+
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+      <div class="metric-card"><div class="metric-icon bg-[var(--blue-soft)] text-[var(--blue)]"><i class="fa-solid fa-briefcase"></i></div><p class="text-xs text-[var(--muted)] mt-3">Licitaciones activas</p><p id="kpiAbiertas" class="text-2xl font-extrabold mt-1">0</p></div>
+      <div class="metric-card"><div class="metric-icon bg-[var(--green-soft)] text-[var(--green)]"><i class="fa-solid fa-euro-sign"></i></div><p class="text-xs text-[var(--muted)] mt-3">Presupuesto acumulado</p><p id="kpiBudget" class="text-2xl font-extrabold mt-1">€0</p></div>
+      <div class="metric-card"><div class="metric-icon bg-[var(--orange-soft)] text-[var(--orange)]"><i class="fa-solid fa-building-columns"></i></div><p class="text-xs text-[var(--muted)] mt-3">Organismos activos</p><p id="kpiOrganismos" class="text-2xl font-extrabold mt-1">0</p></div>
+      <div class="metric-card"><div class="metric-icon bg-slate-100 text-slate-700"><i class="fa-solid fa-calculator"></i></div><p class="text-xs text-[var(--muted)] mt-3">Presupuesto medio</p><p id="kpiPromedio" class="text-2xl font-extrabold mt-1">€0</p></div>
+    </section>
+
+    <section class="grid grid-cols-1 xl:grid-cols-5 gap-4 mb-5">
+      <div class="panel rounded-2xl p-4 xl:col-span-3">
+        <h3 class="font-extrabold mb-3">Tabla de oportunidades</h3>
+        <div class="overflow-x-auto">
+          <table class="data-table min-w-[1150px] w-full">
+            <thead>
+              <tr class="text-left">
+                <th class="py-3 pr-3"><button data-sort="titulo">Título <i class="fa-solid fa-sort"></i></button></th>
+                <th class="py-3 pr-3"><button data-sort="expediente">Expediente <i class="fa-solid fa-sort"></i></button></th>
+                <th class="py-3 pr-3"><button data-sort="organo_contratacion">Órgano <i class="fa-solid fa-sort"></i></button></th>
+                <th class="py-3 pr-3"><button data-sort="importe_total">Importe <i class="fa-solid fa-sort"></i></button></th>
+                <th class="py-3 pr-3"><button data-sort="presentacion_hasta">Fecha límite <i class="fa-solid fa-sort"></i></button></th>
+                <th class="py-3 pr-3">CPV</th>
+                <th class="py-3 pr-3">Probabilidad</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div class="flex items-center justify-between mt-4">
+          <button id="prevPageBtn" class="px-4 py-2 rounded-xl border border-[var(--border)] bg-white text-sm font-semibold">Anterior</button>
+          <span id="pageInfo" class="text-sm text-[var(--muted)]">Página 1</span>
+          <button id="nextPageBtn" class="px-4 py-2 rounded-xl border border-[var(--border)] bg-white text-sm font-semibold">Siguiente</button>
+        </div>
+      </div>
+
+      <div class="panel rounded-2xl p-4 xl:col-span-2">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-extrabold">Insights IA</h3>
+          <span class="text-xs font-bold px-2 py-1 rounded-full bg-[var(--green-soft)] text-[var(--green)]">Activo</span>
+        </div>
+        <ul id="aiInsights" class="text-sm space-y-3"></ul>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div class="panel rounded-2xl p-4"><h3 class="font-extrabold mb-2">Licitaciones por tipo</h3><div class="h-64"><canvas id="tipoChart"></canvas></div></div>
+      <div class="panel rounded-2xl p-4"><h3 class="font-extrabold mb-2">Presupuesto por tipo</h3><div class="h-64"><canvas id="importeTipoChart"></canvas></div></div>
+      <div class="panel rounded-2xl p-4"><h3 class="font-extrabold mb-2">Top organismos</h3><div class="h-64"><canvas id="orgChart"></canvas></div></div>
+      <div class="panel rounded-2xl p-4"><h3 class="font-extrabold mb-2">Top CPV</h3><div class="h-64"><canvas id="cpvChart"></canvas></div></div>
+      <div class="panel rounded-2xl p-4 lg:col-span-2 xl:col-span-2"><h3 class="font-extrabold mb-2">Evolución temporal</h3><div class="h-72"><canvas id="temporalChart"></canvas></div></div>
+    </section>
+  </main>
 
   <script>
+    const DATASET_PATHS = [
+      './data/Silver/licitaciones_abiertas.json',
+      './data/licitaciones_abiertas.json'
+    ];
+
     const state = {
       raw: [],
       filtered: [],
-      visible: 24,
+      visible: 18,
       tablePage: 1,
-      pageSize: 12,
-      sort: { field: 'fecha_publicacion', direction: 'desc' },
+      pageSize: 10,
       charts: {},
+      sort: { field: 'presentacion_hasta', direction: 'asc' },
       filters: {
         q: '',
         tipo: new Set(),
         estado: new Set(),
-        organo: new Set(),
-        cpv: new Set(),
         ubicacion: new Set(),
+        probabilidad: new Set(),
+        organo: '',
+        cpv: '',
         minBudget: null,
-        maxBudget: null,
-        fecha: 'all',
-        flags: new Set()
-      },
-      meta: { recurrentOrg: new Set() }
+        maxBudget: null
+      }
     };
 
-    const DATASET_PATHS = [
-      './data/Silver/licitaciones_abiertas.json',
-      './data/licitaciones_abiertas.json',
+    const REGION_MAP = {
+      ES11: 'Galicia', ES12: 'Asturias', ES13: 'Cantabria', ES21: 'País Vasco', ES22: 'Navarra',
+      ES23: 'La Rioja', ES24: 'Aragón', ES30: 'Madrid', ES41: 'Castilla y León', ES42: 'Castilla-La Mancha',
+      ES43: 'Extremadura', ES51: 'Cataluña', ES52: 'Comunidad Valenciana', ES53: 'Illes Balears',
+      ES61: 'Andalucía', ES62: 'Región de Murcia', ES63: 'Ceuta', ES64: 'Melilla', ES70: 'Canarias'
+    };
+
+    const PROVINCE_HINTS = [
+      'Madrid','Barcelona','Valencia','Sevilla','Zaragoza','Málaga','Murcia','Palma','Bilbao','Alicante',
+      'Córdoba','Valladolid','Vigo','Gijón','Hospitalet','A Coruña','Granada','Vitoria','Elche','Oviedo',
+      'Badalona','Cartagena','Terrassa','Jerez','Sabadell','Móstoles','Alcalá','Pamplona','Santander'
     ];
 
-    const HEALTH = ['salud', 'sanidad', 'hospital', 'médic', 'clinic', 'farmac'];
-    const TECH = ['software', 'aplicaci', 'sistema', 'digital', 'cloud', 'datos', 'ia'];
     function safeText(v) { return (v ?? '').toString().trim(); }
     function escapeHtml(v) {
-      return safeText(v)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+      return safeText(v).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
     }
     function amount(v) {
-      const n = Number((safeText(v).replace(/[^\d,.-]/g, '').replace(',', '.')));
+      const n = Number(safeText(v).replace(/[^\d,.-]/g, '').replace(',', '.'));
       return Number.isFinite(n) ? n : 0;
     }
     function dateVal(v) {
       const d = new Date(v);
       return Number.isNaN(d.getTime()) ? null : d;
     }
-    function daysAgo(d) {
+    function formatEuro(n) {
+      return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number.isFinite(n) ? n : 0);
+    }
+    function daysUntil(d) {
       if (!d) return 9999;
-      return Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
+      return Math.ceil((d.getTime() - Date.now()) / 86400000);
     }
-    function locationBucket(item) {
-      const loc = safeText(item.lugar_ejecucion || item.lugar_ejecucion_codigo);
-      if (!loc) return 'No especificado';
-      return loc.split(/[\/,]/)[0].trim() || 'No especificado';
+    function locationName(row) {
+      const text = `${safeText(row.lugar_ejecucion)} ${safeText(row.titulo)}`;
+      const city = PROVINCE_HINTS.find(x => text.toLowerCase().includes(x.toLowerCase()));
+      if (city) return city;
+      const code = safeText(row.lugar_ejecucion_codigo || row.lugar_ejecucion).slice(0, 4).toUpperCase();
+      return REGION_MAP[code] || safeText(row.lugar_ejecucion) || 'No especificado';
     }
-    function score(item) {
-      let s = 55;
-      if (amount(item.importe_total) >= 100000) s += 10;
-      if (amount(item.importe_total) >= 500000) s += 10;
-      if (daysAgo(item.__date) <= 7) s += 8;
-      if (item.__tags.has('SALUD')) s += 6;
-      if (item.__tags.has('TECH')) s += 5;
-      if (state.meta.recurrentOrg.has(item.organo_contratacion)) s += 5;
-      return Math.min(97, s);
+    function probability(row) {
+      let score = 50;
+      const offers = amount(row.ofertas_recibidas);
+      const budget = amount(row.importe_total || row.importe_sin_impuestos);
+      const cpv = safeText(row.cpv_codes);
+      const procedure = safeText(row.procedimiento_codigo);
+      const estado = safeText(row.estado || row.estado_codigo).toLowerCase();
+
+      if (!offers) score += 14;
+      else if (offers <= 2) score += 18;
+      else if (offers <= 5) score += 8;
+      else score -= 10;
+
+      if (budget > 0 && budget <= 150000) score += 12;
+      else if (budget <= 750000) score += 7;
+      else if (budget > 1500000) score -= 8;
+
+      if (['1','2','9','10'].includes(procedure)) score += 6;
+      if (estado.includes('evalu') || estado.includes('public')) score += 7;
+      if (cpv.split(';').filter(Boolean).length <= 1) score += 5;
+      else score -= 4;
+      if (safeText(row.adjudicatario)) score -= 10;
+
+      score = Math.max(8, Math.min(96, Math.round(score)));
+      const label = score >= 75 ? 'Alta probabilidad' : score >= 50 ? 'Media probabilidad' : 'Baja probabilidad';
+      const cls = score >= 75 ? 'prob-high' : score >= 50 ? 'prob-mid' : 'prob-low';
+      return { score, label, cls };
+    }
+    function chip(id, label, set) {
+      return `<button data-id="${escapeHtml(id)}" class="chip ${set.has(id) ? 'active' : ''}">${escapeHtml(label)}</button>`;
+    }
+    function topCounts(rows, accessor, max = 8) {
+      const map = {};
+      rows.forEach(r => {
+        const key = safeText(accessor(r)) || 'No especificado';
+        map[key] = (map[key] || 0) + 1;
+      });
+      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
     }
 
     function enrich(rows) {
-      const orgCounter = {};
-      rows.forEach(r => { const o = safeText(r.organo_contratacion); if (o) orgCounter[o] = (orgCounter[o] || 0) + 1; });
-      state.meta.recurrentOrg = new Set(Object.entries(orgCounter).filter(([, c]) => c >= 5).map(([o]) => o));
-
-      return rows.map(r => {
-        const title = safeText(r.titulo || r.title);
-        const org = safeText(r.organo_contratacion);
-        const tipo = safeText(r.tipo_contrato || r.tipo_contrato_codigo);
-        const cpv = safeText(r.cpv_codes);
-        const adjudicatario = safeText(r.adjudicatario);
-        const blob = `${title} ${safeText(r.expediente)} ${org} ${safeText(r.organo_dir3)} ${safeText(r.lugar_ejecucion)} ${safeText(r.lugar_ejecucion_codigo)} ${tipo} ${safeText(r.estado)} ${safeText(r.estado_codigo)} ${cpv} ${safeText(r.cpv_descripcion)} ${adjudicatario}`.toLowerCase();
-        const tags = new Set();
-        if (HEALTH.some(k => blob.includes(k))) tags.add('SALUD');
-        if (TECH.some(k => blob.includes(k))) tags.add('TECH');
-        const item = {
-          ...r,
+      return rows.map(row => {
+        const title = safeText(row.titulo || row.title);
+        const enriched = {
+          ...row,
           title,
-          __amount: amount(r.importe_total),
-          __amountNoTax: amount(r.importe_sin_impuestos),
-          __date: dateVal(r.fecha_publicacion),
-          __deadline: dateVal(r.presentacion_hasta),
-          __loc: locationBucket(r),
-          __tipo: tipo || 'No especificado',
-          __estado: safeText(r.estado || r.estado_codigo) || 'No especificado',
-          __org: org || 'No especificado',
-          __cpv: cpv || 'No especificado',
-          __adjudicatario: adjudicatario,
-          __blob: blob,
-          __tags: tags
+          __amount: amount(row.importe_total || row.importe_sin_impuestos),
+          __noTax: amount(row.importe_sin_impuestos),
+          __date: dateVal(row.fecha_publicacion),
+          __deadline: dateVal(row.presentacion_hasta),
+          __tipo: safeText(row.tipo_contrato || row.tipo_contrato_codigo) || 'No especificado',
+          __estado: safeText(row.estado || row.estado_codigo) || 'No especificado',
+          __org: safeText(row.organo_contratacion) || 'No especificado',
+          __cpv: safeText(row.cpv_codes) || 'No especificado',
+          __loc: locationName(row),
+          __adjudicatario: safeText(row.adjudicatario)
         };
-        item.__score = score(item);
-        return item;
+        enriched.__probability = probability(enriched);
+        enriched.__blob = `${title} ${row.expediente} ${enriched.__org} ${enriched.__cpv} ${row.cpv_descripcion} ${enriched.__loc} ${enriched.__adjudicatario}`.toLowerCase();
+        return enriched;
       });
     }
 
     function renderSkeleton() {
-      const c = document.getElementById('cardsContainer');
-      c.innerHTML = Array.from({ length: 9 }).map(() => `
-        <div class="soft-card rounded-2xl p-4">
-          <div class="skeleton h-4 rounded w-4/5 mb-3"></div>
-          <div class="skeleton h-3 rounded w-2/3 mb-4"></div>
-          <div class="skeleton h-20 rounded mb-3"></div>
-          <div class="skeleton h-8 rounded"></div>
-        </div>
+      document.getElementById('cardsContainer').innerHTML = Array.from({ length: 6 }).map(() => `
+        <div class="panel rounded-2xl p-5"><div class="skeleton h-5 rounded w-4/5 mb-3"></div><div class="skeleton h-3 rounded w-2/3 mb-5"></div><div class="skeleton h-24 rounded"></div></div>
       `).join('');
     }
 
-    function chip(id, label, active = false) {
-      return `<button data-id="${escapeHtml(id)}" class="chip ${active ? 'active' : ''}">${escapeHtml(label)}</button>`;
-    }
-
-    function topCounts(field, max = 10) {
-      const map = {};
-      state.raw.forEach(r => { const k = safeText(r[field]); if (k) map[k] = (map[k] || 0) + 1; });
-      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
-    }
-
-    function topByAccessor(accessor, max = 10) {
-      const map = {};
-      state.raw.forEach(r => {
-        const k = safeText(accessor(r));
-        if (k) map[k] = (map[k] || 0) + 1;
-      });
-      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
-    }
-
-    function topLocations(max = 12) {
-      const map = {};
-      state.raw.forEach(r => { map[r.__loc] = (map[r.__loc] || 0) + 1; });
-      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
-    }
-
-    function renderFilterUI() {
-      const tipo = topByAccessor(r => r.__tipo, 8);
-      const estado = topByAccessor(r => r.__estado, 8);
-      const organo = topByAccessor(r => r.__org, 8);
-      const cpv = topByAccessor(r => r.__cpv, 8);
-      const loc = topLocations(12);
-
-      document.getElementById('tipoChips').innerHTML = tipo.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.tipo.has(v))).join('');
-      document.getElementById('estadoChips').innerHTML = estado.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.estado.has(v))).join('');
-      document.getElementById('organoChips').innerHTML = organo.map(([v, c]) => chip(v, `${v.slice(0, 34)}${v.length > 34 ? '…' : ''} (${c})`, state.filters.organo.has(v))).join('');
-      document.getElementById('cpvChips').innerHTML = cpv.map(([v, c]) => chip(v, `${v.slice(0, 22)}${v.length > 22 ? '…' : ''} (${c})`, state.filters.cpv.has(v))).join('');
-      document.getElementById('ubicacionChips').innerHTML = loc.map(([v, c]) => chip(v, `${v} (${c})`, state.filters.ubicacion.has(v))).join('');
-
-      document.getElementById('fechaChips').innerHTML = [
-        ['all', 'Todas'], ['7d', 'Últimos 7 días'], ['30d', 'Últimos 30 días'], ['90d', 'Últimos 90 días']
-      ].map(([v, l]) => chip(v, l, state.filters.fecha === v)).join('');
-
-      document.getElementById('iaChips').innerHTML = [
-        ['ia', 'IA recomendada'], ['alto', 'Alto presupuesto'], ['salud', 'Sector salud'], ['tech', 'Tecnología'], ['recurrente', 'Recurrentes']
-      ].map(([v, l]) => chip(v, l, state.filters.flags.has(v))).join('');
-
+    function renderFilters() {
+      document.getElementById('tipoChips').innerHTML = topCounts(state.raw, r => r.__tipo, 6).map(([v, c]) => chip(v, `${v} (${c})`, state.filters.tipo)).join('');
+      document.getElementById('estadoChips').innerHTML = topCounts(state.raw, r => r.__estado, 6).map(([v, c]) => chip(v, `${v} (${c})`, state.filters.estado)).join('');
+      document.getElementById('ubicacionChips').innerHTML = topCounts(state.raw, r => r.__loc, 8).map(([v, c]) => chip(v, `${v} (${c})`, state.filters.ubicacion)).join('');
+      document.getElementById('probabilityChips').innerHTML = ['Alta probabilidad','Media probabilidad','Baja probabilidad'].map(v => chip(v, v, state.filters.probabilidad)).join('');
       document.getElementById('quickFilters').innerHTML = [
-        ['salud', 'Salud'], ['tech', 'Tecnología'], ['alto', 'Alto presupuesto'], ['30d', 'Recientes']
-      ].map(([k, l]) => `<button class="chip" data-quick="${k}">${l}</button>`).join('');
+        ['Alta probabilidad', 'Alta probabilidad'],
+        ['lowOffers', 'Baja competencia'],
+        ['highBudget', 'Alto presupuesto']
+      ].map(([k, l]) => `<button class="chip" data-quick="${k}">${escapeHtml(l)}</button>`).join('');
+
+      fillSelect('orgFilter', topCounts(state.raw, r => r.__org, 40), 'Todos los órganos');
+      fillSelect('cpvFilter', topCounts(state.raw, r => r.__cpv, 40), 'Todos los CPV');
+    }
+    function fillSelect(id, entries, label) {
+      const el = document.getElementById(id);
+      const current = el.value;
+      el.innerHTML = `<option value="">${label}</option>` + entries.map(([v, c]) => `<option value="${escapeHtml(v)}">${escapeHtml(v)} (${c})</option>`).join('');
+      el.value = current;
     }
 
     function applyFilters() {
@@ -460,772 +384,260 @@
         if (f.q && !r.__blob.includes(f.q)) return false;
         if (f.tipo.size && !f.tipo.has(r.__tipo)) return false;
         if (f.estado.size && !f.estado.has(r.__estado)) return false;
-        if (f.organo.size && !f.organo.has(r.__org)) return false;
-        if (f.cpv.size && !f.cpv.has(r.__cpv)) return false;
         if (f.ubicacion.size && !f.ubicacion.has(r.__loc)) return false;
+        if (f.probabilidad.size && !f.probabilidad.has(r.__probability.label)) return false;
+        if (f.organo && r.__org !== f.organo) return false;
+        if (f.cpv && r.__cpv !== f.cpv) return false;
         if (f.minBudget !== null && r.__amount < f.minBudget) return false;
         if (f.maxBudget !== null && r.__amount > f.maxBudget) return false;
-
-        if (f.fecha !== 'all') {
-          const d = daysAgo(r.__date);
-          if (f.fecha === '7d' && d > 7) return false;
-          if (f.fecha === '30d' && d > 30) return false;
-          if (f.fecha === '90d' && d > 90) return false;
-        }
-
-        if (f.flags.has('ia') && r.__score < 80) return false;
-        if (f.flags.has('alto') && r.__amount < 500000) return false;
-        if (f.flags.has('salud') && !r.__tags.has('SALUD')) return false;
-        if (f.flags.has('tech') && !r.__tags.has('TECH')) return false;
-        if (f.flags.has('recurrente') && !state.meta.recurrentOrg.has(r.organo_contratacion)) return false;
-
+        if (f.lowOffers && amount(r.ofertas_recibidas) > 2) return false;
+        if (f.highBudget && r.__amount < 500000) return false;
         return true;
-      });
+      }).sort((a, b) => b.__probability.score - a.__probability.score || (a.__deadline?.getTime() || 0) - (b.__deadline?.getTime() || 0));
 
-      state.filtered.sort((a, b) => {
-        const dateDiff = (b.__date?.getTime() || 0) - (a.__date?.getTime() || 0);
-        if (dateDiff !== 0) return dateDiff;
-        return b.__score - a.__score;
-      });
-
+      state.visible = Math.min(state.visible, Math.max(18, state.filtered.length));
       state.tablePage = 1;
       renderAll();
     }
 
-    function formatEuro(n) {
-      return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number.isFinite(n) ? n : 0);
-    }
-
-    function kpis() {
-      const rows = state.filtered;
-      const base = state.raw;
-      const budget = rows.reduce((a, r) => a + r.__amount, 0);
-      const avgBudget = rows.length ? budget / rows.length : 0;
-      const orgs = new Set(rows.map(r => r.__org).filter(Boolean));
-      const cpvs = new Set(rows.map(r => r.__cpv).filter(v => v && v !== 'No especificado'));
-      const adjudicatarios = new Set(rows.map(r => r.__adjudicatario).filter(Boolean));
-      const ofertas = rows.reduce((a, r) => a + amount(r.ofertas_recibidas), 0);
-      const adjudicadas = rows.filter(r => r.__adjudicatario).length;
-
-      document.getElementById('kpiAbiertas').textContent = rows.length.toLocaleString('es-ES');
-      document.getElementById('kpiBudget').textContent = formatEuro(budget);
-      document.getElementById('kpiOrganismos').textContent = orgs.size.toLocaleString('es-ES');
-      document.getElementById('kpiSemana').textContent = formatEuro(avgBudget);
-
-      document.getElementById('kpiHistorico').textContent = cpvs.size.toLocaleString('es-ES');
-      document.getElementById('kpiSectores').textContent = adjudicatarios.size.toLocaleString('es-ES');
-      document.getElementById('kpiIA').textContent = ofertas.toLocaleString('es-ES');
-      document.getElementById('kpiRecurrentes').textContent = adjudicadas.toLocaleString('es-ES');
-    }
-
-    function insights() {
-      const rows = state.filtered;
-      const high = rows.filter(r => r.__amount >= 500000).length;
-      const health = rows.filter(r => r.__tags.has('SALUD')).length;
-      const tech = rows.filter(r => r.__tags.has('TECH')).length;
-      const topLoc = Object.entries(rows.reduce((m, r) => (m[r.__loc] = (m[r.__loc] || 0) + 1, m), {})).sort((a, b) => b[1] - a[1])[0];
-      const pctHealth = rows.length ? Math.round((health / rows.length) * 100) : 0;
-
-      document.getElementById('aiInsights').innerHTML = [
-        `${high} oportunidades superan 500.000€ de presupuesto.`,
-        `${pctHealth}% de oportunidades activas pertenece a salud.`,
-        `${tech} licitaciones contienen señales de tecnología/digitalización.`,
-        `${topLoc ? topLoc[0] : 'N/A'} concentra más oportunidades activas.`
-      ].map(t => `<li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-600 mt-1"></i><span>${t}</span></li>`).join('');
-    }
-
     function renderActiveFilters() {
-      const out = [];
-      if (state.filters.q) out.push(`Búsqueda: ${state.filters.q}`);
-      state.filters.tipo.forEach(v => out.push(`Tipo: ${v}`));
-      state.filters.estado.forEach(v => out.push(`Estado: ${v}`));
-      state.filters.organo.forEach(v => out.push(`Órgano: ${v}`));
-      state.filters.cpv.forEach(v => out.push(`CPV: ${v}`));
-      state.filters.ubicacion.forEach(v => out.push(`Ubicación: ${v}`));
-      if (state.filters.minBudget !== null) out.push(`Min: ${formatEuro(state.filters.minBudget)}`);
-      if (state.filters.maxBudget !== null) out.push(`Max: ${formatEuro(state.filters.maxBudget)}`);
-      if (state.filters.fecha !== 'all') out.push(`Fecha: ${state.filters.fecha}`);
-      state.filters.flags.forEach(v => out.push(`IA: ${v}`));
-
-      document.getElementById('activeFilters').innerHTML = out.length
-        ? out.map(t => `<span class="chip active">${t}</span>`).join('')
-        : '<span class="text-sm text-[var(--muted)]">Sin filtros activos</span>';
+      const tags = [];
+      if (state.filters.q) tags.push(`Búsqueda: ${state.filters.q}`);
+      state.filters.tipo.forEach(v => tags.push(`Tipo: ${v}`));
+      state.filters.estado.forEach(v => tags.push(`Estado: ${v}`));
+      state.filters.ubicacion.forEach(v => tags.push(`Ubicación: ${v}`));
+      state.filters.probabilidad.forEach(v => tags.push(v));
+      if (state.filters.organo) tags.push(`Órgano: ${state.filters.organo}`);
+      if (state.filters.cpv) tags.push(`CPV: ${state.filters.cpv}`);
+      if (state.filters.minBudget !== null) tags.push(`Min: ${formatEuro(state.filters.minBudget)}`);
+      if (state.filters.maxBudget !== null) tags.push(`Max: ${formatEuro(state.filters.maxBudget)}`);
+      document.getElementById('activeFilters').innerHTML = tags.length ? tags.map(t => `<span class="chip active">${escapeHtml(t)}</span>`).join('') : '<span class="text-sm text-[var(--muted)]">Sin filtros activos</span>';
     }
 
-    function aggregate(rows, accessor, reducer = 'count', max = 8) {
-      const map = {};
-      rows.forEach(r => {
-        const key = safeText(accessor(r)) || 'No especificado';
-        map[key] = (map[key] || 0) + (reducer === 'sumAmount' ? r.__amount : 1);
-      });
-      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
-    }
-
-    function monthKey(date) {
-      if (!date) return 'Sin fecha';
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    }
-
-    function makeChart(id, type, labels, values, label, color = '#2f7ff7') {
-      if (state.charts[id]) state.charts[id].destroy();
-      state.charts[id] = new Chart(document.getElementById(id), {
-        type,
-        data: {
-          labels,
-          datasets: [{
-            label,
-            data: values,
-            backgroundColor: type === 'doughnut' ? ['#2f7ff7','#8fd5be','#ffd08a','#b9a6ff','#ff9eb5','#7bdff2','#c7d2fe'] : color,
-            borderColor: color,
-            borderRadius: type === 'bar' ? 8 : 0,
-            tension: .3,
-            fill: type === 'line'
-          }]
-        },
-        options: {
-          plugins: { legend: { display: type === 'doughnut', position: 'bottom' } },
-          maintainAspectRatio: false,
-          scales: type === 'doughnut' ? {} : { x: { ticks: { maxRotation: 35, minRotation: 0 } }, y: { beginAtZero: true } }
-        }
-      });
-    }
-
-    function chart() {
-      const rows = state.filtered;
-      const tipo = aggregate(rows, r => r.__tipo, 'count', 8);
-      const importeTipo = aggregate(rows, r => r.__tipo, 'sumAmount', 8);
-      const org = aggregate(rows, r => r.__org, 'count', 8);
-      const cpv = aggregate(rows, r => r.__cpv, 'count', 8);
-      const estado = aggregate(rows, r => r.__estado, 'count', 8);
-      const temporalCount = Object.entries(rows.reduce((m, r) => (m[monthKey(r.__date)] = (m[monthKey(r.__date)] || 0) + 1, m), {})).sort((a, b) => a[0].localeCompare(b[0]));
-      const temporalAmount = Object.entries(rows.reduce((m, r) => (m[monthKey(r.__date)] = (m[monthKey(r.__date)] || 0) + r.__amount, m), {})).sort((a, b) => a[0].localeCompare(b[0]));
-
-      makeChart('tipoChart', 'bar', tipo.map(x => x[0]), tipo.map(x => x[1]), 'Licitaciones');
-      makeChart('importeTipoChart', 'bar', importeTipo.map(x => x[0]), importeTipo.map(x => x[1]), 'Importe', '#1f9d7a');
-      makeChart('orgChart', 'bar', org.map(x => x[0]), org.map(x => x[1]), 'Licitaciones', '#2f7ff7');
-      makeChart('cpvChart', 'bar', cpv.map(x => x[0]), cpv.map(x => x[1]), 'Licitaciones', '#6d7dfc');
-      makeChart('estadoChart', 'doughnut', estado.map(x => x[0]), estado.map(x => x[1]), 'Estado');
-      makeChart('temporalChart', 'line', temporalCount.map(x => x[0]), temporalCount.map(x => x[1]), 'Licitaciones', '#2f7ff7');
-      makeChart('temporalImporteChart', 'line', temporalAmount.map(x => x[0]), temporalAmount.map(x => x[1]), 'Importe', '#1f9d7a');
-    }
-
-    function badgeClass(label) {
-      const map = {
-        'ABIERTO': 'bg-emerald-50 text-emerald-700 border-emerald-200',
-        'URGENTE': 'bg-amber-50 text-amber-700 border-amber-200',
-        'ALTO': 'bg-blue-50 text-blue-700 border-blue-200',
-        'SALUD': 'bg-pink-50 text-pink-700 border-pink-200',
-        'TECH': 'bg-indigo-50 text-indigo-700 border-indigo-200',
-        'IA': 'bg-violet-50 text-violet-700 border-violet-200'
-      };
-      return map[label] || 'bg-slate-100 text-slate-700 border-slate-200';
-    }
-
-    function cards() {
+    function renderCards() {
       const rows = state.filtered.slice(0, state.visible);
-      const c = document.getElementById('cardsContainer');
       document.getElementById('resultsCount').textContent = state.filtered.length.toLocaleString('es-ES');
-
+      const container = document.getElementById('cardsContainer');
       if (!rows.length) {
-        c.innerHTML = '<div class="soft-card rounded-2xl p-8 text-center col-span-full"><h3 class="text-xl font-bold mb-2">Sin resultados</h3><p class="text-sm text-[var(--muted)]">Prueba cambiar filtros o limpiar búsqueda.</p></div>';
+        container.innerHTML = '<div class="panel rounded-2xl p-8 text-center md:col-span-2 xl:col-span-3"><h3 class="text-xl font-extrabold mb-2">Sin resultados</h3><p class="text-sm text-[var(--muted)]">Prueba con otros filtros o una búsqueda más amplia.</p></div>';
         document.getElementById('loadMoreBtn').classList.add('hidden');
         return;
       }
-
-      c.innerHTML = rows.map(r => {
-        const badges = ['ABIERTO'];
-        if (daysAgo(r.__date) <= 7) badges.push('URGENTE');
-        if (r.__amount >= 500000) badges.push('ALTO');
-        if (r.__tags.has('SALUD')) badges.push('SALUD');
-        if (r.__tags.has('TECH')) badges.push('TECH');
-        if (r.__score >= 80) badges.push('IA');
-
-        return `
-        <article class="soft-card rounded-2xl p-4">
+      container.innerHTML = rows.map(r => `
+        <article class="panel rounded-2xl p-5 hover:shadow-xl transition">
           <div class="flex items-start justify-between gap-3 mb-3">
-            <h4 class="font-bold leading-snug text-sm md:text-base">${escapeHtml(r.title) || 'Sin título'}</h4>
-            <span class="text-xs px-2 py-1 rounded-full border ${badgeClass('IA')}">${r.__score}%</span>
+            <h3 class="font-extrabold leading-snug">${escapeHtml(r.title)}</h3>
+            <span class="text-xs font-extrabold px-2 py-1 rounded-full border ${r.__probability.cls}">${r.__probability.score}%</span>
           </div>
-          <p class="text-xs text-[var(--muted)] mb-3">${escapeHtml(r.__org) || 'Organismo no informado'}</p>
-          <div class="grid grid-cols-2 gap-2 text-xs mb-3">
-            <div><p class="text-[var(--muted)]">Estado</p><p class="font-semibold">${escapeHtml(r.__estado) || '-'}</p></div>
-            <div><p class="text-[var(--muted)]">Fecha</p><p class="font-semibold">${r.__date ? r.__date.toLocaleDateString('es-ES') : '-'}</p></div>
-            <div><p class="text-[var(--muted)]">Importe</p><p class="font-semibold">${formatEuro(r.__amount)}</p></div>
-            <div><p class="text-[var(--muted)]">Ubicación</p><p class="font-semibold">${escapeHtml(r.__loc)}</p></div>
-            <div><p class="text-[var(--muted)]">CPV</p><p class="font-semibold">${escapeHtml(r.__cpv)}</p></div>
-            <div><p class="text-[var(--muted)]">Fecha límite</p><p class="font-semibold">${r.__deadline ? r.__deadline.toLocaleDateString('es-ES') : '-'}</p></div>
+          <p class="text-xs text-[var(--muted)] mb-4">${escapeHtml(r.expediente)} · ${escapeHtml(r.__org)}</p>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div><p class="text-[var(--muted)]">Ubicación</p><p class="font-bold">${escapeHtml(r.__loc)}</p></div>
+            <div><p class="text-[var(--muted)]">Presupuesto</p><p class="font-bold">${formatEuro(r.__amount)}</p></div>
+            <div><p class="text-[var(--muted)]">Fecha límite</p><p class="font-bold">${r.__deadline ? r.__deadline.toLocaleDateString('es-ES') : '-'}</p></div>
+            <div><p class="text-[var(--muted)]">Estado</p><p class="font-bold">${escapeHtml(r.__estado)}</p></div>
+            <div><p class="text-[var(--muted)]">Tipo</p><p class="font-bold">${escapeHtml(r.__tipo)}</p></div>
+            <div><p class="text-[var(--muted)]">CPV</p><p class="font-bold">${escapeHtml(r.__cpv)}</p></div>
           </div>
-          <div class="flex flex-wrap gap-1.5 mb-3">${badges.map(b => `<span class="text-[10px] px-2 py-1 rounded-full border ${badgeClass(b)}">${b}</span>`).join('')}</div>
-          
-<div class="grid grid-cols-2 gap-2 mt-4">
-  <a href="${safeText(r.url) || '#'}"
-     target="_blank"
-     rel="noopener noreferrer"
-     class="text-center bg-[var(--brand)] text-white rounded-xl py-2 text-sm font-semibold hover:opacity-90">
-     Ver licitación
-  </a>
-
-  <button onclick="openTenderAnalysis('${r.licitacion_id}')"
-          class="text-center bg-white border border-[var(--border)] rounded-xl py-2 text-sm font-semibold hover:bg-[var(--bg-soft)]">
-          Analizar IA
-  </button>
-</div>
-
-        </article>`;
-      }).join('');
-
+          <div class="flex items-center justify-between gap-3 mt-4">
+            <span class="text-xs font-bold px-2 py-1 rounded-full border ${r.__probability.cls}">${r.__probability.label}</span>
+            <a href="${escapeHtml(r.url || r.detail_url)}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-[var(--blue)] text-white text-sm font-bold hover:opacity-90">Ver detalle</a>
+          </div>
+        </article>
+      `).join('');
       document.getElementById('loadMoreBtn').classList.toggle('hidden', state.filtered.length <= state.visible);
+    }
+
+    function renderKpis() {
+      const rows = state.filtered;
+      const budget = rows.reduce((a, r) => a + r.__amount, 0);
+      document.getElementById('kpiAbiertas').textContent = rows.length.toLocaleString('es-ES');
+      document.getElementById('kpiBudget').textContent = formatEuro(budget);
+      document.getElementById('kpiOrganismos').textContent = new Set(rows.map(r => r.__org)).size.toLocaleString('es-ES');
+      document.getElementById('kpiPromedio').textContent = formatEuro(rows.length ? budget / rows.length : 0);
+    }
+
+    function renderInsights() {
+      const rows = state.filtered;
+      const best = [...rows].sort((a, b) => b.__probability.score - a.__probability.score)[0];
+      const topOrg = topCounts(rows, r => r.__org, 1)[0];
+      const lowCompetition = rows.filter(r => amount(r.ofertas_recibidas) <= 2).length;
+      const insights = [
+        best ? `Mejor oportunidad: ${best.__probability.score}% en "${best.title.slice(0, 78)}".` : 'No hay oportunidades filtradas.',
+        topOrg ? `${topOrg[0]} concentra más actividad en el conjunto filtrado.` : 'Sin organismo dominante.',
+        `${lowCompetition} oportunidades muestran baja competencia estimada.`
+      ];
+      document.getElementById('aiInsights').innerHTML = insights.map(i => `<li class="p-3 rounded-xl bg-[var(--panel-soft)]">${escapeHtml(i)}</li>`).join('');
+    }
+
+    function aggregate(rows, accessor, mode = 'count', max = 8) {
+      const map = {};
+      rows.forEach(r => {
+        const key = safeText(accessor(r)) || 'No especificado';
+        map[key] = (map[key] || 0) + (mode === 'amount' ? r.__amount : 1);
+      });
+      return Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, max);
+    }
+    function monthKey(d) {
+      return d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` : 'Sin fecha';
+    }
+    function makeChart(id, type, labels, values, label, color) {
+      if (state.charts[id]) state.charts[id].destroy();
+      state.charts[id] = new Chart(document.getElementById(id), {
+        type,
+        data: { labels, datasets: [{ label, data: values, backgroundColor: color, borderColor: color, borderRadius: 10, tension: .35, fill: type === 'line' }] },
+        options: {
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { padding: 12, cornerRadius: 10 } },
+          scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#edf2f7' } } }
+        }
+      });
+    }
+    function renderCharts() {
+      const rows = state.filtered;
+      const typeCount = aggregate(rows, r => r.__tipo, 'count', 8);
+      const typeAmount = aggregate(rows, r => r.__tipo, 'amount', 8);
+      const org = aggregate(rows, r => r.__org, 'count', 8);
+      const cpv = aggregate(rows, r => r.__cpv, 'count', 8);
+      const temporal = Object.entries(rows.reduce((m, r) => (m[monthKey(r.__date)] = (m[monthKey(r.__date)] || 0) + 1, m), {})).sort((a, b) => a[0].localeCompare(b[0]));
+      makeChart('tipoChart', 'bar', typeCount.map(x => x[0]), typeCount.map(x => x[1]), 'Licitaciones', '#2563eb');
+      makeChart('importeTipoChart', 'bar', typeAmount.map(x => x[0]), typeAmount.map(x => x[1]), 'Presupuesto', '#12a678');
+      makeChart('orgChart', 'bar', org.map(x => x[0]), org.map(x => x[1]), 'Organismos', '#f59e0b');
+      makeChart('cpvChart', 'bar', cpv.map(x => x[0]), cpv.map(x => x[1]), 'CPV', '#64748b');
+      makeChart('temporalChart', 'line', temporal.map(x => x[0]), temporal.map(x => x[1]), 'Licitaciones', '#2563eb');
     }
 
     function sortValue(row, field) {
       if (field === 'importe_total') return row.__amount;
-      if (field === 'importe_sin_impuestos') return row.__amountNoTax;
-      if (field === 'fecha_publicacion') return row.__date?.getTime() || 0;
       if (field === 'presentacion_hasta') return row.__deadline?.getTime() || 0;
       return safeText(row[field] ?? row[`__${field}`]).toLowerCase();
     }
-
-    function sortedTableRows() {
-      const { field, direction } = state.sort;
-      return [...state.filtered].sort((a, b) => {
-        const av = sortValue(a, field);
-        const bv = sortValue(b, field);
-        if (av < bv) return direction === 'asc' ? -1 : 1;
-        if (av > bv) return direction === 'asc' ? 1 : -1;
+    function renderTable() {
+      const rows = [...state.filtered].sort((a, b) => {
+        const av = sortValue(a, state.sort.field);
+        const bv = sortValue(b, state.sort.field);
+        if (av < bv) return state.sort.direction === 'asc' ? -1 : 1;
+        if (av > bv) return state.sort.direction === 'asc' ? 1 : -1;
         return 0;
       });
-    }
-
-    function renderTable() {
-      const rows = sortedTableRows();
-      const totalPages = Math.max(1, Math.ceil(rows.length / state.pageSize));
-      state.tablePage = Math.min(state.tablePage, totalPages);
-      const start = (state.tablePage - 1) * state.pageSize;
-      const pageRows = rows.slice(start, start + state.pageSize);
-
-      document.getElementById('tableCount').textContent = rows.length.toLocaleString('es-ES');
-      document.getElementById('pageInfo').textContent = `Página ${state.tablePage} de ${totalPages}`;
+      const pages = Math.max(1, Math.ceil(rows.length / state.pageSize));
+      state.tablePage = Math.min(state.tablePage, pages);
+      const pageRows = rows.slice((state.tablePage - 1) * state.pageSize, state.tablePage * state.pageSize);
+      document.getElementById('pageInfo').textContent = `Página ${state.tablePage} de ${pages}`;
       document.getElementById('prevPageBtn').disabled = state.tablePage <= 1;
-      document.getElementById('nextPageBtn').disabled = state.tablePage >= totalPages;
-
+      document.getElementById('nextPageBtn').disabled = state.tablePage >= pages;
       document.getElementById('tableBody').innerHTML = pageRows.map(r => `
         <tr>
-          <td class="py-3 pr-3 min-w-[260px] font-semibold">${escapeHtml(r.title)}</td>
+          <td class="py-3 pr-3 min-w-[240px] font-bold">${escapeHtml(r.title)}</td>
           <td class="py-3 pr-3">${escapeHtml(r.expediente)}</td>
-          <td class="py-3 pr-3 min-w-[220px]">${escapeHtml(r.__org)}</td>
-          <td class="py-3 pr-3">${escapeHtml(r.__tipo)}</td>
-          <td class="py-3 pr-3">${escapeHtml(r.__estado)}</td>
-          <td class="py-3 pr-3 font-semibold">${formatEuro(r.__amount)}</td>
-          <td class="py-3 pr-3">${formatEuro(r.__amountNoTax)}</td>
-          <td class="py-3 pr-3">${r.__date ? r.__date.toLocaleDateString('es-ES') : '-'}</td>
+          <td class="py-3 pr-3 min-w-[210px]">${escapeHtml(r.__org)}</td>
+          <td class="py-3 pr-3 font-bold">${formatEuro(r.__amount)}</td>
           <td class="py-3 pr-3">${r.__deadline ? r.__deadline.toLocaleDateString('es-ES') : '-'}</td>
-          <td class="py-3 pr-3">${escapeHtml(r.__loc)}</td>
-          <td class="py-3 pr-3">${escapeHtml(r.__cpv)}<br><span class="text-[var(--muted)]">${escapeHtml(r.cpv_descripcion)}</span></td>
-          <td class="py-3 pr-3">${escapeHtml(r.__adjudicatario) || '-'}</td>
+          <td class="py-3 pr-3">${escapeHtml(r.__cpv)}</td>
+          <td class="py-3 pr-3"><span class="text-xs font-bold px-2 py-1 rounded-full border ${r.__probability.cls}">${r.__probability.score}%</span></td>
         </tr>
       `).join('');
     }
 
     function renderAll() {
-      kpis();
-      insights();
       renderActiveFilters();
-      chart();
-      cards();
+      renderCards();
+      renderKpis();
+      renderInsights();
+      renderCharts();
       renderTable();
     }
 
+    function toggleSet(set, value) {
+      set.has(value) ? set.delete(value) : set.add(value);
+    }
+    function bindChipGroup(id, set) {
+      document.getElementById(id).addEventListener('click', e => {
+        const btn = e.target.closest('button[data-id]');
+        if (!btn) return;
+        toggleSet(set, btn.dataset.id);
+        renderFilters();
+        applyFilters();
+      });
+    }
     function clearAll() {
-      state.filters = { q: '', tipo: new Set(), estado: new Set(), organo: new Set(), cpv: new Set(), ubicacion: new Set(), minBudget: null, maxBudget: null, fecha: 'all', flags: new Set() };
-      state.visible = 24;
+      state.filters = { q: '', tipo: new Set(), estado: new Set(), ubicacion: new Set(), probabilidad: new Set(), organo: '', cpv: '', minBudget: null, maxBudget: null };
+      state.visible = 18;
       state.tablePage = 1;
       document.getElementById('searchInput').value = '';
+      document.getElementById('orgFilter').value = '';
+      document.getElementById('cpvFilter').value = '';
       document.getElementById('minBudget').value = '';
       document.getElementById('maxBudget').value = '';
-      renderFilterUI();
+      delete state.filters.lowOffers;
+      delete state.filters.highBudget;
+      renderFilters();
       applyFilters();
     }
-
     function bindEvents() {
-      document.getElementById('searchInput').addEventListener('input', e => {
-        state.filters.q = safeText(e.target.value).toLowerCase();
-        state.visible = 24;
-        applyFilters();
-      });
-
-      document.getElementById('minBudget').addEventListener('input', e => {
-        const v = Number(e.target.value);
-        state.filters.minBudget = Number.isFinite(v) && v > 0 ? v : null;
-        state.visible = 24;
-        applyFilters();
-      });
-
-      document.getElementById('maxBudget').addEventListener('input', e => {
-        const v = Number(e.target.value);
-        state.filters.maxBudget = Number.isFinite(v) && v > 0 ? v : null;
-        state.visible = 24;
-        applyFilters();
-      });
-
-      function toggleSet(set, value) { set.has(value) ? set.delete(value) : set.add(value); }
-
-      document.getElementById('tipoChips').addEventListener('click', e => {
-        const b = e.target.closest('button[data-id]'); if (!b) return;
-        toggleSet(state.filters.tipo, b.dataset.id);
-        renderFilterUI(); applyFilters();
-      });
-
-      document.getElementById('estadoChips').addEventListener('click', e => {
-        const b = e.target.closest('button[data-id]'); if (!b) return;
-        toggleSet(state.filters.estado, b.dataset.id);
-        renderFilterUI(); applyFilters();
-      });
-
-      document.getElementById('organoChips').addEventListener('click', e => {
-        const b = e.target.closest('button[data-id]'); if (!b) return;
-        toggleSet(state.filters.organo, b.dataset.id);
-        renderFilterUI(); applyFilters();
-      });
-
-      document.getElementById('cpvChips').addEventListener('click', e => {
-        const b = e.target.closest('button[data-id]'); if (!b) return;
-        toggleSet(state.filters.cpv, b.dataset.id);
-        renderFilterUI(); applyFilters();
-      });
-
-      document.getElementById('ubicacionChips').addEventListener('click', e => {
-        const b = e.target.closest('button[data-id]'); if (!b) return;
-        toggleSet(state.filters.ubicacion, b.dataset.id);
-        renderFilterUI(); applyFilters();
-      });
-
-      document.getElementById('fechaChips').addEventListener('click', e => {
-        const b = e.target.closest('button[data-id]'); if (!b) return;
-        state.filters.fecha = b.dataset.id;
-        renderFilterUI(); applyFilters();
-      });
-
-      document.getElementById('iaChips').addEventListener('click', e => {
-        const b = e.target.closest('button[data-id]'); if (!b) return;
-        toggleSet(state.filters.flags, b.dataset.id);
-        renderFilterUI(); applyFilters();
-      });
-
-      document.getElementById('quickFilters').addEventListener('click', e => {
-        const b = e.target.closest('button[data-quick]'); if (!b) return;
-        const v = b.dataset.quick;
-        if (['7d', '30d', '90d', 'all'].includes(v)) state.filters.fecha = v;
-        else state.filters.flags.has(v) ? state.filters.flags.delete(v) : state.filters.flags.add(v);
-        renderFilterUI(); applyFilters();
-      });
-
+      document.getElementById('searchInput').addEventListener('input', e => { state.filters.q = safeText(e.target.value).toLowerCase(); applyFilters(); });
+      document.getElementById('orgFilter').addEventListener('change', e => { state.filters.organo = e.target.value; applyFilters(); });
+      document.getElementById('cpvFilter').addEventListener('change', e => { state.filters.cpv = e.target.value; applyFilters(); });
+      document.getElementById('minBudget').addEventListener('input', e => { const v = Number(e.target.value); state.filters.minBudget = Number.isFinite(v) && v > 0 ? v : null; applyFilters(); });
+      document.getElementById('maxBudget').addEventListener('input', e => { const v = Number(e.target.value); state.filters.maxBudget = Number.isFinite(v) && v > 0 ? v : null; applyFilters(); });
+      bindChipGroup('tipoChips', state.filters.tipo);
+      bindChipGroup('estadoChips', state.filters.estado);
+      bindChipGroup('ubicacionChips', state.filters.ubicacion);
+      bindChipGroup('probabilityChips', state.filters.probabilidad);
       document.getElementById('clearAllFilters').addEventListener('click', clearAll);
-      document.getElementById('loadMoreBtn').addEventListener('click', () => { state.visible += 24; cards(); });
+      document.getElementById('loadMoreBtn').addEventListener('click', () => { state.visible += 18; renderCards(); });
       document.getElementById('prevPageBtn').addEventListener('click', () => { state.tablePage = Math.max(1, state.tablePage - 1); renderTable(); });
       document.getElementById('nextPageBtn').addEventListener('click', () => { state.tablePage += 1; renderTable(); });
       document.querySelectorAll('button[data-sort]').forEach(btn => {
         btn.addEventListener('click', () => {
           const field = btn.dataset.sort;
-          state.sort = {
-            field,
-            direction: state.sort.field === field && state.sort.direction === 'asc' ? 'desc' : 'asc'
-          };
-          state.tablePage = 1;
+          state.sort = { field, direction: state.sort.field === field && state.sort.direction === 'asc' ? 'desc' : 'asc' };
           renderTable();
         });
+      });
+      document.getElementById('quickFilters').addEventListener('click', e => {
+        const btn = e.target.closest('button[data-quick]');
+        if (!btn) return;
+        const key = btn.dataset.quick;
+        if (key === 'Alta probabilidad') toggleSet(state.filters.probabilidad, key);
+        if (key === 'lowOffers') state.filters.lowOffers = !state.filters.lowOffers;
+        if (key === 'highBudget') state.filters.highBudget = !state.filters.highBudget;
+        renderFilters();
+        applyFilters();
       });
     }
 
     async function fetchDashboardDataset() {
       const errors = [];
-
       for (const path of DATASET_PATHS) {
         try {
-          console.info(`[GovAI] Intentando cargar dataset: ${path}`);
           const res = await fetch(path, { cache: 'no-store' });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
           const data = await res.json();
-          if (!Array.isArray(data)) throw new Error('JSON inválido: se esperaba array');
-
-          const label = path.replace('./', '');
-          document.getElementById('datasetSourceLabel').textContent = label;
-          console.info(`[GovAI] Dataset cargado: ${label}. Registros: ${data.length}`);
+          if (!Array.isArray(data)) throw new Error('JSON inválido');
           return data;
         } catch (err) {
           errors.push(`${path}: ${err.message}`);
-          console.warn(`[GovAI] No se pudo cargar ${path}`, err);
         }
       }
-
-      throw new Error(`No se pudo cargar ningún dataset frontend. ${errors.join(' | ')}`);
+      throw new Error(errors.join(' | '));
     }
 
     async function init() {
       renderSkeleton();
       try {
         const data = await fetchDashboardDataset();
-
         state.raw = enrich(data.filter(x => x && typeof x === 'object'));
         state.filtered = [...state.raw];
-
-        renderFilterUI();
+        renderFilters();
         bindEvents();
         applyFilters();
       } catch (err) {
-        console.error('[GovAI] init error:', err);
-        document.getElementById('cardsContainer').innerHTML = '<div class="soft-card rounded-2xl p-8 text-center col-span-full"><h3 class="text-xl font-bold mb-2 text-red-700">Error de carga</h3><p class="text-sm text-[var(--muted)]">No se pudo cargar el dataset frontend de licitaciones abiertas.</p></div>';
+        console.error('[GovAI] Error de carga:', err);
+        document.getElementById('cardsContainer').innerHTML = '<div class="panel rounded-2xl p-8 text-center md:col-span-2 xl:col-span-3"><h3 class="text-xl font-extrabold text-red-700 mb-2">Error de carga</h3><p class="text-sm text-[var(--muted)]">No se pudo cargar el dataset de oportunidades.</p></div>';
       }
     }
 
-
-function openTenderAnalysis(id) {
-  const lic = state.raw.find(x => x.licitacion_id == id);
-  if (!lic) return;
-
-  document.getElementById('analysisModal').classList.remove('hidden');
-
-  const risk = lic.__score >= 85 ? 'Bajo' : lic.__score >= 70 ? 'Medio' : 'Alto';
-  const urgency = daysAgo(lic.__date) <= 7 ? 'Alta' : 'Media';
-
-  document.getElementById('analysisTitle').textContent = lic.title || 'Licitación';
-
-  document.getElementById('analysisContent').innerHTML = `
-  <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
-    <div class="soft-card rounded-2xl p-4">
-      <p class="text-xs text-[var(--muted)]">AI Opportunity Score</p>
-      <p class="text-3xl font-extrabold mt-1">${lic.__score}</p>
-    </div>
-
-    <div class="soft-card rounded-2xl p-4">
-      <p class="text-xs text-[var(--muted)]">Riesgo</p>
-      <p class="text-2xl font-bold mt-1">${risk}</p>
-    </div>
-
-    <div class="soft-card rounded-2xl p-4">
-      <p class="text-xs text-[var(--muted)]">Urgencia</p>
-      <p class="text-2xl font-bold mt-1">${urgency}</p>
-    </div>
-
-    <div class="soft-card rounded-2xl p-4">
-      <p class="text-xs text-[var(--muted)]">ODS Impacto</p>
-      <p class="text-xl font-bold mt-1">ODS 9 · ODS 16</p>
-    </div>
-  </section>
-
-  <section class="soft-card rounded-2xl p-6">
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="text-xl font-bold">Resumen Ejecutivo IA</h3>
-      <span class="text-xs bg-violet-50 text-violet-700 border border-violet-200 rounded-full px-3 py-1">AI Generated</span>
-    </div>
-
-    <div class="space-y-4 text-sm leading-relaxed">
-      <p>
-        Contrato orientado a ${lic.__tags.has('TECH') ? 'transformación digital y tecnología' : 'servicios especializados'}.
-      </p>
-
-      <p>
-        El organismo presenta actividad recurrente y potencial estratégico de colaboración.
-      </p>
-
-      <p>
-        Presupuesto estimado de <strong>${formatEuro(lic.__amount)}</strong>
-        y nivel de oportunidad IA de <strong>${lic.__score}/100</strong>.
-      </p>
-    </div>
-  </section>
-
-  <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-    <div class="soft-card rounded-2xl p-6">
-      <h3 class="text-xl font-bold mb-4">Información clave</h3>
-
-      <div class="space-y-4 text-sm">
-        <div class="flex justify-between border-b border-[var(--border)] pb-2">
-          <span class="text-[var(--muted)]">Organismo</span>
-          <span class="font-semibold text-right">${lic.organo_contratacion || '-'}</span>
-        </div>
-
-        <div class="flex justify-between border-b border-[var(--border)] pb-2">
-          <span class="text-[var(--muted)]">Presupuesto</span>
-          <span class="font-semibold">${formatEuro(lic.__amount)}</span>
-        </div>
-
-        <div class="flex justify-between border-b border-[var(--border)] pb-2">
-          <span class="text-[var(--muted)]">Ubicación</span>
-          <span class="font-semibold">${lic.__loc}</span>
-        </div>
-
-        <div class="flex justify-between border-b border-[var(--border)] pb-2">
-          <span class="text-[var(--muted)]">Estado</span>
-          <span class="font-semibold">${lic.estado_codigo || '-'}</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="soft-card rounded-2xl p-6">
-      <h3 class="text-xl font-bold mb-4">Documentación recomendada</h3>
-
-      <div class="space-y-3 text-sm">
-        <div class="flex items-center gap-3">
-          <i class="fa-solid fa-circle-check text-emerald-600"></i>
-          <span>Certificado AEAT</span>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <i class="fa-solid fa-circle-check text-emerald-600"></i>
-          <span>Seguridad Social</span>
-        </div>
-
-        <div class="flex items-center gap-3">
-          <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
-          <span>Solvencia técnica especializada</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="soft-card rounded-2xl p-6">
-    <div class="flex items-center justify-between mb-5">
-      <h3 class="text-xl font-bold">IA Documental</h3>
-      <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-3 py-1">
-        Enterprise AI
-      </span>
-    </div>
-
-    <div class="border-2 border-dashed border-[var(--border)] rounded-2xl p-8 text-center bg-[var(--bg-soft)]">
-      <i class="fa-solid fa-cloud-arrow-up text-4xl text-[var(--brand)] mb-4"></i>
-
-      <h4 class="font-bold text-lg mb-2">Subir documentación empresarial</h4>
-
-      <p class="text-sm text-[var(--muted)] mb-5">
-        La IA analizará certificados, solvencia y documentación administrativa.
-      </p>
-
-      <input type="file" multiple class="mb-4" />
-    </div>
-  </section>
-  `;
-}
-
-function closeTenderAnalysis() {
-  document.getElementById('analysisModal').classList.add('hidden');
-}
-
-
-function openODSModal(ods) {
-
-  const modal = document.getElementById('odsModal');
-  modal.classList.remove('hidden');
-
-  const data = {
-    ODS9: {
-      title: 'ODS 9 · Innovación pública',
-      subtitle: 'Transformación digital y GovTech',
-      metrics: [
-        ['GovTech', 'Activo'],
-        ['Digitalización', 'Alta'],
-        ['AI Score', '87/100'],
-        ['Servicios IA', '61%']
-      ],
-      insights: [
-        'La contratación pública tecnológica sigue creciendo.',
-        'Las oportunidades GovTech tienen alto potencial empresarial.',
-        'Existe fuerte demanda de modernización institucional.'
-      ]
-    },
-
-    ODS16: {
-      title: 'ODS 16 · Transparencia institucional',
-      subtitle: 'Acceso y transparencia pública',
-      metrics: [
-        ['Open Data', '92%'],
-        ['Organismos', '152'],
-        ['Contratos', '2.000+'],
-        ['Gov Score', '91/100']
-      ],
-      insights: [
-        'La plataforma facilita acceso competitivo a oportunidades públicas.',
-        'La transparencia digital reduce asimetrías de información.',
-        'Los datos abiertos mejoran eficiencia institucional.'
-      ]
-    },
-
-    ODS8: {
-      title: 'ODS 8 · Competitividad empresarial',
-      subtitle: 'Crecimiento económico y servicios',
-      metrics: [
-        ['Servicios', '72%'],
-        ['Empresas', 'Alta'],
-        ['Mercado', 'Activo'],
-        ['Impacto', 'Elevado']
-      ],
-      insights: [
-        'La contratación pública impulsa actividad empresarial.',
-        'Las PYMEs pueden acceder a nuevas oportunidades.',
-        'La plataforma mejora el discovery comercial.'
-      ]
-    },
-
-    ODS12: {
-      title: 'ODS 12 · Optimización tecnológica',
-      subtitle: 'Infraestructura eficiente y sostenible',
-      metrics: [
-        ['Frontend', 'Ligero'],
-        ['Cloud', 'Optimizado'],
-        ['GitHub Pages', 'Activo'],
-        ['Eficiencia', 'Alta']
-      ],
-      insights: [
-        'La arquitectura ligera reduce consumo computacional.',
-        'El frontend optimizado mejora sostenibilidad tecnológica.',
-        'La solución evita infraestructura pesada innecesaria.'
-      ]
-    }
-  };
-
-  const d = data[ods];
-
-  document.getElementById('odsModalTitle').textContent = d.title;
-  document.getElementById('odsModalSubtitle').textContent = d.subtitle;
-
-  document.getElementById('odsModalContent').innerHTML = `
-
-    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-      ${d.metrics.map(m => `
-        <div class="soft-card rounded-2xl p-4">
-          <p class="text-xs text-[var(--muted)]">${m[0]}</p>
-          <h3 class="text-2xl font-extrabold mt-1">${m[1]}</h3>
-        </div>
-      `).join('')}
-
-    </section>
-
-    <section class="soft-card rounded-2xl p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-xl font-bold">Insights estratégicos</h3>
-
-        <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full px-3 py-1">
-          Sustainability Intelligence
-        </span>
-      </div>
-
-      <div class="space-y-3">
-        ${d.insights.map(i => `
-          <div class="bg-[var(--bg-soft)] rounded-2xl p-4 text-sm">
-            ${i}
-          </div>
-        `).join('')}
-      </div>
-    </section>
-
-    <section class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-
-      <div class="soft-card rounded-2xl p-6">
-        <h3 class="text-xl font-bold mb-4">Flujos GovTech</h3>
-
-        <div class="space-y-3 text-sm">
-
-          <div class="flex justify-between border-b border-[var(--border)] pb-2">
-            <span>AI Opportunity Scoring</span>
-            <span class="font-semibold">Activo</span>
-          </div>
-
-          <div class="flex justify-between border-b border-[var(--border)] pb-2">
-            <span>Procurement Intelligence</span>
-            <span class="font-semibold">Enterprise</span>
-          </div>
-
-          <div class="flex justify-between border-b border-[var(--border)] pb-2">
-            <span>IA documental</span>
-            <span class="font-semibold">Roadmap</span>
-          </div>
-
-          <div class="flex justify-between">
-            <span>Sostenibilidad GovTech</span>
-            <span class="font-semibold">ODS Ready</span>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="soft-card rounded-2xl p-6">
-        <h3 class="text-xl font-bold mb-4">Impacto Agenda 2030 / 2035</h3>
-
-        <ul class="space-y-3 text-sm list-disc ml-5">
-          <li>Modernización institucional</li>
-          <li>Transformación digital pública</li>
-          <li>Acceso competitivo empresarial</li>
-          <li>Sostenibilidad tecnológica</li>
-          <li>Optimización operativa</li>
-        </ul>
-      </div>
-
-    </section>
-  `;
-}
-
-function closeODSModal() {
-  document.getElementById('odsModal').classList.add('hidden');
-}
-
-
-
     init();
   </script>
-
-<div id="analysisModal"
-     class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 overflow-y-auto">
-
-  <div class="min-h-screen flex items-start justify-center p-6">
-    <div class="bg-white w-full max-w-6xl rounded-3xl shadow-2xl overflow-hidden">
-
-      <div class="border-b border-[var(--border)] px-8 py-6 flex items-center justify-between sticky top-0 bg-white z-10">
-        <div>
-          <h2 id="analysisTitle" class="text-2xl font-extrabold">Análisis IA de Licitación</h2>
-          <p class="text-sm text-[var(--muted)]">Procurement Intelligence · GovAI</p>
-        </div>
-
-        <button onclick="closeTenderAnalysis()"
-                class="w-10 h-10 rounded-xl hover:bg-[var(--bg-soft)]">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div id="analysisContent" class="p-8 space-y-6"></div>
-    </div>
-  </div>
-</div>
-
-
-
-<div id="odsModal"
-     class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50 overflow-y-auto">
-
-  <div class="min-h-screen flex items-start justify-center p-6">
-
-    <div class="bg-white w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden">
-
-      <div class="border-b border-[var(--border)] px-8 py-6 flex items-center justify-between sticky top-0 bg-white z-10">
-        <div>
-          <h2 id="odsModalTitle" class="text-2xl font-extrabold">ODS Intelligence</h2>
-          <p id="odsModalSubtitle" class="text-sm text-[var(--muted)]">Agenda 2030 / 2035</p>
-        </div>
-
-        <button onclick="closeODSModal()"
-                class="w-10 h-10 rounded-xl hover:bg-[var(--bg-soft)]">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <div id="odsModalContent" class="p-8 space-y-6"></div>
-
-    </div>
-
-  </div>
-
-</div>
-
-
 </body>
 </html>
