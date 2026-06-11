@@ -144,18 +144,14 @@
     ];
 
     const state = {
-      raw: [],
-      filtered: [],
-      visible: 18,
-      tablePage: 1,
-      pageSize: 10,
-      charts: {},
-      sort: { field: 'presentacion_hasta', direction: 'asc' },
-      filters: {
-        q: '',
-        ubicacion: ''
-      }
-    };
+  raw: [],
+  filtered: [],
+  visible: 18,
+  filters: {
+    q: '',
+    ubicacion: ''
+  }
+};
 
     const REGION_MAP = {
       ES11: 'Galicia', ES12: 'Asturias', ES13: 'Cantabria', ES21: 'País Vasco', ES22: 'Navarra',
@@ -376,27 +372,23 @@
     }
 
     function bindEvents() {
-      document.getElementById('searchInput').addEventListener('input', e => {
-        state.filters.q = safeText(e.target.value).toLowerCase();
-        applyFilters();
-      });
-      document.getElementById('locationFilter').addEventListener('change', e => {
-        state.filters.ubicacion = e.target.value;
-        applyFilters();
-      });
-      document.getElementById('loadMoreBtn').addEventListener('click', () => { state.visible += 18; renderCards(); });
-      document.getElementById('prevPageBtn').addEventListener('click', () => { state.tablePage = Math.max(1, state.tablePage - 1); renderTable(); });
-      document.getElementById('nextPageBtn').addEventListener('click', () => { state.tablePage += 1; renderTable(); });
-      document.querySelectorAll('button[data-sort]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const field = btn.dataset.sort;
-          state.sort = { field, direction: state.sort.field === field && state.sort.direction === 'asc' ? 'desc' : 'asc' };
-          renderTable();
-        });
-      });
-    }
+  document.getElementById('searchInput').addEventListener('input', e => {
+    state.filters.q = safeText(e.target.value).toLowerCase();
+    applyFilters();
+  });
 
-    async function fetchDashboardDataset() {
+  document.getElementById('locationFilter').addEventListener('change', e => {
+    state.filters.ubicacion = e.target.value;
+    applyFilters();
+  });
+
+  document.getElementById('loadMoreBtn').addEventListener('click', () => {
+    state.visible += 18;
+    renderCards();
+  });
+}
+
+async function fetchDashboardDataset() {
       const errors = [];
       for (const path of DATASET_PATHS) {
         try {
