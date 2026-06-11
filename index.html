@@ -307,7 +307,7 @@
           </div>
           <div class="flex items-center justify-between gap-3 mt-4">
             <span class="text-xs font-bold px-2 py-1 rounded-full border ${r.__probability.cls}">${r.__probability.label}</span>
-            <a href="${escapeHtml(r.url || r.detail_url)}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-[var(--blue)] text-white text-sm font-bold hover:opacity-90">Ver detalle</a>
+            <button onclick="showTenderDetail(\'${r.licitacion_id}\')" class="px-4 py-2 rounded-xl border border-[var(--border)] text-sm font-bold">Ver análisis</button><a href="${escapeHtml(r.url || r.detail_url)}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl bg-[var(--blue)] text-white text-sm font-bold hover:opacity-90">Portal oficial</a>
           </div>
         </article>
       `).join('');
@@ -419,8 +419,65 @@ async function fetchDashboardDataset() {
       }
     }
 
-    init();
+    
+function closeModal() {
+  document.getElementById('detailModal').classList.add('hidden');
+}
+
+function showTenderDetail(id) {
+  const lic = state.raw.find(x => String(x.licitacion_id) === String(id));
+  if (!lic) return;
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-2xl font-extrabold">${lic.titulo || '-'}</h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div><b>Expediente:</b><br>${lic.expediente || '-'}</div>
+        <div><b>Estado:</b><br>${lic.estado || '-'}</div>
+        <div><b>Organismo:</b><br>${lic.organo_contratacion || '-'}</div>
+        <div><b>Tipo contrato:</b><br>${lic.tipo_contrato || '-'}</div>
+        <div><b>Procedimiento:</b><br>${lic.procedimiento_codigo || '-'}</div>
+        <div><b>Ubicación:</b><br>${lic.lugar_ejecucion || '-'}</div>
+        <div><b>Importe total:</b><br>${formatEuro(amount(lic.importe_total))}</div>
+        <div><b>Importe sin impuestos:</b><br>${formatEuro(amount(lic.importe_sin_impuestos))}</div>
+        <div><b>Fecha publicación:</b><br>${lic.fecha_publicacion || '-'}</div>
+        <div><b>Fecha límite:</b><br>${lic.presentacion_hasta || '-'}</div>
+        <div><b>Hora límite:</b><br>${lic.presentacion_hora || '-'}</div>
+        <div><b>Duración:</b><br>${lic.contrato_duracion || '-'} ${lic.contrato_duracion_unidad || ''}</div>
+        <div><b>CPV:</b><br>${lic.cpv_codes || '-'}</div>
+        <div><b>Descripción CPV:</b><br>${lic.cpv_descripcion || '-'}</div>
+        <div><b>Fuente:</b><br>${lic.fuente_publicacion || '-'}</div>
+        <div><b>Tipo anuncio:</b><br>${lic.notice_types || '-'}</div>
+      </div>
+
+      <div>
+        <a href="${lic.detail_url || lic.url || '#'}" target="_blank"
+           class="inline-block px-4 py-2 rounded-xl bg-blue-600 text-white font-bold">
+           Ver licitación oficial
+        </a>
+      </div>
+    </div>`;
+
+  document.getElementById('detailModal').classList.remove('hidden');
+}
+
+
+init();
   </script>
+
+<div id="detailModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto p-6">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-extrabold">Ficha de Licitación</h2>
+      <button onclick="closeModal()" class="text-gray-500 hover:text-black text-xl">✕</button>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
 </body>
 </html>
 
