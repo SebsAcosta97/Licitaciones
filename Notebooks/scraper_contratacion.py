@@ -793,6 +793,41 @@ def enrich_awardees_from_detail_pages(
             updated += 1
     return scanned, updated
 
+def extract_current_status(html):
+
+    soup = BeautifulSoup(html, "html.parser")
+
+    text = soup.get_text(" ", strip=True).lower()
+
+    patterns = {
+        "ADJ": [
+            "adjudicada",
+            "adjudicado",
+            "adjudicación"
+        ],
+        "RES": [
+            "resuelta",
+            "resuelto"
+        ],
+        "EV": [
+            "evaluación",
+            "en evaluación"
+        ],
+        "PUB": [
+            "publicada",
+            "publicado"
+        ],
+        "ANUL": [
+            "anulada",
+            "anulado"
+        ]
+    }
+
+    for code, keywords in patterns.items():
+        if any(k in text for k in keywords):
+            return code
+
+    return ""
 
 def build_dictionaries(
     items: list[TenderRecord], docs: list[TenderDocument]
@@ -1001,6 +1036,20 @@ def build_document_timeline_from_detail_pages(
     for it in selected:
         try:
             html = download_text(it.detail_url, timeout_seconds=timeout_seconds)
+            estado_actual = extract_current_status(html)
+            if estado_actual:
+                print(
+                    "ACTUALIZANDO:",
+                    it.expediente,
+                    "DE",
+                    it.estado_codigo,
+                    "A",
+                    estado_actual
+                )
+
+                it.estado_codigo = estado_actual
+            if estado_actual:
+                it.estado_codigo = estado_actual
         except Exception:
             continue
         soup = BeautifulSoup(html, "html.parser")
@@ -1103,7 +1152,7 @@ def save_document_timeline(
     (OUTPUT_DIR / "timeline_documentos.json").write_text(
         json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8"
     )
-    
+
 
 
 def first_match(text: str, patterns: list[str]) -> str:
@@ -1290,6 +1339,8 @@ def save_outputs(items: list[TenderRecord], docs: list[TenderDocument]) -> None:
             existing_docs.append(row)
             existing_doc_keys[key] = row
             new_docs += 1
+        else:
+            existing_doc_keys[key].update(row)
 
     docs_path.write_text(
         json.dumps(existing_docs, ensure_ascii=False, indent=2),
@@ -1480,11 +1531,41 @@ def main() -> None:
             items, timeout_seconds=args.timeout, max_pages=args.max_detail_pages
         )
 
+    latest_docs = {}
+
+    for doc in docs:
+
+        exp = doc.expediente
+
+        if exp not in latest_docs:
+            latest_docs[exp] = doc
+
+        elif doc.publication_date > latest_docs[exp].publication_date:
+            latest_docs[exp] = doc
+
+    for item in items:
+
+        latest = latest_docs.get(item.expediente)
+
+        if latest:
+            item.estado_codigo = latest.estado_licitacion
+            item.fecha_publicacion = latest.publication_date
+
     save_outputs(items, docs)
     if args.timeline_docs:
         save_document_timeline(
-            items, docs, timeout_seconds=args.timeout, max_pages=args.max_detail_pages
+            items,
+            docs,
+            timeout_seconds=args.timeout,
+            max_pages=args.max_detail_pages
         )
+
+    for x in items[:10]:
+        print(
+            x.expediente,
+            x.estado_codigo
+        )
+    save_outputs(items, docs)
 
     print(f"Fuente: {args.source}")
     print(f"Registros exportados: {len(items)}")
