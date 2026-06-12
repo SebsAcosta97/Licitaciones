@@ -259,6 +259,43 @@ def main() -> None:
     log(f"Salida:  {output_path}")
 
     df = pd.read_parquet(input_path)
+    docs_path = PROJECT_ROOT / "data" / "Bronze" / "documentos_licitacion.json"
+
+    if docs_path.exists():
+
+        docs = pd.read_json(docs_path)
+
+        docs["publication_date"] = pd.to_datetime(
+            docs["publication_date"],
+            errors="coerce"
+        )
+
+        # quedarse con el estado más reciente por expediente
+        docs_latest = (
+            docs.sort_values("publication_date")
+                .drop_duplicates(
+                    subset=["expediente"],
+                    keep="last"
+                )
+        )
+
+        estado_map = (
+            docs_latest
+            .set_index("expediente")["estado_licitacion"]
+            .to_dict()
+        )
+
+        # actualizar estado_codigo usando documentos_licitacion
+        df["estado_codigo"] = (
+            df["expediente"]
+            .map(estado_map)
+            .fillna(df["estado_codigo"])
+        )
+
+        log(
+            f"Estados actualizados desde documentos: "
+            f"{len(estado_map):,}"
+        )
     raw = df.to_dict(orient="records")
     total_input = len(raw)
 
