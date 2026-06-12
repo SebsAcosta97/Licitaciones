@@ -347,9 +347,23 @@ def main() -> None:
             filtered_open += 1
             continue
 
+        if not is_submission_open(row):
+            filtered_open += 1
+            continue
+
         if not is_recent(row, cutoff):
             filtered_recent += 1
             continue
+
+        def is_submission_open(row: dict[str, Any]) -> bool:
+            fecha_limite = parse_date(row.get("presentacion_hasta"))
+
+            if not fecha_limite:
+                return True
+
+            hoy = datetime.now(timezone.utc)
+
+            return fecha_limite >= hoy
 
         normalized_rows.append(normalized)
 
