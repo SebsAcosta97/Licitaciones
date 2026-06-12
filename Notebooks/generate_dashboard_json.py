@@ -5,8 +5,9 @@ import json
 import math
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-import pandas as pd
 from typing import Any
+
+import pandas as pd
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = PROJECT_ROOT / "data"
@@ -47,7 +48,6 @@ EXPORT_COLUMNS = [
     "notice_types",
 ]
 
-
 TIPO_CONTRATO_MAP = {
     "1": "Obras",
     "2": "Servicios",
@@ -66,22 +66,7 @@ ESTADO_MAP = {
     "ANUL": "Anulado",
     "DES": "Desierto",
     "CERR": "Cerrado",
-}
-
-OPEN_STATE_CODES = {
-    "EV", "PUB", "PCP", "PRES", "ABI", "AB", "OPEN", "ACT", "ACTIVA", "ACTIVO"
-}
-
-CLOSED_STATE_CODES = {
-    "ADJ", "RES", "ANUL", "CERR", "DES", "ARCH", "FORM", "CAN", "CANCELADA", "CANCELADO"
-}
-
-OPEN_TEXT_HINTS = {
-    "abierta", "abierto", "activa", "activo", "evaluacion", "evaluación", "licitacion", "publicada", "publicado"
-}
-
-CLOSED_TEXT_HINTS = {
-    "adjudicada", "adjudicado", "resuelta", "resuelto", "formalizada", "cancelada", "cancelado", "anulada", "anulado", "cerrada", "cerrado", "desierta", "desierto", "archivada", "archivado"
+    "PRE": "En presentación",
 }
 
 
@@ -145,12 +130,7 @@ def parse_date(value: Any) -> datetime | None:
     if not text:
         return None
 
-    candidates = [
-        text,
-        text.replace("Z", "+00:00"),
-    ]
-
-    for candidate in candidates:
+    for candidate in [text, text.replace("Z", "+00:00")]:
         try:
             dt = datetime.fromisoformat(candidate)
             if dt.tzinfo is None:
@@ -161,53 +141,16 @@ def parse_date(value: Any) -> datetime | None:
 
     for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%Y/%m/%d"):
         try:
-            dt = datetime.strptime(text, fmt).replace(tzinfo=timezone.utc)
-            return dt
+            return datetime.strptime(text, fmt).replace(tzinfo=timezone.utc)
         except ValueError:
             continue
 
     return None
 
 
-def is_open_active(row: dict[str, Any]) -> bool:
-    code = safe_text(row.get("estado_codigo")).upper()
-    state_text = " ".join(
-        safe_text(row.get(k)).lower()
-        for k in ("estado_codigo", "estado", "estado_nombre", "status", "status_text")
-    )
-
-    if code in CLOSED_STATE_CODES:
-        return False
-    if code in OPEN_STATE_CODES:
-        return True
-
-    if any(hint in state_text for hint in CLOSED_TEXT_HINTS):
-        return False
-    if any(hint in state_text for hint in OPEN_TEXT_HINTS):
-        return True
-
-    return False
-
-
-def is_recent(row: dict[str, Any], cutoff: datetime) -> bool:
-    for field in ("fecha_publicacion", "updated", "presentacion_hasta"):
-        dt = parse_date(row.get(field))
-        if dt and dt >= cutoff:
-            return True
-    return False
-
-def is_submission_open(row: dict[str, Any]) -> bool:
-
-    fecha_limite = parse_date(
-        row.get("presentacion_hasta")
-    )
-
-    if not fecha_limite:
-        return True
-
-    hoy = datetime.now(timezone.utc)
-
-    return fecha_limite >= hoy
+def is_pub(row: dict[str, Any]) -> bool:
+    """Devuelve True solo si el estado_codigo es exactamente 'PUB'."""
+    return safe_text(row.get("estado_codigo")).upper() == "PUB"
 
 
 def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
@@ -217,9 +160,7 @@ def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
     estado = safe_text(row.get("estado_codigo")).upper()
     tipo = safe_text(row.get("tipo_contrato"))
     tipo_codigo = safe_text(row.get("tipo_contrato_codigo"))
-    fecha = safe_text(row.get("fecha_publicacion"))
     lugar = safe_text(row.get("lugar_ejecucion") or row.get("lugar_ejecucion_codigo"))
-    url = safe_text(row.get("url") or row.get("detail_url"))
 
     if not licitacion_id:
         return None
@@ -229,8 +170,6 @@ def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
     importe_sin_impuestos = parse_amount(row.get("importe_sin_impuestos"))
     importe_total = parse_amount(row.get("importe_total"))
     if importe_total is None:
-        # El parquet actual no incluye importe_total; se usa importe_sin_impuestos
-        # como proxy para mantener compatibilidad con el frontend.
         importe_total = importe_sin_impuestos
 
     normalized: dict[str, Any] = {}
@@ -258,8 +197,7 @@ def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
             dt = parse_date(value)
             normalized[column] = dt.date().isoformat() if dt else ""
         elif column in {"contrato_duracion", "ofertas_recibidas"}:
-            amount = parse_amount(value)
-            normalized[column] = amount
+            normalized[column] = parse_amount(value)
         else:
             normalized[column] = safe_text(value)
 
@@ -292,10 +230,6 @@ def dedupe_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return out
 
 
-def to_json_size(path: Path) -> int:
-    return path.stat().st_size if path.exists() else 0
-
-
 def human_size(num_bytes: int) -> str:
     units = ["B", "KB", "MB", "GB"]
     n = float(num_bytes)
@@ -308,40 +242,28 @@ def human_size(num_bytes: int) -> str:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Genera dataset optimizado para dashboard frontend de licitaciones abiertas/activas."
+        description="Genera dataset con licitaciones en estado PUB para el dashboard frontend."
     )
-    parser.add_argument("--input", type=Path, default=SOURCE_PATH, help="Ruta del JSON histórico")
-    parser.add_argument("--output", type=Path, default=OUTPUT_PATH, help="Ruta de salida optimizada")
-    parser.add_argument("--months", type=int, default=6, help="Ventana de recencia en meses")
-    parser.add_argument("--max-records", type=int, default=2000, help="Máximo de registros finales")
+    parser.add_argument("--input", type=Path, default=SOURCE_PATH, help="Ruta del parquet de entrada")
+    parser.add_argument("--output", type=Path, default=OUTPUT_PATH, help="Ruta de salida JSON")
+    parser.add_argument("--max-records", type=int, default=2000, help="Máximo de registros finales (0 = sin límite)")
     args = parser.parse_args()
 
-    input_path = args.input
-    output_path = args.output
+    input_path: Path = args.input
+    output_path: Path = args.output
 
     if not input_path.exists():
         raise FileNotFoundError(f"No existe archivo de entrada: {input_path}")
 
-    cutoff = datetime.now(timezone.utc) - timedelta(days=max(1, args.months) * 30)
-
     log(f"Entrada: {input_path}")
-    log(f"Salida: {output_path}")
-    log(f"Ventana de recencia: últimos {args.months} meses (desde {cutoff.date()})")
+    log(f"Salida:  {output_path}")
 
     df = pd.read_parquet(input_path)
     raw = df.to_dict(orient="records")
-
-    if not isinstance(raw, list):
-        raise ValueError("El JSON de entrada debe ser una lista de objetos.")
-
     total_input = len(raw)
-    source_size = to_json_size(input_path)
 
-    cleaned = 0
     removed_corrupt = 0
-    filtered_open = 0
-    filtered_recent = 0
-
+    filtered_non_pub = 0
     normalized_rows: list[dict[str, Any]] = []
 
     for row in raw:
@@ -349,25 +271,15 @@ def main() -> None:
             removed_corrupt += 1
             continue
 
+        # Filtro principal: solo PUB
+        if not is_pub(row):
+            filtered_non_pub += 1
+            continue
+
         normalized = normalize_row(row)
         if normalized is None:
             removed_corrupt += 1
             continue
-
-        cleaned += 1
-
-        if not is_open_active(row):
-            filtered_open += 1
-            continue
-
-        if not is_submission_open(row):
-            filtered_open += 1
-            continue
-
-        if not is_recent(row, cutoff):
-            filtered_recent += 1
-            continue
-
 
         normalized_rows.append(normalized)
 
@@ -378,34 +290,19 @@ def main() -> None:
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", encoding="utf-8") as f:
-        json.dump(
-            deduped,
-            f,
-            ensure_ascii=False,
-            separators=(",", ":")
-        )
-    
-    output_size = output_path.stat().st_size
-    
-    reduction_pct = 0.0
-    if total_input > 0:
-        reduction_pct = (1 - (len(deduped) / total_input)) * 100
+        json.dump(deduped, f, ensure_ascii=False, separators=(",", ":"))
 
-    size_reduction_pct = 0.0
-    if source_size > 0:
-        size_reduction_pct = (1 - (output_size / source_size)) * 100
+    source_size = input_path.stat().st_size
+    output_size = output_path.stat().st_size
 
     log("--- Métricas ETL ---")
-    log(f"Registros entrada: {total_input:,}")
-    log(f"Registros normalizados válidos: {cleaned:,}")
-    log(f"Descartados por corrupción/estructura: {removed_corrupt:,}")
-    log(f"Descartados por no abiertos/activos: {filtered_open:,}")
-    log(f"Descartados por no recientes: {filtered_recent:,}")
-    log(f"Registros finales: {len(deduped):,}")
-    log(f"Reducción de registros: {reduction_pct:.2f}%")
-    log(f"Tamaño origen: {human_size(source_size)}")
-    log(f"Tamaño salida: {human_size(output_size)}")
-    log(f"Reducción de tamaño: {size_reduction_pct:.2f}%")
+    log(f"Registros entrada:            {total_input:,}")
+    log(f"Descartados (no PUB):         {filtered_non_pub:,}")
+    log(f"Descartados (corruptos):      {removed_corrupt:,}")
+    log(f"Registros PUB normalizados:   {len(normalized_rows):,}")
+    log(f"Registros finales (deduped):  {len(deduped):,}")
+    log(f"Tamaño entrada:               {human_size(source_size)}")
+    log(f"Tamaño salida:                {human_size(output_size)}")
     log("Dataset frontend generado correctamente.")
 
 
