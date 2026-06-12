@@ -590,11 +590,22 @@
       return `<span class="estado-badge" style="background:var(--green-soft);color:#065F46;border:1px solid var(--green-border);">${escapeHtml(estado)}</span>`;
     }
 
-    /* ── Urgency indicator ── */
-    function urgencyLabel(deadline) {
+    /* ── Urgency indicator ──
+       Si el estado del dato dice que está abierta/publicada, la fecha límite
+       puede ser histórica (dataset antiguo) — en ese caso no mostramos "Cerrado"
+       para no contradecir el estado real del registro. ── */
+    function isEstadoAbierto(estado) {
+      const e = safeText(estado).toLowerCase();
+      return e.includes('public') || e.includes('abiert') || e.includes('activ') || e.includes('vigent');
+    }
+    function urgencyLabel(deadline, estado) {
       if (!deadline) return '';
       const days = daysUntil(deadline);
-      if (days < 0) return `<span class="metric-pill" style="background:var(--red-soft);color:var(--red);border-color:#FECACA;"><i class="fa-solid fa-clock"></i>Cerrado</span>`;
+      // Fecha pasada pero estado indica abierta → no mostrar badge confuso
+      if (days < 0) {
+        if (isEstadoAbierto(estado)) return '';
+        return `<span class="metric-pill" style="background:var(--red-soft);color:var(--red);border-color:#FECACA;"><i class="fa-solid fa-clock"></i>Plazo vencido</span>`;
+      }
       if (days <= 7) return `<span class="metric-pill" style="background:var(--red-soft);color:var(--red);border-color:#FECACA;"><i class="fa-solid fa-fire-flame-curved"></i>${days}d restantes</span>`;
       if (days <= 21) return `<span class="metric-pill" style="background:var(--amber-soft);color:#92400E;border-color:var(--amber-border);"><i class="fa-solid fa-clock"></i>${days}d restantes</span>`;
       return '';
@@ -621,7 +632,7 @@
 
       container.innerHTML = rows.map(r => {
         const days = daysUntil(r.__deadline);
-        const urgent = urgencyLabel(r.__deadline);
+        const urgent = urgencyLabel(r.__deadline, r.__estado);
         return `
         <article class="lic-card" onclick="showTenderDetail('${r.licitacion_id}')">
 
