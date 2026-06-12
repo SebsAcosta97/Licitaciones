@@ -196,6 +196,19 @@ def is_recent(row: dict[str, Any], cutoff: datetime) -> bool:
             return True
     return False
 
+def is_submission_open(row: dict[str, Any]) -> bool:
+
+    fecha_limite = parse_date(
+        row.get("presentacion_hasta")
+    )
+
+    if not fecha_limite:
+        return True
+
+    hoy = datetime.now(timezone.utc)
+
+    return fecha_limite >= hoy
+
 
 def normalize_row(row: dict[str, Any]) -> dict[str, Any] | None:
     licitacion_id = safe_text(row.get("licitacion_id"))
@@ -355,15 +368,6 @@ def main() -> None:
             filtered_recent += 1
             continue
 
-        def is_submission_open(row: dict[str, Any]) -> bool:
-            fecha_limite = parse_date(row.get("presentacion_hasta"))
-
-            if not fecha_limite:
-                return True
-
-            hoy = datetime.now(timezone.utc)
-
-            return fecha_limite >= hoy
 
         normalized_rows.append(normalized)
 
