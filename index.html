@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GovAI | Oportunidades de Licitación</title>
+  <title>GovAI | Oportunidades de Licitación — Los Tilos</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,272 +35,130 @@
       --red-soft: #FEF2F2;
       --slate-soft: #F1F5F9;
       --slate-border: #CBD5E1;
+      --purple: #7C3AED;
+      --purple-soft: #F5F3FF;
+      --purple-border: #DDD6FE;
     }
 
-    * {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      letter-spacing: -0.01em;
-      box-sizing: border-box;
-    }
+    * { font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.01em; box-sizing: border-box; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; }
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+    /* ── Topbar ── */
+    .topbar { background: var(--panel); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 40; }
 
-    /* ── Navbar ── */
-    .topbar {
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 40;
-    }
-
-    /* ── Search bar ── */
-    .search-wrap {
-      background: var(--panel);
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      transition: border-color .15s, box-shadow .15s;
-    }
-    .search-wrap:focus-within {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
-    }
-    .search-wrap input {
-      background: transparent;
-      outline: none;
-      width: 100%;
-      font-size: 15px;
-      color: var(--text);
-    }
+    /* ── Search ── */
+    .search-wrap { background: var(--panel); border: 1.5px solid var(--border); border-radius: 12px; transition: border-color .15s, box-shadow .15s; }
+    .search-wrap:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+    .search-wrap input { background: transparent; outline: none; width: 100%; font-size: 15px; color: var(--text); }
     .search-wrap input::placeholder { color: var(--muted-light); }
 
-    /* ── Location select ── */
-    .location-select {
-      width: 100%;
-      height: 48px;
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      background: var(--panel);
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 0 40px 0 40px;
-      outline: none;
-      appearance: none;
-      cursor: pointer;
+    /* ── Selects ── */
+    .filter-select {
+      width: 100%; height: 48px; border: 1.5px solid var(--border); border-radius: 12px;
+      background: var(--panel); color: var(--text); font-size: 14px; font-weight: 600;
+      padding: 0 36px 0 36px; outline: none; appearance: none; cursor: pointer;
       transition: border-color .15s, box-shadow .15s;
     }
-    .location-select:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
-    }
+    .filter-select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
 
     /* ── Cards ── */
     .lic-card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      cursor: pointer;
+      background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+      padding: 20px; cursor: pointer;
       transition: border-color .15s, box-shadow .15s, transform .15s;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
+      display: flex; flex-direction: column; gap: 0;
     }
-    .lic-card:hover {
-      border-color: #BFDBFE;
-      box-shadow: 0 4px 24px rgba(37,99,235,.09);
-      transform: translateY(-1px);
-    }
+    .lic-card:hover { border-color: #BFDBFE; box-shadow: 0 4px 24px rgba(37,99,235,.09); transform: translateY(-1px); }
 
-    /* ── Probability badges ── */
-    .prob-high {
-      background: var(--green-soft);
-      color: #065F46;
-      border: 1px solid var(--green-border);
-    }
-    .prob-mid {
-      background: var(--amber-soft);
-      color: #92400E;
-      border: 1px solid var(--amber-border);
-    }
-    .prob-low {
-      background: var(--slate-soft);
-      color: #475569;
-      border: 1px solid var(--slate-border);
-    }
+    /* ── Priority ribbon ── */
+    .prio-alta  { background:#DCFCE7; color:#15803D; border:1px solid #86EFAC; }
+    .prio-media { background:var(--amber-soft); color:#92400E; border:1px solid var(--amber-border); }
+    .prio-baja  { background:var(--slate-soft); color:#475569; border:1px solid var(--slate-border); }
+
+    /* ── Prob badges (score modelo) ── */
+    .prob-high { background: var(--green-soft); color: #065F46; border: 1px solid var(--green-border); }
+    .prob-mid  { background: var(--amber-soft); color: #92400E; border: 1px solid var(--amber-border); }
+    .prob-low  { background: var(--slate-soft); color: #475569; border: 1px solid var(--slate-border); }
 
     /* ── Estado badge ── */
     .estado-badge {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 10px;
-      border-radius: 20px;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+      letter-spacing: .03em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px;
     }
     .estado-badge::before {
-      content: '';
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: currentColor;
-      opacity: .7;
+      content: ''; display: inline-block; width: 6px; height: 6px;
+      border-radius: 50%; background: currentColor; opacity: .7;
     }
 
     /* ── Skeleton ── */
-    .skeleton {
-      animation: shimmer 1.4s infinite;
-      background: linear-gradient(90deg, #F1F5F9 25%, #E8EEF6 50%, #F1F5F9 75%);
-      background-size: 400% 100%;
-      border-radius: 8px;
-    }
-    @keyframes shimmer {
-      0% { background-position: 100% 50%; }
-      100% { background-position: 0 50%; }
-    }
+    .skeleton { animation: shimmer 1.4s infinite; background: linear-gradient(90deg,#F1F5F9 25%,#E8EEF6 50%,#F1F5F9 75%); background-size: 400% 100%; border-radius: 8px; }
+    @keyframes shimmer { 0%{background-position:100% 50%}100%{background-position:0 50%} }
 
     /* ── Modal ── */
-    .modal-overlay {
-      background: rgba(15,23,42,.55);
-      backdrop-filter: blur(3px);
-    }
-    .modal-panel {
-      background: var(--panel);
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      box-shadow: 0 24px 64px rgba(15,23,42,.18);
-    }
+    .modal-overlay { background: rgba(15,23,42,.55); backdrop-filter: blur(3px); }
+    .modal-panel { background: var(--panel); border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 24px 64px rgba(15,23,42,.18); }
 
-    /* ── Section headers in modal ── */
+    /* ── Section labels ── */
     .section-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--muted);
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+      color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
     }
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
     /* ── Info rows ── */
-    .info-row {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 14px;
-    }
+    .info-row { display: flex; align-items: baseline; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
     .info-row:last-child { border-bottom: none; }
-    .info-label {
-      color: var(--muted);
-      font-weight: 500;
-      min-width: 140px;
-      flex-shrink: 0;
-    }
-    .info-value {
-      color: var(--text);
-      font-weight: 600;
-    }
+    .info-label { color: var(--muted); font-weight: 500; min-width: 140px; flex-shrink: 0; }
+    .info-value { color: var(--text); font-weight: 600; }
 
-    /* ── AI block ── */
-    .ai-card {
-      background: linear-gradient(135deg, #EFF6FF 0%, #F0FDF4 100%);
-      border: 1px solid #DBEAFE;
-      border-radius: 14px;
-      padding: 16px;
-    }
-    .ai-check {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #065F46;
-      padding: 6px 0;
-    }
-    .ai-check i {
-      width: 20px;
-      height: 20px;
-      background: var(--green-soft);
-      border: 1px solid var(--green-border);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      flex-shrink: 0;
-    }
+    /* ── AI card ── */
+    .ai-card { background: linear-gradient(135deg,#EFF6FF 0%,#F0FDF4 100%); border: 1px solid #DBEAFE; border-radius: 14px; padding: 16px; }
+    .ai-check { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #065F46; padding: 6px 0; }
+    .ai-check i { width: 20px; height: 20px; background: var(--green-soft); border: 1px solid var(--green-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+    .ai-warn { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #92400E; padding: 6px 0; }
+    .ai-warn i { width: 20px; height: 20px; background: var(--amber-soft); border: 1px solid var(--amber-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
 
     /* ── Upload zone ── */
-    .upload-zone {
-      border: 2px dashed var(--border);
-      border-radius: 14px;
-      padding: 32px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color .15s, background .15s;
-      position: relative;
-    }
-    .upload-zone:hover, .upload-zone.drag-over {
-      border-color: var(--blue);
-      background: var(--blue-soft);
-    }
-    .upload-zone input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-    }
+    .upload-zone { border: 2px dashed var(--border); border-radius: 14px; padding: 32px 20px; text-align: center; cursor: pointer; transition: border-color .15s, background .15s; position: relative; }
+    .upload-zone:hover, .upload-zone.drag-over { border-color: var(--blue); background: var(--blue-soft); }
+    .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
     /* ── Metric pill ── */
-    .metric-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 4px 10px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--panel);
-      color: var(--muted);
+    .metric-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel); color: var(--muted); }
+
+    /* ── Score bar ── */
+    .score-bar-track { height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .score-bar-fill  { height: 100%; border-radius: 99px; transition: width .6s ease; }
+
+    /* ── ODS pill ── */
+    .ods-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; }
+
+    /* ── Doc row ── */
+    .doc-row { display: flex; align-items: center; gap-x: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+    .doc-row:last-child { border-bottom: none; }
+
+    /* ── Dual-thumb range slider ── */
+    input[type="range"] { -webkit-appearance: none; appearance: none; }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--blue); border: 2px solid white;
+      box-shadow: 0 1px 6px rgba(37,99,235,.35);
+      cursor: pointer; pointer-events: all;
+      position: relative; z-index: 2;
     }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--blue); border: 2px solid white;
+      box-shadow: 0 1px 6px rgba(37,99,235,.35);
+      cursor: pointer; pointer-events: all;
+    }
+    input[type="range"]:focus { outline: none; }
+    input[type="range"]:focus::-webkit-slider-thumb { box-shadow: 0 0 0 3px rgba(37,99,235,.2); }
 
     /* ── Load more ── */
-    #loadMoreBtn {
-      height: 44px;
-      padding: 0 28px;
-      border-radius: 10px;
-      border: 1.5px solid var(--border);
-      background: var(--panel);
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text);
-      cursor: pointer;
-      transition: background .15s, border-color .15s;
-    }
-    #loadMoreBtn:hover {
-      background: var(--panel-soft);
-      border-color: #CBD5E1;
-    }
+    #loadMoreBtn { height: 44px; padding: 0 28px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--panel); font-size: 14px; font-weight: 700; color: var(--text); cursor: pointer; transition: background .15s, border-color .15s; }
+    #loadMoreBtn:hover { background: var(--panel-soft); border-color: #CBD5E1; }
 
     /* ── Scrollbar ── */
     .modal-scroll::-webkit-scrollbar { width: 6px; }
@@ -308,67 +166,91 @@
     .modal-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
     /* ── Responsive ── */
-    @media (max-width: 640px) {
-      .info-label { min-width: 110px; }
-      .modal-panel { border-radius: 16px; }
-    }
+    @media (max-width: 640px) { .info-label { min-width: 110px; } .modal-panel { border-radius: 16px; } }
   </style>
 </head>
 <body>
 
-  <!-- ═══════════════════════════════════════
-       TOPBAR
-  ════════════════════════════════════════ -->
+  <!-- ═══════════════ TOPBAR ════════════════ -->
   <div class="topbar">
     <div class="max-w-7xl mx-auto px-4 md:px-8 h-14 flex items-center justify-between gap-4">
       <div class="flex items-center gap-2.5">
         <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm" style="background:#2563EB;">
           <i class="fa-solid fa-chart-line"></i>
         </div>
-        <span class="text-base font-800 font-extrabold tracking-tight">GovAI</span>
-        <span class="hidden sm:inline text-xs font-semibold text-[var(--muted)] ml-1 mt-0.5">Oportunidades</span>
+        <span class="text-base font-extrabold tracking-tight">GovAI</span>
+        <span class="hidden sm:inline text-xs font-semibold text-[var(--muted)] ml-1 mt-0.5">Los Tilos · Oportunidades</span>
       </div>
       <div class="flex items-center gap-2">
         <span class="hidden md:flex items-center gap-1.5 text-xs font-semibold text-[var(--muted)] bg-[var(--panel-soft)] border border-[var(--border)] px-3 py-1.5 rounded-lg">
           <i class="fa-solid fa-circle text-green-400" style="font-size:7px;"></i>
-          Datos actualizados
+          Scoring v4 activo
         </span>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       MAIN
-  ════════════════════════════════════════ -->
+  <!-- ═══════════════ MAIN ════════════════ -->
   <main class="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-10">
 
-    <!-- Hero search block -->
+    <!-- Hero -->
     <div class="mb-10">
       <div class="mb-6">
         <h1 class="text-2xl md:text-3xl font-extrabold text-[var(--text)] mb-1.5">Licitaciones públicas</h1>
-        <p class="text-[var(--muted)] text-sm md:text-base">Encuentra y analiza oportunidades de contratación pública en España.</p>
+        <p class="text-[var(--muted)] text-sm md:text-base">Oportunidades seleccionadas y puntuadas para Los Tilos — Madrid · Segovia · Castilla y León.</p>
       </div>
 
+      <!-- Filters row -->
       <div class="flex flex-col sm:flex-row gap-3">
-        <!-- Search -->
         <div class="search-wrap flex items-center gap-3 px-4 py-3 flex-1">
           <i class="fa-solid fa-magnifying-glass text-[var(--muted-light)] flex-shrink-0"></i>
-          <input
-            id="searchInput"
-            type="search"
-            aria-label="Buscar licitaciones"
-            placeholder="Buscar por título, organismo, CPV, expediente o ubicación…"
-          />
+          <input id="searchInput" type="search" aria-label="Buscar licitaciones"
+            placeholder="Título, organismo, CPV, expediente, ubicación…" />
         </div>
-
-        <!-- Location filter -->
-        <div class="relative flex-shrink-0 sm:w-56">
+        <div class="relative flex-shrink-0 sm:w-52">
           <label for="locationFilter" class="sr-only">Ubicación</label>
           <i class="fa-solid fa-location-dot absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted-light)] pointer-events-none text-sm"></i>
-          <select id="locationFilter" class="location-select">
+          <select id="locationFilter" class="filter-select">
             <option value="">Todas las ubicaciones</option>
           </select>
-          <i class="fa-solid fa-chevron-down absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--muted-light)] pointer-events-none text-xs"></i>
+          <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted-light)] pointer-events-none text-xs"></i>
+        </div>
+      </div>
+
+      <!-- Probability range slider -->
+      <div class="mt-3 bg-white border border-[var(--border)] rounded-2xl px-5 py-4">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-percent text-[var(--blue)] text-sm"></i>
+            <span class="text-sm font-bold text-[var(--text)]">Probabilidad de adjudicación</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span id="probMinLabel" class="text-sm font-extrabold text-[var(--blue)]">0%</span>
+            <span class="text-xs text-[var(--muted-light)] font-semibold">—</span>
+            <span id="probMaxLabel" class="text-sm font-extrabold text-[var(--blue)]">100%</span>
+          </div>
+        </div>
+        <div class="relative h-6 flex items-center" id="sliderTrackWrap">
+          <!-- Track -->
+          <div class="absolute inset-x-0 h-2 bg-[var(--border)] rounded-full" id="sliderTrack"></div>
+          <!-- Active fill -->
+          <div class="absolute h-2 rounded-full bg-[var(--blue)]" id="sliderFill" style="left:0%;right:0%"></div>
+          <!-- Min thumb -->
+          <input id="probMin" type="range" min="0" max="100" value="0" step="5"
+            class="absolute inset-x-0 w-full appearance-none bg-transparent pointer-events-none"
+            style="height:2px;" aria-label="Probabilidad mínima" />
+          <!-- Max thumb -->
+          <input id="probMax" type="range" min="0" max="100" value="100" step="5"
+            class="absolute inset-x-0 w-full appearance-none bg-transparent pointer-events-none"
+            style="height:2px;" aria-label="Probabilidad máxima" />
+        </div>
+        <!-- Tick marks -->
+        <div class="flex justify-between mt-2 px-0.5">
+          <span class="text-[10px] font-semibold text-[var(--muted-light)]">0%</span>
+          <span class="text-[10px] font-semibold text-[var(--muted-light)]">25%</span>
+          <span class="text-[10px] font-semibold text-[var(--muted-light)]">50%</span>
+          <span class="text-[10px] font-semibold text-[var(--muted-light)]">75%</span>
+          <span class="text-[10px] font-semibold text-[var(--muted-light)]">100%</span>
         </div>
       </div>
     </div>
@@ -394,9 +276,7 @@
   </main>
 
 
-  <!-- ═══════════════════════════════════════
-       MODAL — FICHA DE LICITACIÓN
-  ════════════════════════════════════════ -->
+  <!-- ═══════════════ MODAL ════════════════ -->
   <div id="detailModal" class="hidden fixed inset-0 modal-overlay z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="modal-panel modal-scroll w-full sm:max-w-4xl max-h-[95dvh] sm:max-h-[90vh] overflow-y-auto">
 
@@ -420,20 +300,19 @@
   </div>
 
 
-  <!-- ═══════════════════════════════════════
-       SCRIPTS — LÓGICA ORIGINAL INTACTA
-  ════════════════════════════════════════ -->
+  <!-- ═══════════════ SCRIPTS ════════════════ -->
   <script>
+    /* ── Dataset paths (el ETL Python genera este JSON) ── */
     const DATASET_PATHS = [
-      './data/Silver/licitaciones_abiertas.json',
-      './data/licitaciones_abiertas.json'
+      './data/Silver/licitaciones_tilos.json',
+      './data/licitaciones_tilos.json',
     ];
 
     const state = {
       raw: [],
       filtered: [],
       visible: 18,
-      filters: { q: '', ubicacion: '' }
+      filters: { q: '', ubicacion: '', probMin: 0, probMax: 100 }
     };
 
     const REGION_MAP = {
@@ -446,9 +325,11 @@
     const PROVINCE_HINTS = [
       'Madrid','Barcelona','Valencia','Sevilla','Zaragoza','Málaga','Murcia','Palma','Bilbao','Alicante',
       'Córdoba','Valladolid','Vigo','Gijón','Hospitalet','A Coruña','Granada','Vitoria','Elche','Oviedo',
-      'Badalona','Cartagena','Terrassa','Jerez','Sabadell','Móstoles','Alcalá','Pamplona','Santander'
+      'Badalona','Cartagena','Terrassa','Jerez','Sabadell','Móstoles','Alcalá','Pamplona','Santander',
+      'Segovia','Burgos','Zamora','Ávila','Palencia','Salamanca','Soria','León'
     ];
 
+    /* ═══ Helpers ═══ */
     function safeText(v) { return (v ?? '').toString().trim(); }
     function escapeHtml(v) {
       return safeText(v)
@@ -459,141 +340,147 @@
       const n = Number(safeText(v).replace(/[^\d,.-]/g,'').replace(',','.'));
       return Number.isFinite(n) ? n : 0;
     }
-    function dateVal(v) {
-      const d = new Date(v);
-      return Number.isNaN(d.getTime()) ? null : d;
-    }
+    function dateVal(v) { const d = new Date(v); return Number.isNaN(d.getTime()) ? null : d; }
     function formatEuro(n) {
       return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(Number.isFinite(n)?n:0);
     }
-    function daysUntil(d) {
-      if (!d) return 9999;
-      return Math.ceil((d.getTime()-Date.now())/86400000);
-    }
+    function daysUntil(d) { if (!d) return 9999; return Math.ceil((d.getTime()-Date.now())/86400000); }
     function locationName(row) {
-      const text = `${safeText(row.lugar_ejecucion)} ${safeText(row.titulo)}`;
+      const text = `${safeText(row.lugar_ejecucion)} ${safeText(row.titulo||row.title)}`;
       const city = PROVINCE_HINTS.find(x => text.toLowerCase().includes(x.toLowerCase()));
       if (city) return city;
       const code = safeText(row.lugar_ejecucion_codigo||row.lugar_ejecucion).slice(0,4).toUpperCase();
       return REGION_MAP[code] || safeText(row.lugar_ejecucion) || 'No especificado';
     }
-    function probability(row) {
-      let score = 50;
-      const offers = amount(row.ofertas_recibidas);
-      const budget = amount(row.importe_total||row.importe_sin_impuestos);
-      const cpv = safeText(row.cpv_codes);
-      const procedure = safeText(row.procedimiento_codigo);
-      const estado = safeText(row.estado||row.estado_codigo).toLowerCase();
-
-      if (!offers) score += 14;
-      else if (offers <= 2) score += 18;
-      else if (offers <= 5) score += 8;
-      else score -= 10;
-
-      if (budget > 0 && budget <= 150000) score += 12;
-      else if (budget <= 750000) score += 7;
-      else if (budget > 1500000) score -= 8;
-
-      if (['1','2','9','10'].includes(procedure)) score += 6;
-      if (estado.includes('evalu') || estado.includes('public')) score += 7;
-      if (cpv.split(';').filter(Boolean).length <= 1) score += 5;
-      else score -= 4;
-      if (safeText(row.adjudicatario)) score -= 10;
-
-      score = Math.max(8, Math.min(96, Math.round(score)));
-      const label = score >= 75 ? 'Alta probabilidad' : score >= 50 ? 'Media probabilidad' : 'Baja probabilidad';
-      const cls = score >= 75 ? 'prob-high' : score >= 50 ? 'prob-mid' : 'prob-low';
-      return { score, label, cls };
-    }
-    function topCounts(rows, accessor, max=8) {
+    function topCounts(rows, accessor, max=80) {
       const map = {};
-      rows.forEach(r => {
-        const key = safeText(accessor(r)) || 'No especificado';
-        map[key] = (map[key]||0)+1;
-      });
+      rows.forEach(r => { const key = safeText(accessor(r))||'No especificado'; map[key]=(map[key]||0)+1; });
       return Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,max);
     }
 
+    /* ═══ Score display from model ═══ */
+    function scoringDisplay(lic) {
+      const sc = lic.__scoring || {};
+      const raw = Number(sc.score_global || sc.score || sc.puntuacion_global || 0);
+      const score = Math.max(0, Math.min(100, Math.round(raw)));
+      const prob  = Math.round((Number(sc.probabilidad || sc.prob || 0) || 0) * 100);
+
+      // Fallback heurístico si no hay scoring del modelo
+      const effective = score || heuristicScore(lic);
+      const label = effective >= 70 ? 'Alta probabilidad' : effective >= 45 ? 'Media probabilidad' : 'Baja probabilidad';
+      const cls   = effective >= 70 ? 'prob-high' : effective >= 45 ? 'prob-mid' : 'prob-low';
+      return { score: effective, raw_prob: prob || effective, label, cls };
+    }
+
+    function heuristicScore(row) {
+      let s = 50;
+      const offers  = amount(row.ofertas_recibidas);
+      const budget  = amount(row.importe_total || row.importe_sin_impuestos);
+      const procedure = safeText(row.procedimiento_codigo);
+      const estado    = safeText(row.estado || row.estado_codigo).toLowerCase();
+      if (!offers) s += 12; else if (offers <= 2) s += 18; else if (offers <= 5) s += 7; else s -= 10;
+      if (budget > 0 && budget <= 150000) s += 12; else if (budget <= 750000) s += 7; else if (budget > 1500000) s -= 8;
+      if (['1','2','9','10'].includes(procedure)) s += 6;
+      if (estado.includes('evalu') || estado.includes('public')) s += 7;
+      if (safeText(row.adjudicatario)) s -= 10;
+      return Math.max(8, Math.min(96, Math.round(s)));
+    }
+
+    /* ═══ Enrich rows ═══ */
     function enrich(rows) {
       return rows.map(row => {
-        const title = safeText(row.titulo||row.title);
+        const title = safeText(row.titulo || row.title);
+        const sc    = scoringDisplay(row);
+        const prio  = safeText(row.__prioridad || (sc.score >= 70 ? 'ALTA' : sc.score >= 45 ? 'MEDIA' : 'BAJA'));
         const enriched = {
           ...row,
           title,
-          __amount: amount(row.importe_total||row.importe_sin_impuestos),
-          __noTax: amount(row.importe_sin_impuestos),
-          __date: dateVal(row.fecha_publicacion),
+          __amount:   amount(row.importe_total || row.importe_sin_impuestos),
+          __noTax:    amount(row.importe_sin_impuestos),
+          __date:     dateVal(row.fecha_publicacion),
           __deadline: dateVal(row.presentacion_hasta),
-          __tipo: safeText(row.tipo_contrato||row.tipo_contrato_codigo)||'No especificado',
-          __estado: safeText(row.estado||row.estado_codigo)||'No especificado',
-          __org: safeText(row.organo_contratacion)||'No especificado',
-          __cpv: safeText(row.cpv_codes)||'No especificado',
-          __loc: locationName(row),
-          __adjudicatario: safeText(row.adjudicatario)
+          __tipo:     safeText(row.tipo_contrato || row.tipo_contrato_codigo) || 'No especificado',
+          __estado:   safeText(row.estado || row.estado_codigo) || 'Activa',
+          __org:      safeText(row.organo_contratacion) || 'No especificado',
+          __cpv:      safeText(row.cpv_codes) || 'No especificado',
+          __loc:      locationName(row),
+          __adjudicatario: safeText(row.adjudicatario),
+          __sc:       sc,
+          __prio:     prio,
         };
-        enriched.__probability = probability(enriched);
-        enriched.__blob = `${title} ${row.expediente} ${enriched.__org} ${enriched.__cpv} ${row.cpv_descripcion} ${enriched.__loc} ${enriched.__adjudicatario}`.toLowerCase();
+        enriched.__blob = [
+          title, row.expediente, enriched.__org, enriched.__cpv,
+          row.cpv_descripcion, enriched.__loc, enriched.__adjudicatario,
+          safeText(row.__resumen_ejecutivo)
+        ].join(' ').toLowerCase();
         return enriched;
       });
     }
 
-    /* ── Skeleton ── */
+    /* ═══ Skeleton ═══ */
     function renderSkeleton() {
       document.getElementById('cardsContainer').innerHTML = Array.from({length:6}).map(()=>`
         <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
           <div class="skeleton h-4 w-3/4 mb-2"></div>
           <div class="skeleton h-3 w-1/2 mb-5"></div>
           <div class="grid grid-cols-2 gap-3">
-            <div class="skeleton h-8 rounded-lg"></div>
-            <div class="skeleton h-8 rounded-lg"></div>
-            <div class="skeleton h-8 rounded-lg"></div>
-            <div class="skeleton h-8 rounded-lg"></div>
+            <div class="skeleton h-8 rounded-lg"></div><div class="skeleton h-8 rounded-lg"></div>
+            <div class="skeleton h-8 rounded-lg"></div><div class="skeleton h-8 rounded-lg"></div>
           </div>
           <div class="skeleton h-9 rounded-xl mt-4"></div>
-        </div>
-      `).join('');
+        </div>`).join('');
     }
 
-    /* ── Filters ── */
+    /* ═══ Filters ═══ */
     function renderFilters() {
-      const entries = topCounts(state.raw, r => r.__loc, 80);
-      const select = document.getElementById('locationFilter');
-      const current = select.value;
-      select.innerHTML = '<option value="">Todas las ubicaciones</option>' +
-        entries.map(([value]) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
-      select.value = current;
+      const sel = document.getElementById('locationFilter');
+      const cur = sel.value;
+      sel.innerHTML = '<option value="">Todas las ubicaciones</option>' +
+        topCounts(state.raw, r => r.__loc, 80)
+          .map(([v]) => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join('');
+      sel.value = cur;
     }
 
-    /* ── Apply filters ── */
     function applyFilters() {
       const f = state.filters;
       state.filtered = state.raw.filter(r => {
         if (f.q && !r.__blob.includes(f.q)) return false;
         if (f.ubicacion && r.__loc !== f.ubicacion) return false;
+        const sc = r.__sc.score;
+        if (sc < f.probMin || sc > f.probMax) return false;
         return true;
-      }).sort((a,b) => b.__probability.score - a.__probability.score || (a.__deadline?.getTime()||0) - (b.__deadline?.getTime()||0));
-
+      }).sort((a,b) => {
+        const po = {ALTA:0,MEDIA:1,BAJA:2};
+        const pd = (po[a.__prio]||2) - (po[b.__prio]||2);
+        if (pd !== 0) return pd;
+        return b.__sc.score - a.__sc.score || (a.__deadline?.getTime()||0) - (b.__deadline?.getTime()||0);
+      });
       state.visible = Math.min(state.visible, Math.max(18, state.filtered.length));
-      state.tablePage = 1;
       renderAll();
     }
 
-    /* ── Estado badge helper ── */
+    /* ═══ Estado badge ═══ */
     function estadoBadge(estado) {
       const e = estado.toLowerCase();
-      if (e.includes('evalu') || e.includes('evaluac')) {
+      if (e.includes('evalu') || e.includes('evaluac'))
         return `<span class="estado-badge" style="background:var(--amber-soft);color:#92400E;border:1px solid var(--amber-border);">${escapeHtml(estado)}</span>`;
-      }
-      if (e.includes('cerr') || e.includes('adjudic') || e.includes('finaliz')) {
+      if (e.includes('cerr') || e.includes('adjudic') || e.includes('finaliz'))
         return `<span class="estado-badge" style="background:var(--slate-soft);color:#475569;border:1px solid var(--slate-border);">${escapeHtml(estado)}</span>`;
-      }
       return `<span class="estado-badge" style="background:var(--green-soft);color:#065F46;border:1px solid var(--green-border);">${escapeHtml(estado)}</span>`;
     }
 
-    /* ── Urgency indicator ──
-       Si el estado del dato dice que está abierta/publicada, la fecha límite
-       puede ser histórica (dataset antiguo) — en ese caso no mostramos "Cerrado"
-       para no contradecir el estado real del registro. ── */
+    /* ═══ Priority badge ═══ */
+    function prioBadge(prio) {
+      const map = {
+        ALTA:  ['prio-alta',  '🟢 Alta prioridad'],
+        MEDIA: ['prio-media', '🟡 Media prioridad'],
+        BAJA:  ['prio-baja',  '⚪ Baja prioridad'],
+      };
+      const [cls, label] = map[prio] || map.BAJA;
+      return `<span class="text-xs font-bold px-2.5 py-1 rounded-full ${cls}">${label}</span>`;
+    }
+
+    /* ═══ Urgency pill ═══ */
     function isEstadoAbierto(estado) {
       const e = safeText(estado).toLowerCase();
       return e.includes('public') || e.includes('abiert') || e.includes('activ') || e.includes('vigent');
@@ -601,17 +488,16 @@
     function urgencyLabel(deadline, estado) {
       if (!deadline) return '';
       const days = daysUntil(deadline);
-      // Fecha pasada pero estado indica abierta → no mostrar badge confuso
       if (days < 0) {
         if (isEstadoAbierto(estado)) return '';
         return `<span class="metric-pill" style="background:var(--red-soft);color:var(--red);border-color:#FECACA;"><i class="fa-solid fa-clock"></i>Plazo vencido</span>`;
       }
-      if (days <= 7) return `<span class="metric-pill" style="background:var(--red-soft);color:var(--red);border-color:#FECACA;"><i class="fa-solid fa-fire-flame-curved"></i>${days}d restantes</span>`;
+      if (days <= 7)  return `<span class="metric-pill" style="background:var(--red-soft);color:var(--red);border-color:#FECACA;"><i class="fa-solid fa-fire-flame-curved"></i>${days}d restantes</span>`;
       if (days <= 21) return `<span class="metric-pill" style="background:var(--amber-soft);color:#92400E;border-color:var(--amber-border);"><i class="fa-solid fa-clock"></i>${days}d restantes</span>`;
       return '';
     }
 
-    /* ── Render cards ── */
+    /* ═══ Render cards ═══ */
     function renderCards() {
       const rows = state.filtered.slice(0, state.visible);
       document.getElementById('resultsCount').textContent = state.filtered.length.toLocaleString('es-ES');
@@ -631,23 +517,36 @@
       }
 
       container.innerHTML = rows.map(r => {
-        const days = daysUntil(r.__deadline);
         const urgent = urgencyLabel(r.__deadline, r.__estado);
+        const rankBadge = r.__scoring?.ranking
+          ? `<span class="metric-pill"><i class="fa-solid fa-trophy text-amber-500"></i>#${escapeHtml(String(r.__scoring.ranking))}</span>`
+          : '';
         return `
-        <article class="lic-card" onclick="showTenderDetail('${r.licitacion_id}')">
+        <article class="lic-card" onclick="showTenderDetail('${escapeHtml(String(r.licitacion_id))}')">
 
-          <!-- Header row -->
+          <!-- Header -->
           <div class="flex items-start justify-between gap-3 mb-3">
-            <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${r.__probability.cls}">${r.__probability.score}% · ${r.__probability.label}</span>
+            ${prioBadge(r.__prio)}
             ${estadoBadge(r.__estado)}
           </div>
 
           <!-- Title -->
-          <h3 class="font-bold text-[15px] leading-snug text-[var(--text)] mb-1.5 line-clamp-2">${escapeHtml(r.title)}</h3>
-          <p class="text-xs text-[var(--muted)] mb-4 truncate">${escapeHtml(r.__org)}</p>
+          <h3 class="font-bold text-[15px] leading-snug text-[var(--text)] mb-1 line-clamp-2">${escapeHtml(r.title)}</h3>
+          <p class="text-xs text-[var(--muted)] mb-3 truncate">${escapeHtml(r.__org)}</p>
+
+          <!-- Score bar -->
+          <div class="mb-3">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide">Score modelo</span>
+              <span class="text-sm font-extrabold ${r.__sc.score >= 70 ? 'text-green-600' : r.__sc.score >= 45 ? 'text-amber-600' : 'text-slate-500'}">${r.__sc.score}<span class="text-xs font-bold">/100</span></span>
+            </div>
+            <div class="score-bar-track">
+              <div class="score-bar-fill" style="width:${r.__sc.score}%;background:${r.__sc.score >= 70 ? '#10B981' : r.__sc.score >= 45 ? '#F59E0B' : '#94A3B8'}"></div>
+            </div>
+          </div>
 
           <!-- Metrics grid -->
-          <div class="grid grid-cols-2 gap-x-4 gap-y-3 mb-4">
+          <div class="grid grid-cols-2 gap-x-4 gap-y-2 mb-3">
             <div>
               <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-0.5">Presupuesto</p>
               <p class="text-sm font-bold text-[var(--text)]">${formatEuro(r.__amount)}</p>
@@ -666,26 +565,19 @@
             </div>
           </div>
 
-          ${urgent ? `<div class="mb-3">${urgent}</div>` : ''}
+          ${urgent || rankBadge ? `<div class="flex flex-wrap gap-2 mb-3">${urgent}${rankBadge}</div>` : ''}
 
-          <!-- Divider -->
           <div class="h-px bg-[var(--border)] mb-3"></div>
 
           <!-- Actions -->
           <div class="flex items-center gap-2">
-            <button
-              onclick="event.stopPropagation();showTenderDetail('${r.licitacion_id}')"
-              class="flex-1 h-9 rounded-lg border border-[var(--border)] bg-white text-xs font-bold text-[var(--text)] hover:bg-[var(--panel-soft)] transition flex items-center justify-center gap-1.5"
-            >
+            <button onclick="event.stopPropagation();showTenderDetail('${escapeHtml(String(r.licitacion_id))}')"
+              class="flex-1 h-9 rounded-lg border border-[var(--border)] bg-white text-xs font-bold text-[var(--text)] hover:bg-[var(--panel-soft)] transition flex items-center justify-center gap-1.5">
               <i class="fa-solid fa-chart-bar text-[var(--muted)] text-[11px]"></i>Ver análisis
             </button>
-            <a
-              href="${escapeHtml(r.url || r.detail_url || '#')}"
-              target="_blank"
-              rel="noopener noreferrer"
+            <a href="${escapeHtml(r.url || r.detail_url || '#')}" target="_blank" rel="noopener noreferrer"
               onclick="event.stopPropagation()"
-              class="flex-1 h-9 rounded-lg bg-[var(--blue)] text-white text-xs font-bold hover:bg-[var(--blue-hover)] transition flex items-center justify-center gap-1.5"
-            >
+              class="flex-1 h-9 rounded-lg bg-[var(--blue)] text-white text-xs font-bold hover:bg-[var(--blue-hover)] transition flex items-center justify-center gap-1.5">
               <i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i>Portal oficial
             </a>
           </div>
@@ -698,7 +590,7 @@
 
     function renderAll() { renderCards(); }
 
-    /* ── Bind events ── */
+    /* ═══ Bind events ═══ */
     function bindEvents() {
       document.getElementById('searchInput').addEventListener('input', e => {
         state.filters.q = safeText(e.target.value).toLowerCase();
@@ -712,9 +604,47 @@
         state.visible += 18;
         renderCards();
       });
+
+      /* ── Dual-thumb probability slider ── */
+      const elMin   = document.getElementById('probMin');
+      const elMax   = document.getElementById('probMax');
+      const lblMin  = document.getElementById('probMinLabel');
+      const lblMax  = document.getElementById('probMaxLabel');
+      const fill    = document.getElementById('sliderFill');
+
+      function updateSliderUI() {
+        const lo = parseInt(elMin.value);
+        const hi = parseInt(elMax.value);
+        lblMin.textContent = lo + '%';
+        lblMax.textContent = hi + '%';
+        fill.style.left  = lo + '%';
+        fill.style.right = (100 - hi) + '%';
+        // Color feedback
+        const color = lo >= 70 ? '#10B981' : lo >= 45 ? '#F59E0B' : '#2563EB';
+        fill.style.background = color;
+        lblMin.style.color = color;
+        lblMax.style.color = color;
+      }
+
+      elMin.addEventListener('input', () => {
+        if (parseInt(elMin.value) > parseInt(elMax.value) - 5)
+          elMin.value = parseInt(elMax.value) - 5;
+        state.filters.probMin = parseInt(elMin.value);
+        updateSliderUI();
+        applyFilters();
+      });
+      elMax.addEventListener('input', () => {
+        if (parseInt(elMax.value) < parseInt(elMin.value) + 5)
+          elMax.value = parseInt(elMin.value) + 5;
+        state.filters.probMax = parseInt(elMax.value);
+        updateSliderUI();
+        applyFilters();
+      });
+
+      updateSliderUI();
     }
 
-    /* ── Fetch dataset ── */
+    /* ═══ Fetch ═══ */
     async function fetchDashboardDataset() {
       const errors = [];
       for (const path of DATASET_PATHS) {
@@ -731,7 +661,7 @@
       throw new Error(errors.join(' | '));
     }
 
-    /* ── Init ── */
+    /* ═══ Init ═══ */
     async function init() {
       renderSkeleton();
       try {
@@ -749,42 +679,231 @@
               <i class="fa-solid fa-triangle-exclamation text-red-400 text-lg"></i>
             </div>
             <h3 class="text-base font-bold text-red-700 mb-1.5">Error de carga</h3>
-            <p class="text-sm text-[var(--muted)]">No se pudo cargar el dataset de oportunidades.</p>
+            <p class="text-sm text-[var(--muted)] mb-3">No se pudo cargar el dataset de oportunidades.</p>
+            <p class="text-xs text-[var(--muted-light)] font-mono">${escapeHtml(err.message)}</p>
           </div>`;
       }
     }
 
-    /* ── Modal ── */
+    /* ═══ Modal helpers ═══ */
     function closeModal() {
       document.getElementById('detailModal').classList.add('hidden');
       document.body.style.overflow = '';
     }
 
+    /* ── Sección: Score del modelo ── */
+    function renderScoringSection(lic) {
+      const sc   = lic.__scoring || {};
+      const disp = lic.__sc;
+      const prob = Math.round((Number(sc.probabilidad || sc.prob || 0) || 0) * 100) || disp.score;
+      const ranking = safeText(sc.ranking || '');
+      const recom   = safeText(sc.recomendacion || sc.recommendation || '');
+      const extraKeys = Object.keys(sc).filter(k =>
+        !['score_global','score','probabilidad','prob','ranking','recomendacion','recommendation',
+          'licitacion_id','expediente','titulo','title'].includes(k) && sc[k] !== null && sc[k] !== ''
+      );
+      const extraRows = extraKeys.slice(0,8).map(k =>
+        `<div class="info-row"><span class="info-label">${escapeHtml(k.replace(/_/g,' '))}</span><span class="info-value">${escapeHtml(String(sc[k]))}</span></div>`
+      ).join('');
+
+      return `
+      <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+        <p class="section-label"><i class="fa-solid fa-brain text-[var(--blue)]"></i>Score del Modelo</p>
+
+        <div class="ai-card mb-4">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-[var(--muted)]">Score global</span>
+            <span class="text-3xl font-extrabold ${disp.score >= 70 ? 'text-green-600' : disp.score >= 45 ? 'text-amber-600' : 'text-slate-500'}">${disp.score}<span class="text-base font-bold">/100</span></span>
+          </div>
+          <div class="score-bar-track mb-3">
+            <div class="score-bar-fill" style="width:${disp.score}%;background:${disp.score>=70?'#10B981':disp.score>=45?'#F59E0B':'#94A3B8'}"></div>
+          </div>
+          <div class="flex flex-wrap gap-3 text-sm">
+            <div class="flex-1 min-w-[120px]">
+              <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-0.5">Probabilidad adjudicación</p>
+              <p class="text-base font-extrabold ${prob>=70?'text-green-600':prob>=45?'text-amber-600':'text-slate-500'}">${prob}%</p>
+            </div>
+            ${ranking ? `<div class="flex-1 min-w-[80px]"><p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-0.5">Ranking</p><p class="text-base font-extrabold text-[var(--text)]">#${escapeHtml(ranking)}</p></div>` : ''}
+          </div>
+        </div>
+
+        ${recom ? `<div class="text-sm font-semibold text-[var(--text)] bg-[var(--blue-soft)] border border-[var(--blue-mid)] rounded-xl p-3 mb-3"><i class="fa-solid fa-lightbulb text-[var(--blue)] mr-2"></i>${escapeHtml(recom)}</div>` : ''}
+        ${extraRows ? `<div class="mt-2">${extraRows}</div>` : ''}
+      </div>`;
+    }
+
+    /* ── Sección: Factores ── */
+    function renderFactoresSection(lic) {
+      const positivos = Array.isArray(lic.__factores_positivos) ? lic.__factores_positivos : [];
+      const riesgos   = Array.isArray(lic.__factores_riesgo)    ? lic.__factores_riesgo   : [];
+      return `
+      <div class="grid md:grid-cols-2 gap-5">
+        <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+          <p class="section-label"><i class="fa-solid fa-circle-check text-green-500"></i>Factores Positivos</p>
+          ${positivos.length
+            ? positivos.map(f => `<div class="ai-check"><i class="fa-solid fa-check"></i><span>${escapeHtml(f)}</span></div>`).join('')
+            : '<p class="text-sm text-[var(--muted)]">Sin factores positivos detectados.</p>'}
+        </div>
+        <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+          <p class="section-label"><i class="fa-solid fa-triangle-exclamation text-amber-500"></i>Factores de Riesgo</p>
+          ${riesgos.length
+            ? riesgos.map(r => `<div class="ai-warn"><i class="fa-solid fa-exclamation"></i><span>${escapeHtml(r)}</span></div>`).join('')
+            : '<p class="text-sm text-[var(--muted)]">Sin alertas de riesgo significativas.</p>'}
+        </div>
+      </div>`;
+    }
+
+    /* ── Sección: Documentación requerida ── */
+    function renderDocumentacionSection(lic) {
+      const docs = Array.isArray(lic.__documentacion) ? lic.__documentacion : [];
+      if (!docs.length) {
+        return `
+        <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+          <p class="section-label"><i class="fa-solid fa-folder-open text-[var(--blue)]"></i>Documentación Requerida</p>
+          <div class="upload-zone">
+            <input type="file" accept=".pdf,.doc,.docx" aria-label="Subir documentación" />
+            <div class="pointer-events-none">
+              <div class="w-10 h-10 rounded-xl bg-[var(--blue-soft)] flex items-center justify-center mx-auto mb-3">
+                <i class="fa-solid fa-cloud-arrow-up text-[var(--blue)] text-lg"></i>
+              </div>
+              <p class="text-sm font-bold text-[var(--text)] mb-1">Arrastra documentos aquí o haz clic para seleccionar</p>
+              <p class="text-xs text-[var(--muted)]">PDF, DOC, DOCX — sin documentación específica detectada en el dataset</p>
+            </div>
+          </div>
+        </div>`;
+      }
+
+      const pendientes = docs.filter(d => d.estado === 'Pendiente');
+      const disponibles = docs.filter(d => d.estado !== 'Pendiente');
+
+      return `
+      <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+        <p class="section-label"><i class="fa-solid fa-folder-open text-[var(--blue)]"></i>Documentación Requerida</p>
+        ${pendientes.length ? `<div class="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>${pendientes.length} documento(s) pendiente(s) de obtener</div>` : ''}
+        <div class="divide-y divide-[var(--border)]">
+          ${docs.map(doc => `
+          <div class="flex items-center gap-3 py-3">
+            <div class="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center text-xs font-bold
+              ${doc.estado === 'Disponible'
+                ? 'bg-green-50 text-green-700 border border-green-200'
+                : 'bg-amber-50 text-amber-700 border border-amber-200'}">
+              <i class="fa-solid ${doc.estado === 'Disponible' ? 'fa-check' : 'fa-clock'}"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-bold text-[var(--text)] truncate">${escapeHtml(doc.nombre)}</p>
+              <p class="text-xs text-[var(--muted)]">${escapeHtml(doc.tipo)} · ${doc.obligatorio ? 'Obligatorio' : 'Recomendado'}</p>
+              ${doc.descripcion ? `<p class="text-xs text-[var(--muted-light)] mt-0.5 line-clamp-1">${escapeHtml(doc.descripcion)}</p>` : ''}
+            </div>
+            ${doc.enlace
+              ? `<a href="${escapeHtml(doc.enlace)}" target="_blank" rel="noopener" class="text-xs font-bold text-[var(--blue)] hover:underline flex-shrink-0"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Abrir</a>`
+              : `<span class="text-xs font-semibold text-[var(--muted-light)] flex-shrink-0">${escapeHtml(doc.estado)}</span>`}
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }
+
+    /* ── Sección: Agenda 2035 ── */
+    function renderAgenda2035Section(lic) {
+      const ods = Array.isArray(lic.__agenda_2035) ? lic.__agenda_2035 : [];
+      return `
+      <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+        <p class="section-label"><i class="fa-solid fa-leaf text-green-600"></i>Contribución Agenda 2035</p>
+        ${!ods.length
+          ? `<p class="text-sm text-[var(--muted)]">No se detectaron ODS específicos alineados con esta licitación.</p>`
+          : `<div class="space-y-3">
+              ${ods.map(o => `
+              <div class="flex items-start gap-3 p-3 rounded-xl border" style="border-color:${escapeHtml(o.color)}22;background:${escapeHtml(o.color)}0D">
+                <span class="text-2xl flex-shrink-0 mt-0.5">${escapeHtml(o.icono)}</span>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2 mb-1">
+                    <p class="text-sm font-bold text-[var(--text)]">${escapeHtml(o.nombre)}</p>
+                    <span class="text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0"
+                      style="background:${escapeHtml(o.color)}22;color:${escapeHtml(o.color)}">
+                      ${escapeHtml(o.nivel_alineacion)}
+                    </span>
+                  </div>
+                  <p class="text-xs text-[var(--muted)] mb-1.5">${escapeHtml(o.justificacion)}</p>
+                  <div class="flex items-center gap-2">
+                    <div class="score-bar-track flex-1" style="height:6px;">
+                      <div class="score-bar-fill" style="width:${o.puntuacion_impacto}%;background:${escapeHtml(o.color)}"></div>
+                    </div>
+                    <span class="text-[11px] font-bold" style="color:${escapeHtml(o.color)}">${o.puntuacion_impacto}%</span>
+                  </div>
+                </div>
+              </div>`).join('')}
+            </div>`}
+      </div>`;
+    }
+
+    /* ── Sección: Recomendación final ── */
+    function renderRecomendacionSection(lic) {
+      const prio  = lic.__prio || 'BAJA';
+      const recom = safeText(lic.__scoring?.recomendacion || '');
+      const configMap = {
+        ALTA:  { icon: 'fa-rocket', color: '#15803D', bg: '#DCFCE7', border: '#86EFAC', text: 'ALTA PRIORIDAD — Acción inmediata recomendada' },
+        MEDIA: { icon: 'fa-thumbs-up', color: '#92400E', bg: '#FFFBEB', border: '#FDE68A', text: 'MEDIA PRIORIDAD — Evaluar con detalle antes de decidir' },
+        BAJA:  { icon: 'fa-info-circle', color: '#475569', bg: '#F1F5F9', border: '#CBD5E1', text: 'BAJA PRIORIDAD — Seguimiento pasivo recomendado' },
+      };
+      const cfg = configMap[prio] || configMap.BAJA;
+      const scoreOds   = (lic.__agenda_2035 || []).reduce((a, o) => a + (o.puntuacion_impacto || 0), 0) / Math.max(1, (lic.__agenda_2035 || []).length);
+      const docsOk     = (lic.__documentacion || []).filter(d => d.estado === 'Disponible').length;
+      const docsTotal  = (lic.__documentacion || []).length;
+
+      return `
+      <div class="rounded-2xl p-5" style="background:${cfg.bg};border:1.5px solid ${cfg.border}">
+        <p class="section-label" style="color:${cfg.color}"><i class="fa-solid ${cfg.icon}"></i>Recomendación Final</p>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${cfg.color}22">
+            <i class="fa-solid ${cfg.icon}" style="color:${cfg.color}"></i>
+          </div>
+          <p class="text-base font-extrabold" style="color:${cfg.color}">${cfg.text}</p>
+        </div>
+        ${recom ? `<p class="text-sm font-semibold text-[var(--text)] mb-4 p-3 bg-white rounded-xl border border-[var(--border)]">${escapeHtml(recom)}</p>` : ''}
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-white rounded-xl p-3 border border-[var(--border)]">
+            <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-0.5">Score</p>
+            <p class="text-xl font-extrabold" style="color:${cfg.color}">${lic.__sc?.score ?? 0}</p>
+          </div>
+          <div class="bg-white rounded-xl p-3 border border-[var(--border)]">
+            <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-0.5">ODS Impacto</p>
+            <p class="text-xl font-extrabold text-green-600">${Math.round(scoreOds)}%</p>
+          </div>
+          <div class="bg-white rounded-xl p-3 border border-[var(--border)]">
+            <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-0.5">Docs OK</p>
+            <p class="text-xl font-extrabold text-[var(--blue)]">${docsOk}/${docsTotal||'—'}</p>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    /* ═══ showTenderDetail ═══ */
     function showTenderDetail(id) {
       const lic = state.raw.find(x => String(x.licitacion_id) === String(id));
       if (!lic) return;
 
-      const prob = lic.__probability;
-      const days = daysUntil(lic.__deadline);
+      const disp   = lic.__sc;
+      const days   = daysUntil(lic.__deadline);
       const daysText = lic.__deadline
         ? (days < 0 ? 'Plazo vencido' : days === 0 ? 'Vence hoy' : `${days} días restantes`)
         : '—';
+      const resumen = safeText(lic.__resumen_ejecutivo || lic.objeto_contrato || lic.descripcion || '');
 
       document.getElementById('detailContent').innerHTML = `
 
         <!-- ── Executive header ── -->
         <div style="background:linear-gradient(135deg,#EFF6FF 0%,#F8FAFC 100%);border:1px solid #DBEAFE;" class="rounded-2xl p-6">
           <div class="flex flex-wrap items-center gap-2 mb-3">
-            ${estadoBadge(lic.__estado || 'Activa')}
-            <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${prob.cls}">${prob.score}% · ${prob.label}</span>
+            ${estadoBadge(lic.__estado)}
+            ${prioBadge(lic.__prio)}
+            <span class="text-xs font-semibold px-2.5 py-1 rounded-full border ${disp.cls}">${disp.score}/100 · ${disp.label}</span>
             ${lic.__tipo !== 'No especificado' ? `<span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-white border border-[var(--border)] text-[var(--muted)]">${escapeHtml(lic.__tipo)}</span>` : ''}
           </div>
-          <h2 class="text-xl md:text-2xl font-extrabold text-[var(--text)] leading-snug mb-5">${escapeHtml(lic.titulo || '—')}</h2>
+          <h2 class="text-xl md:text-2xl font-extrabold text-[var(--text)] leading-snug mb-5">${escapeHtml(lic.titulo || lic.title || '—')}</h2>
 
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div class="bg-white rounded-xl border border-[var(--border)] p-4">
               <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-1">Presupuesto</p>
-              <p class="text-lg font-extrabold text-[var(--text)]">${formatEuro(amount(lic.importe_total))}</p>
+              <p class="text-lg font-extrabold text-[var(--text)]">${formatEuro(lic.__amount)}</p>
             </div>
             <div class="bg-white rounded-xl border border-[var(--border)] p-4">
               <p class="text-[11px] font-semibold text-[var(--muted-light)] uppercase tracking-wide mb-1">Fecha límite</p>
@@ -802,81 +921,72 @@
           </div>
         </div>
 
+        ${resumen ? `
+        <!-- ── Resumen ejecutivo ── -->
+        <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
+          <p class="section-label"><i class="fa-solid fa-file-lines text-[var(--blue)]"></i>Resumen Ejecutivo</p>
+          <p class="text-sm text-[var(--text)] leading-relaxed">${escapeHtml(resumen)}</p>
+        </div>` : ''}
+
         <!-- ── Info columns ── -->
         <div class="grid md:grid-cols-2 gap-5">
 
-          <!-- Información General -->
           <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
-            <p class="section-label"><i class="fa-solid fa-circle-info text-[var(--blue)]"></i>Información General</p>
+            <p class="section-label"><i class="fa-solid fa-circle-info text-[var(--blue)]"></i>Datos Generales</p>
             <div class="info-row"><span class="info-label">Expediente</span><span class="info-value font-mono text-sm">${escapeHtml(lic.expediente || '—')}</span></div>
             <div class="info-row"><span class="info-label">Organismo</span><span class="info-value">${escapeHtml(lic.organo_contratacion || '—')}</span></div>
             <div class="info-row"><span class="info-label">Procedimiento</span><span class="info-value">${escapeHtml(lic.procedimiento_codigo || '—')}</span></div>
             <div class="info-row"><span class="info-label">Publicación</span><span class="info-value">${escapeHtml(lic.fecha_publicacion || '—')}</span></div>
+            <div class="info-row"><span class="info-label">Fuente</span><span class="info-value">${escapeHtml(lic.fuente_publicacion || '—')}</span></div>
           </div>
 
-          <!-- Información Económica -->
           <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
-            <p class="section-label"><i class="fa-solid fa-euro-sign text-[var(--blue)]"></i>Información Económica</p>
-            <div class="info-row"><span class="info-label">Importe total</span><span class="info-value text-[var(--blue)]">${formatEuro(amount(lic.importe_total))}</span></div>
-            <div class="info-row"><span class="info-label">Sin impuestos</span><span class="info-value">${formatEuro(amount(lic.importe_sin_impuestos))}</span></div>
-            ${lic.ofertas_recibidas ? `<div class="info-row"><span class="info-label">Ofertas recibidas</span><span class="info-value">${escapeHtml(lic.ofertas_recibidas)}</span></div>` : ''}
+            <p class="section-label"><i class="fa-solid fa-euro-sign text-[var(--blue)]"></i>Importe</p>
+            <div class="info-row"><span class="info-label">Importe total</span><span class="info-value text-[var(--blue)]">${formatEuro(lic.__amount)}</span></div>
+            <div class="info-row"><span class="info-label">Sin impuestos</span><span class="info-value">${formatEuro(lic.__noTax)}</span></div>
+            ${lic.ofertas_recibidas ? `<div class="info-row"><span class="info-label">Ofertas recibidas</span><span class="info-value">${escapeHtml(String(lic.ofertas_recibidas))}</span></div>` : ''}
             ${lic.__adjudicatario ? `<div class="info-row"><span class="info-label">Adjudicatario</span><span class="info-value">${escapeHtml(lic.__adjudicatario)}</span></div>` : ''}
           </div>
 
-          <!-- Información Técnica -->
           <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
             <p class="section-label"><i class="fa-solid fa-code text-[var(--blue)]"></i>Información Técnica</p>
             <div class="info-row"><span class="info-label">CPV</span><span class="info-value font-mono text-sm">${escapeHtml(lic.cpv_codes || '—')}</span></div>
             <div class="info-row"><span class="info-label">Descripción CPV</span><span class="info-value">${escapeHtml(lic.cpv_descripcion || '—')}</span></div>
-            <div class="info-row"><span class="info-label">Fuente</span><span class="info-value">${escapeHtml(lic.fuente_publicacion || '—')}</span></div>
+            <div class="info-row"><span class="info-label">Ubicación ejecución</span><span class="info-value">${escapeHtml(lic.lugar_ejecucion || '—')}</span></div>
           </div>
 
-          <!-- Análisis IA -->
           <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
-            <p class="section-label"><i class="fa-solid fa-brain text-[var(--blue)]"></i>Análisis IA</p>
-            <div class="ai-card">
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-bold text-[var(--muted)]">Score de oportunidad</span>
-                <span class="text-2xl font-extrabold ${prob.score >= 75 ? 'text-green-600' : prob.score >= 50 ? 'text-amber-600' : 'text-slate-500'}">${prob.score}<span class="text-sm font-bold">%</span></span>
-              </div>
-              <div class="ai-check"><i class="fa-solid fa-check"></i>Licitación activa y vigente</div>
-              <div class="ai-check"><i class="fa-solid fa-check"></i>Información completa disponible</div>
-              <div class="ai-check"><i class="fa-solid fa-check"></i>Apta para revisión comercial</div>
-            </div>
+            <p class="section-label"><i class="fa-solid fa-building-columns text-[var(--blue)]"></i>Órgano Contratante</p>
+            <div class="info-row"><span class="info-label">Organismo</span><span class="info-value">${escapeHtml(lic.organo_contratacion || '—')}</span></div>
+            ${lic.organo_contratacion_id ? `<div class="info-row"><span class="info-label">ID Organismo</span><span class="info-value font-mono text-sm">${escapeHtml(String(lic.organo_contratacion_id))}</span></div>` : ''}
+            ${lic.nif_organo ? `<div class="info-row"><span class="info-label">NIF</span><span class="info-value font-mono text-sm">${escapeHtml(String(lic.nif_organo))}</span></div>` : ''}
           </div>
 
         </div>
 
-        <!-- ── Documentación ── -->
-        <div class="bg-white border border-[var(--border)] rounded-2xl p-5">
-          <p class="section-label"><i class="fa-solid fa-folder-open text-[var(--blue)]"></i>Documentación</p>
-          <div class="upload-zone" id="uploadZone">
-            <input type="file" accept=".pdf,.doc,.docx" aria-label="Subir documentación" />
-            <div class="pointer-events-none">
-              <div class="w-10 h-10 rounded-xl bg-[var(--blue-soft)] flex items-center justify-center mx-auto mb-3">
-                <i class="fa-solid fa-cloud-arrow-up text-[var(--blue)] text-lg"></i>
-              </div>
-              <p class="text-sm font-bold text-[var(--text)] mb-1">Arrastra documentos aquí o haz clic para seleccionar</p>
-              <p class="text-xs text-[var(--muted)]">PDF, DOC, DOCX — preparado para análisis IA en versiones futuras</p>
-            </div>
-          </div>
-        </div>
+        <!-- ── Score del modelo ── -->
+        ${renderScoringSection(lic)}
+
+        <!-- ── Factores ── -->
+        ${renderFactoresSection(lic)}
+
+        <!-- ── Documentación requerida ── -->
+        ${renderDocumentacionSection(lic)}
+
+        <!-- ── Agenda 2035 ── -->
+        ${renderAgenda2035Section(lic)}
+
+        <!-- ── Recomendación final ── -->
+        ${renderRecomendacionSection(lic)}
 
         <!-- ── CTA ── -->
         <div class="flex flex-col sm:flex-row items-center gap-3 pt-1 pb-2">
-          <a
-            href="${escapeHtml(lic.detail_url || lic.url || '#')}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[var(--blue)] text-white font-bold text-sm hover:bg-[var(--blue-hover)] transition"
-          >
-            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
-            Ver licitación oficial
+          <a href="${escapeHtml(lic.detail_url || lic.url || '#')}" target="_blank" rel="noopener noreferrer"
+            class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[var(--blue)] text-white font-bold text-sm hover:bg-[var(--blue-hover)] transition">
+            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>Ver licitación oficial
           </a>
-          <button
-            onclick="closeModal()"
-            class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-[var(--border)] bg-white text-sm font-bold text-[var(--muted)] hover:bg-[var(--panel-soft)] transition"
-          >
+          <button onclick="closeModal()"
+            class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-[var(--border)] bg-white text-sm font-bold text-[var(--muted)] hover:bg-[var(--panel-soft)] transition">
             Cerrar ficha
           </button>
         </div>
@@ -885,17 +995,9 @@
 
       document.getElementById('detailModal').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
-
-      /* drag & drop visual feedback */
-      const zone = document.getElementById('uploadZone');
-      if (zone) {
-        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-        zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); });
-      }
     }
 
-    /* close on overlay click */
+    /* ── Close on overlay click ── */
     document.getElementById('detailModal').addEventListener('click', function(e) {
       if (e.target === this) closeModal();
     });
